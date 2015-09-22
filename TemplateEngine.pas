@@ -255,6 +255,29 @@ type
     	AVarName: string): TVariableRecord; virtual; abstract;
   end;
 
+  TStorageNamespaceProvider = class(TNamespaceProvider)
+  private
+    type
+    TVarRecItem = record
+      IsSingle: Boolean;
+      Data: TArray<Variant>;
+    end;
+  private
+    FVariables: TDictionary<string,TVarRecItem>;
+    procedure InternalSetVariable(AVarName: string; IsSingle: Boolean; const Values: array of Variant);
+  protected
+    function InternalGetVariable(AVarName: string): TVariableRecord;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    function GetVariable(AIndex: integer;
+    	AVarName: string): TVariableRecord; override;
+
+    procedure SetVariable(AVarName: string; const Value: Variant); overload;
+    procedure SetVariable(AVarName: string; const Values: array of Variant); overload;
+  end;
+
   TForEachData = class
   	Name: string;
     InForEach: boolean;
@@ -3688,6 +3711,70 @@ begin
   end
   else
   	Result := false;
+end;
+
+{************* TStorageNamespaceProvider *************}
+
+constructor TStorageNamespaceProvider.Create;
+begin
+  FVariables := TDictionary<string,TVarRecItem>.Create;
+end;
+
+destructor TStorageNamespaceProvider.Destroy;
+begin
+  FVariables.Free;
+  inherited;
+end;
+
+procedure TStorageNamespaceProvider.InternalSetVariable(AVarName: string;
+  IsSingle: Boolean; const Values: array of Variant);
+var
+  I: Integer;
+  Item: TVarRecItem;
+begin
+  ZeroMemory(@Item, SizeOf(Item));
+  Item.IsSingle := IsSingle;
+  SetLength(Item.Data, Length(Values));
+  for I := Low(Item.Data) to High(Item.Data) do
+    Item.Data[I] := Values[I];
+  FVariables.AddOrSetValue(AnsiUpperCase(AVarName), Item);
+end;
+
+function TStorageNamespaceProvider.InternalGetVariable(
+  AVarName: string): TVariableRecord;
+var
+  Item: TVarRecItem;
+  I: Integer;
+begin
+  if not FVariables.ContainsKey(AVarName) then
+    Exit(TVariableRecord.Null);
+  Item := FVariables[AVarName];
+  if Item.IsSingle then
+    Result := Item.Data[0]
+  else
+  begin
+    Result.SetArrayLength(Length(Item.Data));
+    for I := Low(Item.Data) to High(Item.Data) do
+      Result.SetArrayItemQ(I, '', Item.Data[I]);
+  end;
+end;
+
+function TStorageNamespaceProvider.GetVariable(AIndex: integer;
+  AVarName: string): TVariableRecord;
+begin
+  Result := InternalGetVariable(AVarName);
+end;
+
+procedure TStorageNamespaceProvider.SetVariable(AVarName: string;
+  const Values: array of Variant);
+begin
+  InternalSetVariable(AVarName, False, Values);
+end;
+
+procedure TStorageNamespaceProvider.SetVariable(AVarName: string;
+  const Value: Variant);
+begin
+  InternalSetVariable(AVarName, True, [Value]);
 end;
 
 {************* TForEachList *************}
