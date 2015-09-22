@@ -165,6 +165,7 @@ type
     class operator Implicit(AValue: TDateRecord): TVariableRecord;
     class operator Implicit(AValue: TDateTime): TVariableRecord;
     class operator Implicit(AValue: string): TVariableRecord;
+    class operator Implicit(AValue: Variant): TVariableRecord;
 
     class operator Implicit(ARecord: TVariableRecord): boolean;
     class operator Implicit(ARecord: TVariableRecord): integer;
@@ -2854,6 +2855,29 @@ begin
 	Result.VarType := vtString;
   Result.SValue := nil;
   string(Result.SValue) := AValue;
+end;
+
+class operator TVariableRecord.Implicit(AValue: Variant): TVariableRecord;
+begin
+  case TVarData(AValue).VType of
+    varEmpty     : Result.Null;
+    varNull      : Result.Null;
+    varSmallint  : Result := TVarData(AValue).VSmallInt;
+    varInteger   : Result := TVarData(AValue).VInteger;
+    varDouble    : Result := TVarData(AValue).VDouble;
+    varCurrency  : Result := TVarData(AValue).VCurrency;
+    varDate      : Result := TVarData(AValue).VDate;
+    varOleStr    : Result := string(TVarData(AValue).VOleStr);
+    varBoolean   : Result := TVarData(AValue).VBoolean;
+    varShortInt  : Result := TVarData(AValue).VShortInt;
+    varByte      : Result := TVarData(AValue).VByte;
+    varWord      : Result := TVarData(AValue).VWord;
+    varLongWord  : Result := Integer(TVarData(AValue).VLongWord);
+    varInt64     : Result := Integer(TVarData(AValue).VInt64);
+    varUInt64    : Result := Integer(TVarData(AValue).VUInt64);
+    varString    : Result := string(TVarData(AValue).VString);
+    varUString   : Result := string(TVarData(AValue).VUString);
+  end;
 end;
 
 class operator TVariableRecord.Implicit(ARecord: TVariableRecord): boolean;
