@@ -266,14 +266,8 @@ type
 
   TStorageNamespaceProvider = class(TNamespaceProvider)
   private
-    type
-    TVarRecItem = record
-      IsSingle: Boolean;
-      Data: TArray<Variant>;
-    end;
-  private
-    FVariables: TDictionary<string,TVarRecItem>;
-    procedure InternalSetVariable(AVarName: string; IsSingle: Boolean; const Values: array of Variant);
+    FVariables: TDictionary<string,TVariableRecord>;
+    procedure InternalSetVariable(AVarName: string; Value: TVariableRecord); overload;
   protected
     function InternalGetVariable(AVarName: string): TVariableRecord;
   public
@@ -282,8 +276,8 @@ type
     function GetVariable(AIndex: integer;
     	AVarName: string): TVariableRecord; override;
 
-    procedure SetVariable(AVarName: string; const Value: Variant); overload;
-    procedure SetVariable(AVarName: string; const Values: array of Variant); overload;
+    procedure SetVariable(AVarName: string; const Value: TVariableRecord); overload;
+    procedure SetVariable(AVarName: string; const Values: array of TVariableRecord); overload;
   end;
 
   TForEachData = class
@@ -1280,7 +1274,18 @@ type
 
 *)
 
+type
+  TMapItem = record
+    Key: string;
+    Value: TVariableRecord;
+  end;
+
 //convertion rountines
+
+function Arr(Items: array of TVariableRecord): TVariableRecord; overload;
+function Item(Key: string; Value: TVariableRecord): TMapItem; overload;
+function Map(Items: array of TMapItem): TVariableRecord; overload;
+
 function DateRecordToStr(Value: TDateRecord): string;         //use FormatSettings
 function DateRecordToString(Value: TDateRecord): string;      //FormatSettings independent
 function StringToDateRecord(Value: string): TDateRecord;
@@ -1418,6 +1423,27 @@ begin
   else Result := false;
 end;
 
+function Arr(Items: array of TVariableRecord): TVariableRecord;
+var i: Integer;
+begin
+  Result.SetArrayLength(Length(Items));
+  for I := Low(Items) to High(Items) do
+    Result.SetArrayItemQ(I, '', Items[I]);
+end;
+
+function Item(Key: string; Value: TVariableRecord): TMapItem; overload;
+begin
+  Result.Key := Key;
+  Result.Value := Value;
+end;
+
+function Map(Items: array of TMapItem): TVariableRecord; overload;
+var i: Integer;
+begin
+  Result.SetArrayLength(Length(Items));
+  for I := Low(Items) to High(Items) do
+    Result.SetArrayItemQ(I, Items[I].Key, Items[I].Value);
+end;
 
 procedure RegisterModifier(AModifier: TVariableModifierClass);
 begin
@@ -3763,40 +3789,21 @@ begin
   inherited;
 end;
 
-procedure TStorageNamespaceProvider.InternalSetVariable(AVarName: string;
-  IsSingle: Boolean; const Values: array of Variant);
-var
-  I: Integer;
-  Item: TVarRecItem;
+procedure TStorageNamespaceProvider.InternalSetVariable(AVarName: string; Value: TVariableRecord);
 begin
-  ZeroMemory(@Item, SizeOf(Item));
-  Item.IsSingle := IsSingle;
-  SetLength(Item.Data, Length(Values));
-  for I := Low(Item.Data) to High(Item.Data) do
-    Item.Data[I] := Values[I];
   // lazy init, also saves us from overriding 2 constructors
   if FVariables = nil then
-    FVariables := TDictionary<string,TVarRecItem>.Create;
-  FVariables.AddOrSetValue(AnsiUpperCase(AVarName), Item);
+    FVariables := TDictionary<string,TVariableRecord>.Create;
+  FVariables.AddOrSetValue(AnsiUpperCase(AVarName), Value);
 end;
 
 function TStorageNamespaceProvider.InternalGetVariable(
   AVarName: string): TVariableRecord;
-var
-  Item: TVarRecItem;
-  I: Integer;
 begin
   if not FVariables.ContainsKey(AVarName) then
-    Exit(TVariableRecord.Null);
-  Item := FVariables[AVarName];
-  if Item.IsSingle then
-    Result := Item.Data[0]
+    Result := TVariableRecord.Null
   else
-  begin
-    Result.SetArrayLength(Length(Item.Data));
-    for I := Low(Item.Data) to High(Item.Data) do
-      Result.SetArrayItemQ(I, '', Item.Data[I]);
-  end;
+    Result := FVariables[AVarName];
 end;
 
 function TStorageNamespaceProvider.GetVariable(AIndex: integer;
@@ -3806,15 +3813,15 @@ begin
 end;
 
 procedure TStorageNamespaceProvider.SetVariable(AVarName: string;
-  const Values: array of Variant);
+  const Value: TVariableRecord);
 begin
-  InternalSetVariable(AVarName, False, Values);
+  InternalSetVariable(AVarName, Value);
 end;
 
 procedure TStorageNamespaceProvider.SetVariable(AVarName: string;
-  const Value: Variant);
+  const Values: array of TVariableRecord);
 begin
-  InternalSetVariable(AVarName, True, [Value]);
+  InternalSetVariable(AVarName, Arr(Values));
 end;
 
 {************* TForEachList *************}
