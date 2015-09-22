@@ -2,43 +2,49 @@ object Form1: TForm1
   Left = 0
   Top = 0
   Caption = 'DVD Chief Template Engine Demo'
-  ClientHeight = 432
-  ClientWidth = 685
+  ClientHeight = 565
+  ClientWidth = 896
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -11
+  Font.Height = -14
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
-  PixelsPerInch = 96
-  TextHeight = 13
+  PixelsPerInch = 120
+  TextHeight = 17
   object spl: TSplitter
-    Left = 400
+    Left = 523
     Top = 0
-    Height = 432
-    ExplicitLeft = 512
-    ExplicitTop = 192
-    ExplicitHeight = 100
+    Width = 4
+    Height = 565
+    Margins.Left = 4
+    Margins.Top = 4
+    Margins.Right = 4
+    Margins.Bottom = 4
   end
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 400
-    Height = 432
+    Width = 523
+    Height = 565
+    Margins.Left = 4
+    Margins.Top = 4
+    Margins.Right = 4
+    Margins.Bottom = 4
     Align = alLeft
     Caption = 'Panel1'
     TabOrder = 0
     object memParse: TMemo
       AlignWithMargins = True
-      Left = 5
-      Top = 38
-      Width = 390
-      Height = 389
-      Margins.Left = 4
-      Margins.Top = 4
-      Margins.Right = 4
-      Margins.Bottom = 4
+      Left = 6
+      Top = 48
+      Width = 511
+      Height = 511
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Align = alClient
       Lines.Strings = (
         '{literal}Here you can use any symbols ;) {}{} {/literal}'
@@ -56,14 +62,14 @@ object Form1: TForm1
     end
     object Parse: TButton
       AlignWithMargins = True
-      Left = 5
-      Top = 5
-      Width = 390
-      Height = 25
-      Margins.Left = 4
-      Margins.Top = 4
-      Margins.Right = 4
-      Margins.Bottom = 4
+      Left = 6
+      Top = 6
+      Width = 511
+      Height = 32
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Align = alTop
       Caption = 'Parse'
       TabOrder = 1
@@ -71,10 +77,14 @@ object Form1: TForm1
     end
   end
   object memResult: TMemo
-    Left = 403
+    Left = 527
     Top = 0
-    Width = 282
-    Height = 432
+    Width = 369
+    Height = 565
+    Margins.Left = 4
+    Margins.Top = 4
+    Margins.Right = 4
+    Margins.Bottom = 4
     Align = alClient
     Lines.Strings = (
       'memResult')

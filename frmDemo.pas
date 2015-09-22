@@ -40,7 +40,7 @@ type
     	AVarName: string): TVariableRecord; override;
   end;
 
-  TMyStorageNamespace = class(tStorageNamespaceProvider)
+  TMyStorageNamespace = class(TStorageNamespaceProvider)
     class function GetName: string; override;     //Get Namespace Name
     class function IsIndexSupported: boolean; override;
     class function UseCache: boolean; override;
