@@ -40,8 +40,16 @@ type
     	AVarName: string): TVariableRecord; override;
   end;
 
+  TMyStorageNamespace = class(tStorageNamespaceProvider)
+    class function GetName: string; override;     //Get Namespace Name
+    class function IsIndexSupported: boolean; override;
+    class function UseCache: boolean; override;
+    procedure GetIndexProperties(var AMin, AMax: integer); override;
+  end;
+
 var
   Form1: TForm1;
+  UseStorage: Boolean = False;
 
 implementation
 
@@ -89,23 +97,69 @@ begin
     Result := TVariableRecord.Null;
 end;
 
+{************* TMyStorageNamespace *************}
+
+class function TMyStorageNamespace.GetName: string;
+begin
+	Result := 'mynamespace';
+end;
+
+class function TMyStorageNamespace.IsIndexSupported: boolean;
+begin
+	Result := false;
+end;
+
+class function TMyStorageNamespace.UseCache: boolean;
+begin
+	Result := true;
+end;
+
+procedure TMyStorageNamespace.GetIndexProperties(var AMin, AMax: integer);
+begin
+  AMin := 0;
+  AMax := 0;
+end;
 
 procedure TForm1.ParseClick(Sender: TObject);
 var
   Smarty: TSmartyEngine;
   Errors: TStringList;
+  Namesp: TMyStorageNamespace;
 begin
-  Smarty := TSmartyEngine.Create;
-  Errors := TStringList.Create;
-  try
-    Smarty.AddNamespace(TMyNamespace.Create); //adding needed namespace
-    if Smarty.Compile(memParse.Lines.Text, Errors) then
-      memResult.Lines.Text := Smarty.Execute;
+  if not UseStorage then
+  begin
+    Smarty := TSmartyEngine.Create;
+    Errors := TStringList.Create;
+    try
+      Smarty.AddNamespace(TMyNamespace.Create); //adding needed namespace
+      if Smarty.Compile(memParse.Lines.Text, Errors) then
+        memResult.Lines.Text := Smarty.Execute;
 
-  finally
-    Errors.Free;
-    Smarty.Free;
+    finally
+      Errors.Free;
+      Smarty.Free;
+    end;
+  end
+  else
+  begin
+    Smarty := TSmartyEngine.Create;
+    Errors := TStringList.Create;
+    Namesp := TMyStorageNamespace.Create;
+    Namesp.SetVariable('string', 'string');
+    Namesp.SetVariable('int', 10);
+    Namesp.SetVariable('float', 20.0);
+    Namesp.SetVariable('bool', false);
+    Namesp.SetVariable('array', ['test string', 29, 2.0, true]);
+    try
+      Smarty.AddNamespace(Namesp); //adding needed namespace
+      if Smarty.Compile(memParse.Lines.Text, Errors) then
+        memResult.Lines.Text := Smarty.Execute;
+    finally
+      Errors.Free;
+      Smarty.Free;
+    end;
   end;
+  UseStorage := not UseStorage;
 end;
 
 end.
