@@ -247,9 +247,9 @@ type
   // smarty - system variables
 
   TNamespaceProvider = class
-    class function GetName: string; virtual; abstract;     //Get Namespace Name
-    class function IsIndexSupported: boolean; virtual; abstract;
-    class function UseCache: boolean; virtual; abstract;
+    function GetName: string; virtual; abstract;     //Get Namespace Name
+    function IsIndexSupported: boolean; virtual; abstract;
+    function UseCache: boolean; virtual; abstract;
     procedure GetIndexProperties(var AMin, AMax: integer); virtual; abstract;
     function GetVariable(AIndex: integer;
     	AVarName: string): TVariableRecord; virtual; abstract;
@@ -341,9 +341,9 @@ type
   public
   	constructor Create(AEngine: TSmartyEngine);
     destructor Destroy; override;
-    class function GetName: string; override;     //Get Namespace Name
-    class function IsIndexSupported: boolean; override;
-    class function UseCache: boolean; override;
+    function GetName: string; override;     //Get Namespace Name
+    function IsIndexSupported: boolean; override;
+    function UseCache: boolean; override;
     procedure GetIndexProperties(var AMin, AMax: integer); override;
     function GetVariable(AIndex: integer; AVarName: string): TVariableRecord; override;
   	function GetSmartyVariable(AVarName: string; AVarDetails: TVarList;
@@ -3978,17 +3978,17 @@ begin
   end;
 end;
 
-class function TSmartyProvider.GetName: string;
+function TSmartyProvider.GetName: string;
 begin
 	Result := 'smarty';
 end;
 
-class function TSmartyProvider.IsIndexSupported: boolean;
+function TSmartyProvider.IsIndexSupported: boolean;
 begin
   Result := false;
 end;
 
-class function TSmartyProvider.UseCache: boolean;
+function TSmartyProvider.UseCache: boolean;
 begin
   Result := false;
 end;
