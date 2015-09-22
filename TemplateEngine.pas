@@ -247,10 +247,19 @@ type
   // smarty - system variables
 
   TNamespaceProvider = class
-    function GetName: string; virtual; abstract;     //Get Namespace Name
-    function IsIndexSupported: boolean; virtual; abstract;
-    function UseCache: boolean; virtual; abstract;
-    procedure GetIndexProperties(var AMin, AMax: integer); virtual; abstract;
+  private
+    FName: string;
+    FIsIndexSupported: Boolean;
+    FUseCache: Boolean;
+    FMin, FMax: integer;
+  public
+    constructor Create(AName: string; UseCache: Boolean = False;
+                       IsIndexSupported: Boolean = False;
+                       Min: integer = 0; Max: integer = 0); overload;
+    function GetName: string; virtual;      //Get Namespace Name
+    function IsIndexSupported: boolean; virtual;
+    function UseCache: boolean; virtual;
+    procedure GetIndexProperties(var AMin, AMax: integer); virtual;
     function GetVariable(AIndex: integer;
     	AVarName: string): TVariableRecord; virtual; abstract;
   end;
@@ -268,7 +277,6 @@ type
   protected
     function InternalGetVariable(AVarName: string): TVariableRecord;
   public
-    constructor Create;
     destructor Destroy; override;
 
     function GetVariable(AIndex: integer;
@@ -3713,16 +3721,45 @@ begin
   	Result := false;
 end;
 
-{************* TStorageNamespaceProvider *************}
+{************* TNamespaceProvider *************}
 
-constructor TStorageNamespaceProvider.Create;
+constructor TNamespaceProvider.Create(AName: string; UseCache,
+  IsIndexSupported: Boolean; Min, Max: integer);
 begin
-  FVariables := TDictionary<string,TVarRecItem>.Create;
+  FName := AName;
+  FIsIndexSupported := IsIndexSupported;
+  FUseCache := UseCache;
+  FMin := Min;
+  FMax := Max;
+  inherited Create;
 end;
+
+function TNamespaceProvider.GetName: string;
+begin
+  Result := FName;
+end;
+
+function TNamespaceProvider.IsIndexSupported: boolean;
+begin
+	Result := FIsIndexSupported;
+end;
+
+function TNamespaceProvider.UseCache: boolean;
+begin
+	Result := FUseCache;
+end;
+
+procedure TNamespaceProvider.GetIndexProperties(var AMin, AMax: integer);
+begin
+  AMin := FMin;
+  AMax := FMax;
+end;
+
+{************* TStorageNamespaceProvider *************}
 
 destructor TStorageNamespaceProvider.Destroy;
 begin
-  FVariables.Free;
+  FreeAndNil(FVariables);
   inherited;
 end;
 
@@ -3737,6 +3774,9 @@ begin
   SetLength(Item.Data, Length(Values));
   for I := Low(Item.Data) to High(Item.Data) do
     Item.Data[I] := Values[I];
+  // lazy init, also saves us from overriding 2 constructors
+  if FVariables = nil then
+    FVariables := TDictionary<string,TVarRecItem>.Create;
   FVariables.AddOrSetValue(AnsiUpperCase(AVarName), Item);
 end;
 
