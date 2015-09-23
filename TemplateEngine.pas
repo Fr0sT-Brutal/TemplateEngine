@@ -31,6 +31,7 @@ unit TemplateEngine;
 {$B-}    //Boolean short-circuit evaluation
 {$O+}    //Optimization on
 {$R-}    //Range checking off
+{$HIGHCHARUNICODE ON}
 {.$DEFINE SMARTYDEBUG}
 
 interface
@@ -2307,7 +2308,7 @@ begin
       '>': Result := Result + '&gt;';
       '''': Result := Result + '&#39;';
       '"': Result := Result + '&quot;';
- {     #160: Result := Result + '&nbsp;';
+      #160: Result := Result + '&nbsp;';
       #161: Result := Result + '&iexcl';
       #162: Result := Result + '&cent;';
       #163: Result := Result + '&pound;';
@@ -2555,7 +2556,7 @@ begin
       #9827: Result := Result + '&clubs;';
       #9829: Result := Result + '&hearts;';
       #9830: Result := Result + '&diams;';
-}    else
+    else
       Result := Result + Ch;
     end;
   end;
