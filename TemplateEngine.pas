@@ -1283,7 +1283,7 @@ type
 
 //convertion rountines
 
-function Arr(Items: array of TVariableRecord): TVariableRecord; overload;
+function Arr(Items: array of TVariableRecord; Count: Integer = 0): TVariableRecord; overload;
 function Item(Key: string; Value: TVariableRecord): TMapItem; overload;
 function Map(Items: array of TMapItem): TVariableRecord; overload;
 
@@ -1424,11 +1424,13 @@ begin
   else Result := false;
 end;
 
-function Arr(Items: array of TVariableRecord): TVariableRecord;
-var i: Integer;
+function Arr(Items: array of TVariableRecord; Count: Integer): TVariableRecord;
+var I: Integer;
 begin
-  Result.SetArrayLength(Length(Items));
-  for I := Low(Items) to High(Items) do
+  if Count = 0 then
+    Count := Length(Items);
+  Result.SetArrayLength(Count);
+  for I := 0 to Count - 1 do
     Result.SetArrayItemQ(I, '', Items[I]);
 end;
 
