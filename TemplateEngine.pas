@@ -277,6 +277,7 @@ type
     function GetVariable(AIndex: integer;
     	AVarName: string): TVariableRecord; override;
 
+    procedure ClearVariables;
     procedure SetVariable(AVarName: string; const Value: TVariableRecord); overload;
     procedure SetVariable(AVarName: string; const Values: array of TVariableRecord); overload;
   end;
@@ -3813,6 +3814,11 @@ function TStorageNamespaceProvider.GetVariable(AIndex: integer;
   AVarName: string): TVariableRecord;
 begin
   Result := InternalGetVariable(AVarName);
+end;
+
+procedure TStorageNamespaceProvider.ClearVariables;
+begin
+  FVariables.Clear;
 end;
 
 procedure TStorageNamespaceProvider.SetVariable(AVarName: string;
