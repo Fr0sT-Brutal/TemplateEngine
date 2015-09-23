@@ -3788,7 +3788,10 @@ end;
 {************* TStorageNamespaceProvider *************}
 
 destructor TStorageNamespaceProvider.Destroy;
+var VarRec: TVariableRecord;
 begin
+  for VarRec in FVariables.Values do
+    VarRec.Finalize;
   FreeAndNil(FVariables);
   inherited;
 end;
@@ -3807,7 +3810,7 @@ begin
   if not FVariables.ContainsKey(AVarName) then
     Result := TVariableRecord.Null
   else
-    Result := FVariables[AVarName];
+    Result := FVariables[AVarName].Clone;
 end;
 
 function TStorageNamespaceProvider.GetVariable(AIndex: integer;
