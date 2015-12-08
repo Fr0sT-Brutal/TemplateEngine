@@ -1284,7 +1284,7 @@ type
 
 //convertion rountines
 
-function Arr(Items: array of TVariableRecord; Count: Integer = 0): TVariableRecord; overload;
+function Arr(Items: array of TVariableRecord; Count: Integer = -1): TVariableRecord; overload;
 function Item(Key: string; Value: TVariableRecord): TMapItem; overload;
 function Map(Items: array of TMapItem): TVariableRecord; overload;
 
@@ -1428,7 +1428,8 @@ end;
 function Arr(Items: array of TVariableRecord; Count: Integer): TVariableRecord;
 var I: Integer;
 begin
-  if Count = 0 then
+  // -1 = magic value, set new array Length to Items length
+  if Count = -1 then
     Count := Length(Items);
   Result.SetArrayLength(Count);
   for I := 0 to Count - 1 do
