@@ -23,6 +23,7 @@ type
     Parse: TButton;
     Panel1: TPanel;
     memResult: TMemo;
+    chbNewMethod: TCheckBox;
     procedure ParseClick(Sender: TObject);
   private
     { Private declarations }
@@ -32,24 +33,16 @@ type
 
   TMyNamespace = class (TNamespaceProvider)
   public
-    class function GetName: string; override;     //Get Namespace Name
-    class function IsIndexSupported: boolean; override;
-    class function UseCache: boolean; override;
+    function GetName: string; override;     //Get Namespace Name
+    function IsIndexSupported: boolean; override;
+    function UseCache: boolean; override;
     procedure GetIndexProperties(var AMin, AMax: integer); override;
     function GetVariable(AIndex: integer;
     	AVarName: string): TVariableRecord; override;
   end;
 
-  TMyStorageNamespace = class(TStorageNamespaceProvider)
-    class function GetName: string; override;     //Get Namespace Name
-    class function IsIndexSupported: boolean; override;
-    class function UseCache: boolean; override;
-    procedure GetIndexProperties(var AMin, AMax: integer); override;
-  end;
-
 var
   Form1: TForm1;
-  UseStorage: Boolean = False;
 
 implementation
 
@@ -57,17 +50,17 @@ implementation
 
 {************* TMyNamespace *************}
 
-class function TMyNamespace.GetName: string;
+function TMyNamespace.GetName: string;
 begin
 	Result := 'mynamespace';
 end;
 
-class function TMyNamespace.IsIndexSupported: boolean;
+function TMyNamespace.IsIndexSupported: boolean;
 begin
 	Result := false;
 end;
 
-class function TMyNamespace.UseCache: boolean;
+function TMyNamespace.UseCache: boolean;
 begin
 	Result := true;
 end;
@@ -97,36 +90,13 @@ begin
     Result := TVariableRecord.Null;
 end;
 
-{************* TMyStorageNamespace *************}
-
-class function TMyStorageNamespace.GetName: string;
-begin
-	Result := 'mynamespace';
-end;
-
-class function TMyStorageNamespace.IsIndexSupported: boolean;
-begin
-	Result := false;
-end;
-
-class function TMyStorageNamespace.UseCache: boolean;
-begin
-	Result := true;
-end;
-
-procedure TMyStorageNamespace.GetIndexProperties(var AMin, AMax: integer);
-begin
-  AMin := 0;
-  AMax := 0;
-end;
-
 procedure TForm1.ParseClick(Sender: TObject);
 var
   Smarty: TSmartyEngine;
   Errors: TStringList;
-  Namesp: TMyStorageNamespace;
+  Namesp: TStorageNamespaceProvider;
 begin
-  if not UseStorage then
+  if not chbNewMethod.Checked then
   begin
     Smarty := TSmartyEngine.Create;
     Errors := TStringList.Create;
@@ -144,12 +114,28 @@ begin
   begin
     Smarty := TSmartyEngine.Create;
     Errors := TStringList.Create;
-    Namesp := TMyStorageNamespace.Create;
+    Namesp := TStorageNamespaceProvider.Create('mynamespace');
     Namesp.SetVariable('string', 'string');
     Namesp.SetVariable('int', 10);
     Namesp.SetVariable('float', 20.0);
     Namesp.SetVariable('bool', false);
     Namesp.SetVariable('array', ['test string', 29, 2.0, true]);
+    Namesp.SetVariable('nested_array',
+      Arr([
+        Map([
+          Item('name', 'Foo'),
+          Item('subitems',
+            Arr(['Sub1', 'Sub2'])
+          )
+        ]),
+        Map([
+          Item('name', 'Bar'),
+          Item('subitems',
+            Arr(['Sub1', 'Sub2'])
+          )
+        ])
+      ])
+    );
     try
       Smarty.AddNamespace(Namesp); //adding needed namespace
       if Smarty.Compile(memParse.Lines.Text, Errors) then
@@ -159,7 +145,6 @@ begin
       Smarty.Free;
     end;
   end;
-  UseStorage := not UseStorage;
 end;
 
 end.
