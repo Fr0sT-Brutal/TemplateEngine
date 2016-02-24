@@ -1,4 +1,4 @@
-// DVDChief Template Engine Version 1.0.0 for Delphi XE/XE2/XE3
+// // DVDChi Template Engine Version 1.0.0 for Delphi XE/XE2/XE3
 //
 // SOFTWARE CAN NOT BE USED IN ANY HOME INVENTORY OR CATALOGING SOFTWARE
 // (FREEWARE OR SHAREWARE) WITHOUT OUR WRITTEN PERMISSION
@@ -52,8 +52,8 @@ type
 
 	//record for DateLoose format
   TDateRecord = packed record
-  	Year: word;         //0 means undefine
-    Month, Day: byte;
+  	Year: Word;         //0 means undefine
+    Month, Day: Byte;
     function GetVariant: Variant;
     procedure SetVariant(AValue: Variant);
   end;
@@ -108,45 +108,45 @@ type
 
     procedure Finalize;
     function Clone: TVariableRecord;
-    function IsNull: boolean;
-    function IsEmpty: boolean;
-    function IsArray: boolean;
+    function IsNull: Boolean;
+    function IsEmpty: Boolean;
+    function IsArray: Boolean;
 
-    function IsBoolean: boolean;
-    function IsInteger: boolean;
-    function IsFloat: boolean;
-    function IsNumber: boolean;
-    function IsDateStrict: boolean;
-    function IsDateLoose: boolean;
-    function IsDateTime: boolean;
-    function IsDate: boolean;
-    function IsString: boolean;
+    function IsBoolean: Boolean;
+    function IsInteger: Boolean;
+    function IsFloat: Boolean;
+    function IsNumber: Boolean;
+    function IsDateStrict: Boolean;
+    function IsDateLoose: Boolean;
+    function IsDateTime: Boolean;
+    function IsDate: Boolean;
+    function IsString: Boolean;
 
     class function Null: TVariableRecord; static;
-    class function AsInteger(AValue: integer; ANullValue: integer = 0): TVariableRecord; static;
-    class function AsFloat(AValue: double; ANullValue: double = 0): TVariableRecord; static;
+    class function AsInteger(AValue: Integer; ANullValue: Integer = 0): TVariableRecord; static;
+    class function AsFloat(AValue: Double; ANullValue: Double = 0): TVariableRecord; static;
     class function AsString(AValue: string; ANullValue: string = ''): TVariableRecord; static;
     class function AsDateRecord(AValue: TDateRecord): TVariableRecord; static;
     procedure SetNull;
-    procedure SetBool(AValue: boolean);
-    procedure SetInt(AValue: integer);
-    procedure SetFloat(Avalue: double);
+    procedure SetBool(AValue: Boolean);
+    procedure SetInt(AValue: Integer);
+    procedure SetFloat(Avalue: Double);
     procedure SetString(AValue: string);
-    procedure SetArrayLength(AValue: integer; AReference: TObject = nil; AInit: boolean = false);
-    procedure SetArrayItem(AIndex: integer; AKey: string; AValue: TVariableRecord);
-    procedure SetArrayItemQ(AIndex: integer; AKey: string; AValue: TVariableRecord);
+    procedure SetArrayLength(AValue: Integer; AReference: TObject = nil; AInit: Boolean = False);
+    procedure SetArrayItem(AIndex: Integer; AKey: string; AValue: TVariableRecord);
+    procedure SetArrayItemQ(AIndex: Integer; AKey: string; AValue: TVariableRecord);
 
-  	function ToBool: boolean;
-    function ToInt: integer;
-    function ToFloat: double;
+  	function ToBool: Boolean;
+    function ToInt: Integer;
+    function ToFloat: Double;
     function ToString: string;
-    function CanConvertToLogical(out Value: boolean): boolean;
-    function CanConvertToInt(out Value: integer): boolean;
-    function CanConvertToFloat(out Value: double): boolean;
+    function CanConvertToLogical(out Value: Boolean): Boolean;
+    function CanConvertToInt(out Value: Integer): Boolean;
+    function CanConvertToFloat(out Value: Double): Boolean;
     class function DoCompareRelationship(ALeft, ARight: TVariableRecord;
     	AOperation: TCompareOperation): TVariableRelatioship; static;
     class function DoCompare(ALeft, ARight: TVariableRecord;
-    	AOperation: TCompareOperation): boolean; static;
+    	AOperation: TCompareOperation): Boolean; static;
     class function DoIntFloatOp(ALeft, ARight: TVariableRecord;
     	AOperation: TBinaryOperation): TVariableRecord; static;
     class function DoFloatOp(ALeft, ARight: TVariableRecord;
@@ -158,9 +158,9 @@ type
 			AOperation: TBinaryOperation): TVariableRecord; static;
 		class function DoLogicalNot(ARight: TVariableRecord): TVariableRecord; static;
 
-    class operator Implicit(AValue: boolean): TVariableRecord;
-    class operator Implicit(AValue: integer): TVariableRecord;
-    class operator Implicit(AValue: double): TVariableRecord;
+    class operator Implicit(AValue: Boolean): TVariableRecord;
+    class operator Implicit(AValue: Integer): TVariableRecord;
+    class operator Implicit(AValue: Double): TVariableRecord;
     class operator Implicit(AValue: extended): TVariableRecord;
     class operator Implicit(AValue: TDate): TVariableRecord;
     class operator Implicit(AValue: TDateRecord): TVariableRecord;
@@ -168,9 +168,9 @@ type
     class operator Implicit(AValue: string): TVariableRecord;
     class operator Implicit(AValue: Variant): TVariableRecord;
 
-    class operator Implicit(ARecord: TVariableRecord): boolean;
-    class operator Implicit(ARecord: TVariableRecord): integer;
-    class operator Implicit(ARecord: TVariableRecord): double;
+    class operator Implicit(ARecord: TVariableRecord): Boolean;
+    class operator Implicit(ARecord: TVariableRecord): Integer;
+    class operator Implicit(ARecord: TVariableRecord): Double;
     class operator Implicit(ARecord: TVariableRecord): string;
 
     class operator Add(ALeft, ARight: TVariableRecord): TVariableRecord;
@@ -187,20 +187,20 @@ type
 
     case TVariableType of
     	vtNull:        ();
-      vtBoolean:  	 (BValue: boolean);
-      vtInteger:  	 (IValue: integer);
-      vtFloat:    	 (FValue: double);
+      vtBoolean:  	 (BValue: Boolean);
+      vtInteger:  	 (IValue: Integer);
+      vtFloat:    	 (FValue: Double);
       vtDateStrict:  (DSValue: TDate);
       vtDateLoose:   (DLValue: TDateRecord);
       vtDateTime: 	 (DTValue: TDateTime);
-      vtString:   	 (SValue: pointer);
-      vtArray:       (AValue: pointer);  //PVariableArray
+      vtString:   	 (SValue: Pointer);
+      vtArray:       (AValue: Pointer);  //PVariableArray
   end;
 
   TVarModifierProc = reference to procedure(const Variable: TVariableRecord);
 
   TVariableArrayItem = packed record
-    Key: pointer;
+    Key: Pointer;
     Item: TVariableRecord;
   end;
 
@@ -209,7 +209,7 @@ type
 
   PVariableArray = ^TVariableArray;
   TVariableArray = packed record
-  	Count: integer;
+  	Count: Integer;
     Reference: TObject;
     Data: PVariableArrayData;
   end;
@@ -223,25 +223,25 @@ type
 
     procedure Finalize;
     function Clone: TVariablePart;
-    class operator Implicit(AValue: integer): TVariablePart;
+    class operator Implicit(AValue: Integer): TVariablePart;
     class operator Implicit(AValue: string): TVariablePart;
-    class operator Implicit(APart: TVariablePart): integer;
+    class operator Implicit(APart: TVariablePart): Integer;
     class operator Implicit(APart: TVariablePart): string;
 
     case TVariablePartType of
-    	vptValue: (SValue: pointer);
-      vptIndex: (IValue: integer);
+    	vptValue: (SValue: Pointer);
+      vptIndex: (IValue: Integer);
   end;
 
   TVarList = class (TList<TVariablePart>)
   public
   	function Clone: TVarList;
   	procedure Finalize;
-    procedure DeleteElement(Index: integer);
-    procedure AddArrayPrefix(AVariable: TVarList; Index: integer);
-    function IsSimpleVariable(out VarName: string): boolean;
-    function CheckTopLevel(AName: string): boolean;
-    function IsTopValueLevel(out AName: string): boolean;
+    procedure DeleteElement(Index: Integer);
+    procedure AddArrayPrefix(AVariable: TVarList; Index: Integer);
+    function IsSimpleVariable(out VarName: string): Boolean;
+    function CheckTopLevel(AName: string): Boolean;
+    function IsTopValueLevel(out AName: string): Boolean;
   end;
 
   //Register Namespaces:
@@ -252,16 +252,16 @@ type
     FName: string;
     FIsIndexSupported: Boolean;
     FUseCache: Boolean;
-    FMin, FMax: integer;
+    FMin, FMax: Integer;
   public
     constructor Create(AName: string; UseCache: Boolean = False;
                        IsIndexSupported: Boolean = False;
-                       Min: integer = 0; Max: integer = 0); overload;
+                       Min: Integer = 0; Max: Integer = 0); overload;
     function GetName: string; virtual;      //Get Namespace Name
-    function IsIndexSupported: boolean; virtual;
-    function UseCache: boolean; virtual;
-    procedure GetIndexProperties(var AMin, AMax: integer); virtual;
-    function GetVariable(AIndex: integer;
+    function IsIndexSupported: Boolean; virtual;
+    function UseCache: Boolean; virtual;
+    procedure GetIndexProperties(var AMin, AMax: Integer); virtual;
+    function GetVariable(AIndex: Integer;
     	AVarName: string): TVariableRecord; virtual; abstract;
   end;
 
@@ -274,7 +274,7 @@ type
   public
     destructor Destroy; override;
 
-    function GetVariable(AIndex: integer;
+    function GetVariable(AIndex: Integer;
     	AVarName: string): TVariableRecord; override;
 
     procedure ClearVariables;
@@ -284,31 +284,31 @@ type
 
   TForEachData = class
   	Name: string;
-    InForEach: boolean;
+    InForEach: Boolean;
     ItemVarName, KeyVarName: string;
-    Iteration: integer;   //from 1 to Count
-    First: boolean;
-    Last: boolean;
-    Show: boolean;
-    Total: integer;
-    IsNamespace: boolean;
+    Iteration: Integer;   //from 1 to Count
+    First: Boolean;
+    Last: Boolean;
+    Show: Boolean;
+    Total: Integer;
+    IsNamespace: Boolean;
     Namespace: TNamespaceProvider;
-    MinIndex: integer;
+    MinIndex: Integer;
     VarData: PVariableArray;
   end;
 
   TForEachList = class (TList<TForEachData>)
   private
-  	CurrentRecords: TList<integer>;
+  	CurrentRecords: TList<Integer>;
     procedure EnterForEach(AList: TForEachData);
     procedure ExitForEach;
-    function InForEach: boolean;
-    function FindItemRecord(AItemName: string; out ARecord: TForEachData): boolean;
-		function FindKeyRecord(AKeyName: string; out ARecord: TForEachData): boolean;
+    function InForEach: Boolean;
+    function FindItemRecord(AItemName: string; out ARecord: TForEachData): Boolean;
+		function FindKeyRecord(AKeyName: string; out ARecord: TForEachData): Boolean;
   public
     constructor Create;
     destructor Destroy; override;
-  	function FindRecord(AName: string; out ARecord: TForEachData): boolean;
+  	function FindRecord(AName: string; out ARecord: TForEachData): Boolean;
   end;
 
   TCaptureCache = record
@@ -318,14 +318,14 @@ type
 
   TCaptureArrayItem = class
   private
-    IsActive: boolean;
+    IsActive: Boolean;
     ItemName: string;
-    Index: integer;
+    Index: Integer;
     VarData: PVariableArray;
-    procedure Enter(AName: string; AIndex: integer; AVarData: PVariableArray);
+    procedure Enter(AName: string; AIndex: Integer; AVarData: PVariableArray);
     procedure IncIndex;
     procedure Exit;
-    function IsItemName(AName: string): boolean;
+    function IsItemName(AName: string): Boolean;
   public
     constructor Create;
     destructor Destroy; override;
@@ -339,21 +339,21 @@ type
   	FForEachList: TForEachList;
     FActiveCapture: TCaptureArrayItem;
     procedure ClearCaptureCache;
-    function FindCaptureItem(AName: string; var Cache: TCaptureCache): boolean;
+    function FindCaptureItem(AName: string; var Cache: TCaptureCache): Boolean;
     procedure SetCaptureItem(AName: string; VariableValue: TVariableRecord);
     procedure RemoveCaptureItem(AName: string);
   public
   	constructor Create(AEngine: TSmartyEngine);
     destructor Destroy; override;
     function GetName: string; override;     //Get Namespace Name
-    function IsIndexSupported: boolean; override;
-    function UseCache: boolean; override;
-    procedure GetIndexProperties(var AMin, AMax: integer); override;
-    function GetVariable(AIndex: integer; AVarName: string): TVariableRecord; override;
+    function IsIndexSupported: Boolean; override;
+    function UseCache: Boolean; override;
+    procedure GetIndexProperties(var AMin, AMax: Integer); override;
+    function GetVariable(AIndex: Integer; AVarName: string): TVariableRecord; override;
   	function GetSmartyVariable(AVarName: string; AVarDetails: TVarList;
-    	var NeedFinalize: boolean): TVariableRecord;
+    	var NeedFinalize: Boolean): TVariableRecord;
     function GetDetachVariable(AVarName: string; AVarDetails: TVarList;
-    	var NeedFinalize: boolean): TVariableRecord;
+    	var NeedFinalize: Boolean): TVariableRecord;
   end;
 
   //Variable modifier
@@ -363,12 +363,12 @@ type
   TVariableModifier = class
   protected
   	class function CheckParams(AModifier: TVariableModifierClass;
-    	AParams: TStringList;	AMin, AMax: integer): boolean;
-    class function SetParam(AParams: TStringList; AIndex: integer;
-    	var Value: string): boolean;
+    	AParams: TStringList;	AMin, AMax: Integer): Boolean;
+    class function SetParam(AParams: TStringList; AIndex: Integer;
+    	var Value: string): Boolean;
   public
   	class function GetName: string; virtual; abstract;
-    class function CheckInputParams(AParams: TStringList): boolean; virtual; abstract;
+    class function CheckInputParams(AParams: TStringList): Boolean; virtual; abstract;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); virtual; abstract;
     class procedure ModifyVariable(const AVariable: TVariableRecord;
@@ -377,161 +377,161 @@ type
 
   TCapitalizeModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   TCatModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   TTrimModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   TCountCharactersModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   TCountParagraphsModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   TCountWordsModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   TDefaultModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   THTMLEncodeModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   THTMLEncodeAllModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   TXMLEncodeModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   TFileEncodeModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   TDateFormatModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   TFloatFormatModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   TLowerModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   TUpperModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   TNl2BrModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   TTruncateModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   TStripModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   TSpacifyModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   TWordwrapModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   TIndentModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   TReplaceModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
 
   TStripTagsModifier = class (TVariableModifier)
   	class function GetName: string; override;
-    class function CheckInputParams(AParams: TStringList): boolean; override;
+    class function CheckInputParams(AParams: TStringList): Boolean; override;
 		class procedure ModVariable(const AVariable: TVariableRecord;
     	AParams: TStringList); override;
   end;
@@ -543,12 +543,12 @@ type
 
   TSmartyFunction = class
   protected
-    class function IsParam(Index: integer; AParams: array of TVariableRecord;
-    	var Param: TVariableRecord): boolean;
-    class function GetParam(Index: integer; AParams: array of TVariableRecord): TVariableRecord;
+    class function IsParam(Index: Integer; AParams: array of TVariableRecord;
+    	var Param: TVariableRecord): Boolean;
+    class function GetParam(Index: Integer; AParams: array of TVariableRecord): TVariableRecord;
   public
   	class function GetName: string; virtual; abstract;
-    class function CheckParams(AParamsCount: integer): boolean; virtual; abstract;
+    class function CheckParams(AParamsCount: Integer): Boolean; virtual; abstract;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; virtual; abstract;
     class function EvaluateFunction(AParams: array of TVariableRecord): TVariableRecord; virtual;
   end;
@@ -557,97 +557,97 @@ type
 
   TIsNullFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TIsEmptyFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TIsBooleanFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TIsIntegerFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TIsFloatFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TIsNumberFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TIsDateStrictFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TIsDateLooseFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TIsDateTimeFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TIsDateFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TIsStringFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TIsArrayFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TArrayLengthFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TArrayIndexFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TArrayKeyFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TCountFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
@@ -655,159 +655,159 @@ type
 
   TEchoFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TPrintFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   THTMLEncodeFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   THTMLEncodeAllFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TXMLEncodeFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TFileEncodeFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TTrimFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TTruncateFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TStripFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TStripTagsFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TSpacifyFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TWordwrapFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TIndentFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TCapitalizeFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TCountCharactersFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TCountWordsFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TCountParagraphsFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TUpperCaseFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TLowerCaseFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TResemblesFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TContainsFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TStartsFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TEndsFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TReplaceFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   //string float_format(float $float, string $format = "")
   TFloatFormatFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   //mixed ifthen(bool $condition, mixed $tcond, mixed $fcond)
   TIfThenFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
@@ -815,31 +815,31 @@ type
 
   TDateFormatFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TFullYearsFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TYearOfFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TMonthOfFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
   TDayOfFunction = class (TSmartyFunction)
   	class function GetName: string; override;
-    class function CheckParams(AParamsCount: integer): boolean; override;
+    class function CheckParams(AParamsCount: Integer): Boolean; override;
     class function Evaluate(AParams: array of TVariableRecord): TVariableRecord; override;
   end;
 
@@ -862,26 +862,26 @@ type
 
     constructor Create(AEngine: TSmartyEngine); virtual;
     function Execute: string; virtual; abstract;
-    class function IsComment(var ACommand: string): boolean;
+    class function IsComment(var ACommand: string): Boolean;
 		class function IsTag(const ATag: string; const ACommand: string;
-	 		AOnlyTag: boolean = false): boolean;
+	 		AOnlyTag: Boolean = False): Boolean;
     class function IsTagAndGetCommand(const ATag: string;
-    	var ACommand: string): boolean;
+    	var ACommand: string): Boolean;
     class function IsExitCommand(const ACommand: string;
-    	ABreakAction: TNestAction): boolean;
+    	ABreakAction: TNestAction): Boolean;
     class function ParseFunction(ACommand: string): TStringList;
     class procedure CheckFunction(ACommand: TStringList;
     	AValid: array of string);
     class function GetAttributeValue(ACommand: TStringList; AAtribute: string;
     	ADefault: string = ''): string;
-    class procedure ExtractFunctionItem(ACommand: TStringList; Index: integer;
+    class procedure ExtractFunctionItem(ACommand: TStringList; Index: Integer;
     	var Name, Value: string);
     class procedure ParseVariable(AVariable: string; AVarList: TVarList);
 		class procedure GetVariableProperties(AEngine: TSmartyEngine;
 			AVariable: string; var Namespace: TNamespaceProvider;
-      var Index: integer; var VarName: string; var AVarList: TVarList);
+      var Index: Integer; var VarName: string; var AVarList: TVarList);
     class function IsAction(AEngine: TSmartyEngine; ACommand: string;
-    	var AAction: TTemplateAction): boolean; virtual;
+    	var AAction: TTemplateAction): Boolean; virtual;
   end;
 
   TRawOutputAction = class (TTemplateAction)
@@ -894,7 +894,7 @@ type
     constructor CreateOutput(AEngine: TSmartyEngine; AOutput: string);
     function Execute: string; override;
 		class function IsAction(AEngine: TSmartyEngine;	ACommand: string;
-    	var AAction: TTemplateAction): boolean; override;
+    	var AAction: TTemplateAction): Boolean; override;
   end;
 
   TModifierAction = class
@@ -909,7 +909,7 @@ type
   TVariableOutputAction = class (TTemplateAction)
   private
   	FNamespace: TNamespaceProvider;
-    FIndex: integer;
+    FIndex: Integer;
     FVarName: string;
     FVarDetails: TVarList;
     FModifiers: TObjectList<TModifierAction>;
@@ -919,7 +919,7 @@ type
     destructor Destroy; override;
     function Execute: string; override;
     class function IsAction(AEngine: TSmartyEngine;
-    	ACommand: string; var AAction: TTemplateAction): boolean; override;
+    	ACommand: string; var AAction: TTemplateAction): Boolean; override;
   end;
 
   TFuncOutputAction = class (TTemplateAction)
@@ -931,7 +931,7 @@ type
     destructor Destroy; override;
     function Execute: string; override;
     class function IsAction(AEngine: TSmartyEngine;
-    	ACommand: string; var AAction: TTemplateAction): boolean; override;
+    	ACommand: string; var AAction: TTemplateAction): Boolean; override;
   end;
 
   TOperator = (opEq,      //eq, =
@@ -963,7 +963,7 @@ type
 
   TOperation = class
   	constructor Create; virtual;
-  	function Evaluate(AEngine: TSmartyEngine; var NeedFinalize: boolean): TVariableRecord; virtual; abstract;
+  	function Evaluate(AEngine: TSmartyEngine; var NeedFinalize: Boolean): TVariableRecord; virtual; abstract;
     class function Parse(AEngine: TSmartyEngine; S: string): TOperation;
     {$IFDEF SMARTYDEBUG} function AsString: string; virtual; abstract; {$ENDIF}
   end;
@@ -974,14 +974,14 @@ type
   TOpVariable = class (TOperation)
   private
   	FNamespace: TNamespaceProvider;
-    FIndex: integer;
+    FIndex: Integer;
     FVarName: string;
     FVarDetails: TVarList;
   public
   	constructor Create; override;
     destructor Destroy; override;
     function Evaluate(AEngine: TSmartyEngine;
-    	var NeedFinalize: boolean): TVariableRecord; override;
+    	var NeedFinalize: Boolean): TVariableRecord; override;
     {$IFDEF SMARTYDEBUG} function AsString: string; override; {$ENDIF}
   end;
 
@@ -992,7 +992,7 @@ type
   	constructor Create; override;
     destructor Destroy; override;
     function Evaluate(AEngine: TSmartyEngine;
-    	var NeedFinalize: boolean): TVariableRecord; override;
+    	var NeedFinalize: Boolean): TVariableRecord; override;
 		{$IFDEF SMARTYDEBUG} function AsString: string; override; {$ENDIF}
   end;
 
@@ -1004,7 +1004,7 @@ type
   	constructor Create; override;
     destructor Destroy; override;
     function Evaluate(AEngine: TSmartyEngine;
-    	var NeedFinalize: boolean): TVariableRecord; override;
+    	var NeedFinalize: Boolean): TVariableRecord; override;
 		{$IFDEF SMARTYDEBUG} function AsString: string; override; {$ENDIF}
   end;
 
@@ -1016,7 +1016,7 @@ type
   	constructor Create; override;
     destructor Destroy; override;
     function Evaluate(AEngine: TSmartyEngine;
-    	var NeedFinalize: boolean): TVariableRecord; override;
+    	var NeedFinalize: Boolean): TVariableRecord; override;
 		{$IFDEF SMARTYDEBUG} function AsString: string; override; {$ENDIF}
   end;
 
@@ -1029,7 +1029,7 @@ type
   	FIfType: TIfType;
   public
   	property IfType: TIfType read FIfType;
-    function Evaluate: boolean; virtual; abstract;
+    function Evaluate: Boolean; virtual; abstract;
     constructor Create(AEngine: TSmartyEngine); virtual;
   end;
 
@@ -1040,13 +1040,13 @@ type
     constructor Create(AEngine: TSmartyEngine); override;
     constructor CreateOperation(AEngine: TSmartyEngine; AExpr: string);
     destructor Destroy; override;
-   	function Evaluate: boolean; override;
+   	function Evaluate: Boolean; override;
   end;
 
   TVariableIf = class (TIfCondition)
   private
   	FNamespace: TNamespaceProvider;
-    FIndex: integer;
+    FIndex: Integer;
     FVarName: string;
     FVarDetails: TVarList;
     procedure SetVariable(AEngine: TSmartyEngine; AVariable: string);
@@ -1054,7 +1054,7 @@ type
     constructor Create(AEngine: TSmartyEngine); override;
     constructor CreateIf(AEngine: TSmartyEngine; AType: TIfType);
     destructor Destroy; override;
-    function Evaluate: boolean; override;
+    function Evaluate: Boolean; override;
   end;
 
   TElseIfAction = class
@@ -1075,7 +1075,7 @@ type
     FThenActions, FElseActions: TTemplateActions;
     FElseIfActions: TElseIfActions;
     function ContinueIf(AEngine: TSmartyEngine; ACommand: string;
-    	var AState: integer; var AActions: TTemplateActions): boolean;
+    	var AState: Integer; var AActions: TTemplateActions): Boolean;
   public
     property ThenActions: TTemplateActions read FThenActions;
     property ElseActions: TTemplateActions read FElseActions;
@@ -1085,27 +1085,27 @@ type
     destructor Destroy; override;
     function Execute: string; override;
     class function IsAction(AEngine: TSmartyEngine;	ACommand: string;
-    	var AAction: TTemplateAction): boolean; override;
+    	var AAction: TTemplateAction): Boolean; override;
   end;
 
   TForEachOutputAction = class (TTemplateAction)
   private
-    FNamespaceBased: boolean;
+    FNamespaceBased: Boolean;
   	FNamespace: TNamespaceProvider;
-    FIndex: integer;
+    FIndex: Integer;
     FVarName: string;
     FVarDetails: TVarList;
     FForEachName: string;
     FVariableName: string;
     FAssocName: string;
-    FMaxItems: integer;
+    FMaxItems: Integer;
 
     FBaseActions: TTemplateActions;
     FElseActions: TTemplateActions;
     function ContinueForEach(AEngine: TSmartyEngine; ACommand: string;
-    	var AState: integer; var AActions: TTemplateActions): boolean;
+    	var AState: Integer; var AActions: TTemplateActions): Boolean;
   public
-    property NamespaceBased: boolean read FNamespaceBased;
+    property NamespaceBased: Boolean read FNamespaceBased;
     property VarDetails: TVarList read FVarDetails;
     property ForEachName: string read FForEachName;
     property VariableName: string read FVariableName;
@@ -1117,13 +1117,13 @@ type
     destructor Destroy; override;
     function Execute: string; override;
     class function IsAction(AEngine: TSmartyEngine; ACommand: string;
-    	var AAction: TTemplateAction): boolean; override;
+    	var AAction: TTemplateAction): Boolean; override;
   end;
 
   TCaptureArrayAction = class (TTemplateAction)
   private
   	FNamespace: TNamespaceProvider;
-    FIndex: integer;
+    FIndex: Integer;
     FVarName: string;
     FVarDetails: TVarList;
     FItemName: string;
@@ -1136,7 +1136,7 @@ type
     destructor Destroy; override;
     function Execute: string; override;
     class function IsAction(AEngine: TSmartyEngine; ACommand: string;
-    	var AAction: TTemplateAction): boolean; override;
+    	var AAction: TTemplateAction): Boolean; override;
   end;
 
   TReleaseArrayAction = class (TTemplateAction)
@@ -1147,7 +1147,7 @@ type
     destructor Destroy; override;
     function Execute: string; override;
     class function IsAction(AEngine: TSmartyEngine; ACommand: string;
-    	var AAction: TTemplateAction): boolean; override;
+    	var AAction: TTemplateAction): Boolean; override;
   end;
 
   TAssignAction = class (TTemplateAction)
@@ -1159,7 +1159,7 @@ type
     destructor Destroy; override;
     function Execute: string; override;
     class function IsAction(AEngine: TSmartyEngine; ACommand: string;
-    	var AAction: TTemplateAction): boolean; override;
+    	var AAction: TTemplateAction): Boolean; override;
   end;
 
   TReleaseAction = class (TTemplateAction)
@@ -1170,12 +1170,12 @@ type
     destructor Destroy; override;
     function Execute: string; override;
     class function IsAction(AEngine: TSmartyEngine; ACommand: string;
-    	var AAction: TTemplateAction): boolean; override;
+    	var AAction: TTemplateAction): Boolean; override;
   end;
 
   TVariableCache = record
   	Namespace: TNamespaceProvider;   //nil, if not namespace
-    Index: integer;                  //-1, if no index
+    Index: Integer;                  //-1, if no index
     VariableName: string;            //variable name
     VariableValue: PVariableRecord;  //variable value
   end;
@@ -1199,37 +1199,37 @@ type
 
   TSmartyEngine = class
   private
-  	FCompiled: boolean;
+  	FCompiled: Boolean;
     FActions: TTemplateActions;
 
   	//namespaces
   	FNamespaces: TStringList;
     FSmartyNamespace: TSmartyProvider;
 
-    FIsCache: boolean;
+    FIsCache: Boolean;
     FVarCache: TList<TVariableCache>;
 
     //error handling
-    FSilentMode: boolean;
+    FSilentMode: Boolean;
     FErrors: TStringList;
-    FAutoHTMLEncode: boolean;
-    FAllowEspacesInStrings: boolean;
+    FAutoHTMLEncode: Boolean;
+    FAllowEspacesInStrings: Boolean;
 
     //template properties
     FTemplateFolder: string;
 
     procedure Init;
-    function GetVariable(const ANamespace: TNamespaceProvider; AIndex: integer;
-    	AVariableName: string; ADetails: TVarList; var NeedFinalize: boolean): TVariableRecord;
+    function GetVariable(const ANamespace: TNamespaceProvider; AIndex: Integer;
+    	AVariableName: string; ADetails: TVarList; var NeedFinalize: Boolean): TVariableRecord;
     function GetVariableDetails(AVariable: TVariableRecord; ADetails: TVarList): TVariableRecord;
 		function IsFunction(ACommand: string; var Func: TSmartyFunctionClass;
-			var Params: string; var Modifiers: string): boolean;
+			var Params: string; var Modifiers: string): Boolean;
     function GetFunction(AFunction: string): TSmartyFunctionClass;
-    procedure SetIsCache(Value: boolean);
+    procedure SetIsCache(Value: Boolean);
   public
   	constructor Create;
     destructor Destroy; override;
-    function Compile(ADocument: string; var Errors: TStringList): boolean;
+    function Compile(ADocument: string; var Errors: TStringList): Boolean;
     function Execute: string;
     procedure ClearCache; overload;
     procedure ClearCache(ANamespace: TNamespaceProvider); overload;
@@ -1237,12 +1237,12 @@ type
     procedure AddNamespace(ANamespace: TNamespaceProvider);
     procedure DeleteNamespace(ANamespace: TNamespaceProvider);
 
-    property Compiled: boolean read FCompiled;
-    property SilentMode: boolean read FSilentMode write FSilentMode;
+    property Compiled: Boolean read FCompiled;
+    property SilentMode: Boolean read FSilentMode write FSilentMode;
     property Errors: TStringList read FErrors;
-    property AutoHTMLEncode: boolean read FAutoHTMLEncode write FAutoHTMLEncode;
-    property AllowEspacesInStrings: boolean read FAllowEspacesInStrings write FAllowEspacesInStrings;
-    property IsCache: boolean read FIsCache write SetIsCache;
+    property AutoHTMLEncode: Boolean read FAutoHTMLEncode write FAutoHTMLEncode;
+    property AllowEspacesInStrings: Boolean read FAllowEspacesInStrings write FAllowEspacesInStrings;
+    property IsCache: Boolean read FIsCache write SetIsCache;
     property TemplateFolder: string read FTemplateFolder write FTemplateFolder;
   end;
 
@@ -1293,8 +1293,8 @@ function DateRecordToString(Value: TDateRecord): string;      //FormatSettings i
 function StringToDateRecord(Value: string): TDateRecord;
 function DateTimeFromRecord(Value: TDateRecord): TDateTime;
 function DateTimeToRecord(Value: TDateTime): TDateRecord;
-function IsEmpty(Value: TDateRecord): boolean;
-function GetDateRecordVariant(AYear: word; AMonth: word = 0; ADay: word = 0): Variant;
+function IsEmpty(Value: TDateRecord): Boolean;
+function GetDateRecordVariant(AYear: Word; AMonth: Word = 0; ADay: Word = 0): Variant;
 
 function GetStartDate(Value: TDateRecord): TDateTime;
 function GetEndDate(Value: TDateRecord): TDateTime;
@@ -1305,19 +1305,19 @@ function ParseEscapes(const AStr: string): string;
 function SmartyTrim(const S: string): string;
 function SmartyTrimLeft(const S: string): string;
 function SmartyTrimRight(const S: string): string;
-function UCWords(const AStr: string; ACapitalizeDigits: boolean = false): string;
-function CountCharacters(const AStr: string; ACountWhitespace: boolean = false): integer;
-function TruncateString(const AStr: string; ALength: integer = 80; AEtc: string = '...';
-  ABreakWords: boolean = false; AMiddle: boolean = false): string;
+function UCWords(const AStr: string; ACapitalizeDigits: Boolean = False): string;
+function CountCharacters(const AStr: string; ACountWhitespace: Boolean = False): Integer;
+function TruncateString(const AStr: string; ALength: Integer = 80; AEtc: string = '...';
+  ABreakWords: Boolean = False; AMiddle: Boolean = False): string;
 function Strip(const AStr: string; AStripStr: string = ' '): string;
-function StripTags(const AStr: string; ANoSpace: boolean = true;
-	AParse: boolean = true): string;
+function StripTags(const AStr: string; ANoSpace: Boolean = True;
+	AParse: Boolean = True): string;
 function Spacify(const AStr: string; ASpacifyStr: string = ' '): string;
 function Wordwrap(const Line: string; MaxCol: Integer = 80;
   const BreakStr: string = sLineBreak): string;
-function IsLineBreak(C: char): boolean; inline;
-function CountParagraphs(const AStr: string): integer;
-function CountWords(const AStr: string): integer;
+function IsLineBreak(C: Char): Boolean; inline;
+function CountParagraphs(const AStr: string): Integer;
+function CountWords(const AStr: string): Integer;
 function IndentString(const AStr: string; IndentStr: string = ' '): string;
 
 function XMLEncode(const AStr: string): string;
@@ -1388,7 +1388,7 @@ var
  SmartyProvider: TSmartyInfoProvider;
 
 {   = packed record
-  	Year: word;         //0 means undefine
+  	Year: Word;         //0 means undefine
     Month, Day: byte;     }
 
 function TDateRecord.GetVariant: Variant;
@@ -1409,7 +1409,7 @@ begin
   end;
 end;
 
-function GetDateRecordVariant(AYear: word; AMonth: word = 0; ADay: word = 0): Variant;
+function GetDateRecordVariant(AYear: Word; AMonth: Word = 0; ADay: Word = 0): Variant;
 begin
   Result := VarArrayCreate([0, 2], varInteger);
   Result[0] := AYear;
@@ -1417,12 +1417,12 @@ begin
   Result[2] := ADay;
 end;
 
-function TryStringToBool(AValue: string; var B: boolean): boolean;
+function TryStringToBool(AValue: string; var B: Boolean): Boolean;
 begin
-  Result := true;
-	if (CompareText('true', AValue) = 0) or (CompareText('1', AValue) = 0) then B := true
-  else if (CompareText('false', AValue) = 0) or (CompareText('0', AValue) = 0) then B := false
-  else Result := false;
+  Result := True;
+	if (CompareText('true', AValue) = 0) or (CompareText('1', AValue) = 0) then B := True
+  else if (CompareText('false', AValue) = 0) or (CompareText('0', AValue) = 0) then B := False
+  else Result := False;
 end;
 
 function Arr(Items: array of TVariableRecord; Count: Integer): TVariableRecord;
@@ -1493,12 +1493,12 @@ const
     8  {opBitwiseXor}
   );
 
-function IsSpace(C: char): boolean; inline;
+function IsSpace(C: Char): Boolean; inline;
 begin
 	Result := (C <= ' ') or TCharacter.IsWhiteSpace(C);
 end;
 
-function GetChar(S: string; Index: integer): Char; inline;
+function GetChar(S: string; Index: Integer): Char; inline;
 begin
   if Index <= Length(S) then
     Result := S[Index]
@@ -1506,7 +1506,7 @@ begin
     Result := #0;
 end;
 
-function StartsWithSpace(const ASubStr, AStr: string): boolean;
+function StartsWithSpace(const ASubStr, AStr: string): Boolean;
 begin
   Result := StartsStr(ASubStr, AStr) and (Length(AStr) > Length(ASubStr))
   	and IsSpace(AStr[Length(ASubStr) + 1]);
@@ -1516,7 +1516,7 @@ function DateTimeFromString(const ADate: string): TDateTime;
 // Convert the string ADate to a TDateTime according to the W3C date/time specification
 // as found here: http://www.w3.org/TR/NOTE-datetime
 var
-  AYear, AMonth, ADay, AHour, AMin, ASec, AMSec: word;
+  AYear, AMonth, ADay, AHour, AMin, ASec, AMSec: Word;
 begin
   AYear  := StrToInt(Copy(ADate, 1, 4));
   AMonth := StrToInt(Copy(ADate, 6, 2));
@@ -1547,17 +1547,17 @@ end;
 
 function ParseEscapes(const AStr: string): string;
 var
-  I, J: integer;
+  I, J: Integer;
   Ch: Char;
-  Hex: integer;
+  Hex: Integer;
 
-  function IsHexChar(S: string; Index: integer; var HexValue: integer): boolean; inline;
+  function IsHexChar(S: string; Index: Integer; var HexValue: Integer): Boolean; inline;
   var
     hCh: Char;
   begin
     if Index <= Length(S) then
     begin
-      Result := true;
+      Result := True;
       hCh := S[Index];
 
       case hCh of
@@ -1565,12 +1565,12 @@ var
         'a'..'f': HexValue := HexValue * 16 + Ord(hCh) - Ord('a') + 10;
         'A'..'F': HexValue := HexValue * 16 + Ord(hCh) - Ord('A') + 10;
       else
-        Result := false;
+        Result := False;
       end;
 
     end
     else
-      Result := false;
+      Result := False;
   end;
 
 begin
@@ -1623,7 +1623,7 @@ begin
   end;
 end;
 
-function IsTrimCharacter(Ch: char): boolean; inline;
+function IsTrimCharacter(Ch: Char): Boolean; inline;
 begin
   Result := (Ch <= ' ') or TCharacter.IsWhiteSpace(Ch);
 end;
@@ -1662,10 +1662,10 @@ begin
   Result := Copy(S, 1, I);
 end;
 
-function IsLetterSymbol(C: char): boolean; inline;
+function IsLetterSymbol(C: Char): Boolean; inline;
 begin
   if (C = '''') or (C = #$2019) then
-    Result := true
+    Result := True
   else
     case TCharacter.GetUnicodeCategory(C) of
       TUnicodeCategory.ucUppercaseLetter,
@@ -1675,21 +1675,21 @@ begin
       TUnicodeCategory.ucOtherLetter,
       TUnicodeCategory.ucNonSpacingMark,
       TUnicodeCategory.ucDashPunctuation:
-        Result := true;
+        Result := True;
     else
-      Result := false;
+      Result := False;
     end;
 end;
 
-function UCWords(const AStr: string; ACapitalizeDigits: boolean = false): string;
+function UCWords(const AStr: string; ACapitalizeDigits: Boolean = False): string;
 var
-  I, J: integer;
-  WasDelimiter, IsNumber: boolean;
-  Ch, iCh: char;
+  I, J: Integer;
+  WasDelimiter, IsNumber: Boolean;
+  Ch, iCh: Char;
   S: string;
 begin
   Result := '';
-  WasDelimiter := true;
+  WasDelimiter := True;
   I := 1;
 
   while I <= Length(AStr) do
@@ -1702,12 +1702,12 @@ begin
       if ACapitalizeDigits then
       begin
         Result := Result + TCharacter.ToUpper(Ch);
-        WasDelimiter := false;
+        WasDelimiter := False;
       end
       else begin
         S := '';
 
-        IsNumber := false;
+        IsNumber := False;
         J := I;
         while J <= Length(AStr) do
         begin
@@ -1717,7 +1717,7 @@ begin
 
           if TCharacter.IsDigit(iCh) then
           begin
-            IsNumber := true;
+            IsNumber := True;
             S := S + iCh;
           end
           else if TCharacter.IsLetter(iCh) or (iCh = '''') or (iCh = #$2019) then
@@ -1732,7 +1732,7 @@ begin
           Result := Result + Ch + S
         else
           Result := Result + TCharacter.ToUpper(Ch) + S;
-        WasDelimiter := false;
+        WasDelimiter := False;
       end;
     end
     else begin
@@ -1742,9 +1742,9 @@ begin
   end;
 end;
 
-function CountCharacters(const AStr: string; ACountWhitespace: boolean = false): integer;
+function CountCharacters(const AStr: string; ACountWhitespace: Boolean = False): Integer;
 var
-  I: integer;
+  I: Integer;
 begin
   if ACountWhitespace then
     Result := Length(AStr)
@@ -1755,10 +1755,10 @@ begin
   end;
 end;
 
-function TruncateString(const AStr: string; ALength: integer = 80; AEtc: string = '...';
-  ABreakWords: boolean = false; AMiddle: boolean = false): string;
+function TruncateString(const AStr: string; ALength: Integer = 80; AEtc: string = '...';
+  ABreakWords: Boolean = False; AMiddle: Boolean = False): string;
 var
-  I, L: integer;
+  I, L: Integer;
 begin
   Result := SmartyTrim(AStr);
 
@@ -1775,7 +1775,7 @@ begin
 
         I := Length(Result);
 
-        //skip last word up to half of length
+        //skip last Word up to half of length
         while I > L do
           if IsLetterSymbol(Result[I]) then
             Dec(I)
@@ -1799,21 +1799,21 @@ end;
 
 function Strip(const AStr: string; AStripStr: string = ' '): string;
 var
-  I: integer;
-  WasWhiteSpace: boolean;
-  Ch: char;
+  I: Integer;
+  WasWhiteSpace: Boolean;
+  Ch: Char;
 begin
   Result := '';
-  WasWhiteSpace := false;
+  WasWhiteSpace := False;
   for I := 1 to Length(AStr) do
   begin
     Ch := AStr[I];
     if TCharacter.IsWhiteSpace(Ch) then
-      WasWhiteSpace := true
+      WasWhiteSpace := True
     else begin
       if WasWhiteSpace then
       begin
-        WasWhiteSpace := false;
+        WasWhiteSpace := False;
         Result := Result + AStripStr;
       end;
 
@@ -1825,15 +1825,15 @@ begin
 end;
 
 //idea for strip_tags from php sources
-function StripTags(const AStr: string; ANoSpace: boolean = true;
-	AParse: boolean = true): string;
+function StripTags(const AStr: string; ANoSpace: Boolean = True;
+	AParse: Boolean = True): string;
 var
-  Br, I, Depth: integer;
-  State, Len: integer;
+  Br, I, Depth: Integer;
+  State, Len: Integer;
   Ch, LastChar, In_Quote: Char;
   S: string;
 
-  function GetIC(S: string; Index, Len: integer): Char; inline;
+  function GetIC(S: string; Index, Len: Integer): Char; inline;
   begin
     if (Index > 0) and (Index <= Len) then
       Result := S[Index]
@@ -2058,7 +2058,7 @@ end;
 
 function Spacify(const AStr: string; ASpacifyStr: string = ' '): string;
 var
-  I, L: integer;
+  I, L: Integer;
 begin
   if Length(AStr) > 0 then
   begin
@@ -2086,7 +2086,7 @@ var
   ExistingBreak: Boolean;
   L: Integer;
 
-  function IsBreakChar(Ch: Char): boolean; inline;
+  function IsBreakChar(Ch: Char): Boolean; inline;
   begin
     Result := TCharacter.IsWhiteSpace(Ch) or (Ch = #$0009);
   end;
@@ -2178,43 +2178,43 @@ begin
   Result := Result + Copy(Line, LinePos, MaxInt);
 end;
 
-function IsLineBreak(C: char): boolean; inline;
+function IsLineBreak(C: Char): Boolean; inline;
 begin
   if Integer(C) <= $FF then
     Result := (C = #$000A) or (C = #$000D) or (C = #$0085)
   else
     case TCharacter.GetUnicodeCategory(C) of
       TUnicodeCategory.ucLineSeparator,
-      TUnicodeCategory.ucParagraphSeparator: Result := true
+      TUnicodeCategory.ucParagraphSeparator: Result := True
     else
-      Result := false;
+      Result := False;
     end;
 end;
 
-function CountParagraphs(const AStr: string): integer;
+function CountParagraphs(const AStr: string): Integer;
 var
-  WasLineBreak: boolean;
-  Ch: char;
-  I: integer;
+  WasLineBreak: Boolean;
+  Ch: Char;
+  I: Integer;
 begin
   Result := 1;
-  WasLineBreak := false;
+  WasLineBreak := False;
   for I := 1 to Length(AStr) do
   begin
     Ch := AStr[I];
     if IsLineBreak(Ch) then
-      WasLineBreak := true
+      WasLineBreak := True
     else if WasLineBreak then
     begin
       Inc(Result);
-      WasLineBreak := false;
+      WasLineBreak := False;
     end;
   end;
 end;
 
-function CountWords(const AStr: string): integer;
+function CountWords(const AStr: string): Integer;
 var
-  I: integer;
+  I: Integer;
 begin
   Result := 0;
   I := 1;
@@ -2232,22 +2232,22 @@ end;
 
 function IndentString(const AStr: string; IndentStr: string = ' '): string;
 var
-  I: integer;
-  Ch: char;
-  WasLineBreak: boolean;
+  I: Integer;
+  Ch: Char;
+  WasLineBreak: Boolean;
 begin
   Result := '';
-  WasLineBreak := false;
+  WasLineBreak := False;
   for I := 1 to Length(AStr) do
   begin
     Ch := AStr[I];
 
     if IsLineBreak(Ch) then
-      WasLineBreak := true
+      WasLineBreak := True
     else if WasLineBreak then
     begin
       Result := Result + IndentStr;
-      WasLineBreak := false;
+      WasLineBreak := False;
     end;
 
     Result := Result + Ch;
@@ -2256,8 +2256,8 @@ end;
 
 function XMLEncode(const AStr: string): string;
 var
-  I: integer;
-  Ch: char;
+  I: Integer;
+  Ch: Char;
 begin
   Result := '';
   for I := 1 to Length(AStr) do
@@ -2277,8 +2277,8 @@ end;
 
 function HTMLEncode(const AStr: string): string;
 var
-  I: integer;
-  Ch: char;
+  I: Integer;
+  Ch: Char;
 begin
   Result := '';
   for I := 1 to Length(AStr) do
@@ -2299,8 +2299,8 @@ end;
 
 function HTMLEncodeEntities(const AStr: string): string;
 var
-  I: integer;
-  Ch: char;
+  I: Integer;
+  Ch: Char;
 begin
   Result := '';
   for I := 1 to Length(AStr) do
@@ -2587,7 +2587,7 @@ end;
 procedure TVariableRecord.Finalize;
 var
 	ArrayData: PVariableArray;
-  I: integer;
+  I: Integer;
 begin
 	case Self.VarType of
     vtString:
@@ -2615,7 +2615,7 @@ end;
 function TVariableRecord.Clone: TVariableRecord;
 var
 	ArrayData: PVariableArray;
-  I: integer;
+  I: Integer;
 begin
   Result.VarType := Self.VarType;
   case Self.VarType of
@@ -2660,18 +2660,18 @@ begin
   end;
 end;
 
-function TVariableRecord.IsNull: boolean;
+function TVariableRecord.IsNull: Boolean;
 begin
 	Result := (Self.VarType = vtNull);
 end;
 
-function TVariableRecord.IsEmpty: boolean;
+function TVariableRecord.IsEmpty: Boolean;
 begin
   case Self.VarType of
     vtNull:
-    	Result := true;
+    	Result := True;
     vtBoolean:
-    	Result := false;
+    	Result := False;
     vtInteger:
     	Result := (Self.IValue = 0);
     vtFloat:
@@ -2687,57 +2687,57 @@ begin
     vtArray:
     	Result := (PVariableArray(Self.AValue).Count = 0);
   else
-  	Result := true;
+  	Result := True;
   end;
 end;
 
-function TVariableRecord.IsArray: boolean;
+function TVariableRecord.IsArray: Boolean;
 begin
 	Result := (Self.VarType = vtArray);
 end;
 
-function TVariableRecord.IsBoolean: boolean;
+function TVariableRecord.IsBoolean: Boolean;
 begin
 	Result := (Self.VarType = vtBoolean);
 end;
 
-function TVariableRecord.IsInteger: boolean;
+function TVariableRecord.IsInteger: Boolean;
 begin
 	Result := (Self.VarType = vtInteger);
 end;
 
-function TVariableRecord.IsFloat: boolean;
+function TVariableRecord.IsFloat: Boolean;
 begin
 	Result := (Self.VarType = vtFloat);
 end;
 
-function TVariableRecord.IsNumber: boolean;
+function TVariableRecord.IsNumber: Boolean;
 begin
 	Result := (Self.VarType = vtInteger) or (Self.VarType = vtFloat);
 end;
 
-function TVariableRecord.IsDateStrict: boolean;
+function TVariableRecord.IsDateStrict: Boolean;
 begin
 	Result := (Self.VarType = vtDateStrict);
 end;
 
-function TVariableRecord.IsDateLoose: boolean;
+function TVariableRecord.IsDateLoose: Boolean;
 begin
 	Result := (Self.VarType = vtDateLoose);
 end;
 
-function TVariableRecord.IsDateTime: boolean;
+function TVariableRecord.IsDateTime: Boolean;
 begin
 	Result := (Self.VarType = vtDateTime);
 end;
 
-function TVariableRecord.IsDate: boolean;
+function TVariableRecord.IsDate: Boolean;
 begin
 	Result := (Self.VarType = vtDateStrict) or (Self.VarType = vtDateLoose) or
     (Self.VarType = vtDateTime);
 end;
 
-function TVariableRecord.IsString: boolean;
+function TVariableRecord.IsString: Boolean;
 begin
 	Result := (Self.VarType = vtString);
 end;
@@ -2747,8 +2747,8 @@ begin
 	Result.VarType := vtNull;
 end;
 
-class function TVariableRecord.AsInteger(AValue: integer;
-	ANullValue: integer = 0): TVariableRecord;
+class function TVariableRecord.AsInteger(AValue: Integer;
+	ANullValue: Integer = 0): TVariableRecord;
 begin
 	if AValue <> ANullValue then
   	Result := AValue
@@ -2756,7 +2756,7 @@ begin
   	Result.VarType := vtNull;
 end;
 
-class function TVariableRecord.AsFloat(AValue: double; ANullValue: double = 0): TVariableRecord;
+class function TVariableRecord.AsFloat(AValue: Double; ANullValue: Double = 0): TVariableRecord;
 begin
 	if AValue <> ANullValue then
   	Result := AValue
@@ -2786,21 +2786,21 @@ begin
   VarType := vtNull;
 end;
 
-procedure TVariableRecord.SetBool(AValue: boolean);
+procedure TVariableRecord.SetBool(AValue: Boolean);
 begin
 	Finalize;
   VarType := vtBoolean;
   BValue := AValue;
 end;
 
-procedure TVariableRecord.SetInt(AValue: integer);
+procedure TVariableRecord.SetInt(AValue: Integer);
 begin
 	Finalize;
 	VarType := vtInteger;
   IValue := AValue;
 end;
 
-procedure TVariableRecord.SetFloat(Avalue: double);
+procedure TVariableRecord.SetFloat(Avalue: Double);
 begin
 	Finalize;
 	VarType := vtFloat;
@@ -2815,11 +2815,11 @@ begin
   string(SValue) := AValue;
 end;
 
-procedure TVariableRecord.SetArrayLength(AValue: integer;
-	AReference: TObject = nil; AInit: boolean = false);
+procedure TVariableRecord.SetArrayLength(AValue: Integer;
+	AReference: TObject = nil; AInit: Boolean = False);
 var
 	ArrayData: PVariableArray;
-  I: integer;
+  I: Integer;
 begin
   VarType := vtArray;
   Self.AValue := nil;
@@ -2837,7 +2837,7 @@ begin
     end;
 end;
 
-procedure TVariableRecord.SetArrayItem(AIndex: integer;
+procedure TVariableRecord.SetArrayItem(AIndex: Integer;
 	AKey: string; AValue: TVariableRecord);
 var
 	ArrayData: PVariableArray;
@@ -2853,7 +2853,7 @@ begin
   	raise ESmartyException.CreateRes(@sIncorrectArrayItem);
 end;
 
-procedure TVariableRecord.SetArrayItemQ(AIndex: integer;
+procedure TVariableRecord.SetArrayItemQ(AIndex: Integer;
 	AKey: string; AValue: TVariableRecord);
 var
 	ArrayData: PVariableArray;
@@ -2870,19 +2870,19 @@ begin
   	raise ESmartyException.CreateRes(@sIncorrectArrayKey);
 end;
 
-class operator TVariableRecord.Implicit(AValue: boolean): TVariableRecord;
+class operator TVariableRecord.Implicit(AValue: Boolean): TVariableRecord;
 begin
   Result.VarType := vtBoolean;
   Result.BValue := AValue;
 end;
 
-class operator TVariableRecord.Implicit(AValue: integer): TVariableRecord;
+class operator TVariableRecord.Implicit(AValue: Integer): TVariableRecord;
 begin
 	Result.VarType := vtInteger;
   Result.IValue := AValue;
 end;
 
-class operator TVariableRecord.Implicit(AValue: double): TVariableRecord;
+class operator TVariableRecord.Implicit(AValue: Double): TVariableRecord;
 begin
 	Result.VarType := vtFloat;
   Result.FValue := AValue;
@@ -2942,17 +2942,17 @@ begin
   end;
 end;
 
-class operator TVariableRecord.Implicit(ARecord: TVariableRecord): boolean;
+class operator TVariableRecord.Implicit(ARecord: TVariableRecord): Boolean;
 begin
 	Result := ARecord.ToBool;
 end;
 
-class operator TVariableRecord.Implicit(ARecord: TVariableRecord): integer;
+class operator TVariableRecord.Implicit(ARecord: TVariableRecord): Integer;
 begin
 	Result := ARecord.ToInt;
 end;
 
-class operator TVariableRecord.Implicit(ARecord: TVariableRecord): double;
+class operator TVariableRecord.Implicit(ARecord: TVariableRecord): Double;
 begin
 	Result := ARecord.ToFloat;
 end;
@@ -2962,14 +2962,14 @@ begin
 	Result := ARecord.ToString;
 end;
 
-function TVariableRecord.ToBool: boolean;
+function TVariableRecord.ToBool: Boolean;
 var
-	I: integer;
+	I: Integer;
 	ArrayData: PVariableArray;
 begin
   case Self.VarType of
     vtNull:
-    	Result := false;
+    	Result := False;
     vtBoolean:
     	Result := Self.BValue;
     vtInteger:
@@ -2994,7 +2994,7 @@ begin
     	Result := ArrayData.Count > 0;
       if Result then
       begin
-      	Result := false;
+      	Result := False;
       	for I := 0 to ArrayData.Count - 1 do
       	begin
         	Result := Result or ArrayData.Data[I].Item.ToBool;
@@ -3003,11 +3003,11 @@ begin
       end;
     end
   else
-  	Result := false;
+  	Result := False;
   end;
 end;
 
-function TVariableRecord.ToInt: integer;
+function TVariableRecord.ToInt: Integer;
 begin
 	case Self.VarType of
     vtNull:
@@ -3033,7 +3033,7 @@ begin
   end;
 end;
 
-function TVariableRecord.ToFloat: double;
+function TVariableRecord.ToFloat: Double;
 begin
 	case Self.VarType of
     vtNull:
@@ -3083,93 +3083,93 @@ begin
   end;
 end;
 
-function TVariableRecord.CanConvertToLogical(out Value: boolean): boolean;
+function TVariableRecord.CanConvertToLogical(out Value: Boolean): Boolean;
 begin
 	case Self.VarType of
     vtNull:
-    	Result := false;
+    	Result := False;
     vtBoolean:
     begin
     	Value := Self.BValue;
-      Result := true;
+      Result := True;
     end;
     vtInteger, vtFloat, vtDateStrict, vtDateLoose, vtDateTime, vtArray:
-    	Result := false;
+    	Result := False;
     vtString:
     	Result := TryStrToBool(string(Self.SValue), Value);
   else
-  	Result := false;
+  	Result := False;
   end;
 end;
 
-function TVariableRecord.CanConvertToInt(out Value: integer): boolean;
+function TVariableRecord.CanConvertToInt(out Value: Integer): Boolean;
 begin
 	case Self.VarType of
     vtNull:
-    	Result := false;
+    	Result := False;
     vtBoolean:
     begin
     	if Self.BValue then Value := 1 else Value := 0;
-      Result := true;
+      Result := True;
     end;
     vtInteger:
     begin
     	Value := Self.IValue;
-    	Result := true;
+    	Result := True;
     end;
     vtDateStrict:
     begin
     	Value := Round(Self.DSValue);
-    	Result := true;
+    	Result := True;
     end;
     vtFloat, vtDateLoose, vtDateTime, vtArray:
-    	Result := false;
+    	Result := False;
     vtString:
     	Result := TryStrToInt(string(Self.SValue), Value);
   else
-  	Result := false;
+  	Result := False;
   end;
 end;
 
-function TVariableRecord.CanConvertToFloat(out Value: double): boolean;
+function TVariableRecord.CanConvertToFloat(out Value: Double): Boolean;
 begin
 	case Self.VarType of
     vtNull, vtArray:
-    	Result := false;
+    	Result := False;
     vtBoolean:
     begin
     	if Self.BValue then Value := 1 else Value := 0;
-      Result := true;
+      Result := True;
     end;
     vtInteger:
     begin
     	Value := Self.IValue;
-    	Result := true;
+    	Result := True;
     end;
     vtFloat:
     begin
     	Value := Self.FValue;
-    	Result := true;
+    	Result := True;
     end;
     vtDateStrict:
     begin
     	Value := Self.DSValue;
-    	Result := true;
+    	Result := True;
     end;
     vtDateLoose:
     begin
     	Value := DateTimeFromRecord(Self.DLValue);
-      Result := true;
+      Result := True;
     end;
     vtDateTime:
     begin
     	Value := Self.DTValue;
-    	Result := true;
+    	Result := True;
     end;
     vtString:
     	Result := TryStrToFloat(string(Self.SValue), Value);
   else
-  	Result := false;
+  	Result := False;
   end;
 end;
 
@@ -3177,9 +3177,9 @@ class function TVariableRecord.DoCompareRelationship(ALeft, ARight: TVariableRec
 	AOperation: TCompareOperation): TVariableRelatioship;
 var
 	CompareType: TVariableType;
-  B1, B2: boolean;
-  I, I1, I2, SCompare: integer;
-  F1, F2, DCompare: double;
+  B1, B2: Boolean;
+  I, I1, I2, SCompare: Integer;
+  F1, F2, DCompare: Double;
   S1, S2: string;
   DL: TDateRecord;
   StartTime, EndTime: TDateTime;
@@ -3364,9 +3364,9 @@ begin
 end;
 
 class function TVariableRecord.DoCompare(ALeft, ARight: TVariableRecord;
-	AOperation: TCompareOperation): boolean;
+	AOperation: TCompareOperation): Boolean;
 const
-  CRelationshipToBoolean: array [TCompareOperation, TVariableRelatioship] of boolean =
+  CRelationshipToBoolean: array [TCompareOperation, TVariableRelatioship] of Boolean =
   //  vrGreaterThan, vrEqual, vrLessThan
     ((False, True,  False),  // coEq
      (True,  False, True),   // coNeq
@@ -3385,9 +3385,9 @@ end;
 class function TVariableRecord.DoIntFloatOp(ALeft, ARight: TVariableRecord;
 	AOperation: TBinaryOperation): TVariableRecord;
 var
-	I1, I2: integer;
-  F1, F2: double;
-  CanI1, CanI2, CanF1, CanF2: boolean;
+	I1, I2: Integer;
+  F1, F2: Double;
+  CanI1, CanI2, CanF1, CanF2: Boolean;
 begin
   CanI1 := ALeft.CanConvertToInt(I1);
   CanI2 := ARight.CanConvertToInt(I2);
@@ -3462,8 +3462,8 @@ end;
 class function TVariableRecord.DoFloatOp(ALeft, ARight: TVariableRecord;
 	AOperation: TBinaryOperation): TVariableRecord;
 var
-  F1, F2: double;
-  CanF1, CanF2: boolean;
+  F1, F2: Double;
+  CanF1, CanF2: Boolean;
 begin
   CanF1 := ALeft.CanConvertToFloat(F1);
   CanF2 := ARight.CanConvertToFloat(F2);
@@ -3485,8 +3485,8 @@ end;
 class function TVariableRecord.DoIntOp(ALeft, ARight: TVariableRecord;
 	AOperation: TBinaryOperation): TVariableRecord;
 var
-	I1, I2: integer;
-  CanI1, CanI2: boolean;
+	I1, I2: Integer;
+  CanI1, CanI2: Boolean;
 begin
   CanI1 := ALeft.CanConvertToInt(I1);
   CanI2 := ARight.CanConvertToInt(I2);
@@ -3539,8 +3539,8 @@ end;
 class function TVariableRecord.DoLogicalOp(ALeft, ARight: TVariableRecord;
 	AOperation: TBinaryOperation): TVariableRecord;
 var
-	B1, B2: boolean;
-  CanB1, CanB2: boolean;
+	B1, B2: Boolean;
+  CanB1, CanB2: Boolean;
 begin
   CanB1 := ALeft.CanConvertToLogical(B1);
   CanB2 := ARight.CanConvertToLogical(B2);
@@ -3653,7 +3653,7 @@ begin
   end;
 end;
 
-class operator TVariablePart.Implicit(AValue: integer): TVariablePart;
+class operator TVariablePart.Implicit(AValue: Integer): TVariablePart;
 begin
 	Result.PartType := vptIndex;
   Result.IValue := AValue;
@@ -3666,7 +3666,7 @@ begin
   string(Result.SValue) := AValue;
 end;
 
-class operator TVariablePart.Implicit(APart: TVariablePart): integer;
+class operator TVariablePart.Implicit(APart: TVariablePart): Integer;
 begin
 	case APart.PartType of
     vptIndex: Result := APart.IValue;
@@ -3688,7 +3688,7 @@ end;
 
 function TVarList.Clone: TVarList;
 var
-	I: integer;
+	I: Integer;
 begin
 	Result := TVarList.Create;
  	for I := 0 to Count - 1 do Result.Add(Items[I].Clone);
@@ -3696,66 +3696,66 @@ end;
 
 procedure TVarList.Finalize;
 var
-	I: integer;
+	I: Integer;
 begin
 	for I := 0 to Count - 1 do Items[I].Finalize;
   Free;
 end;
 
-procedure TVarList.DeleteElement(Index: integer);
+procedure TVarList.DeleteElement(Index: Integer);
 begin
 	Items[Index].Finalize;
   Delete(Index);
 end;
 
-procedure TVarList.AddArrayPrefix(AVariable: TVarList; Index: integer);
+procedure TVarList.AddArrayPrefix(AVariable: TVarList; Index: Integer);
 var
-	I: integer;
+	I: Integer;
 begin
 	for I := 0 to AVariable.Count - 1 do
   	Insert(I, AVariable[I]);
   Insert(AVariable.Count, Index);
 end;
 
-function TVarList.IsSimpleVariable(out VarName: string): boolean;
+function TVarList.IsSimpleVariable(out VarName: string): Boolean;
 begin
 	if (Count = 1) and (Items[0].PartType = vptValue) then
   begin
   	VarName := Items[0];
-    Result := true;
+    Result := True;
   end
   else
-  	Result := false;
+  	Result := False;
 end;
 
-function TVarList.CheckTopLevel(AName: string): boolean;
+function TVarList.CheckTopLevel(AName: string): Boolean;
 begin
 	if (Count >= 1) and (Items[0].PartType = vptValue) and
     (CompareText(Items[0], AName) = 0) then
   begin
-    Result := true;
+    Result := True;
     DeleteElement(0);
   end
   else
-  	Result := false;
+  	Result := False;
 end;
 
-function TVarList.IsTopValueLevel(out AName: string): boolean;
+function TVarList.IsTopValueLevel(out AName: string): Boolean;
 begin
 	if (Count >= 1) and (Items[0].PartType = vptValue) then
   begin
   	AName := Items[0];
-    Result := true;
+    Result := True;
     DeleteElement(0);
   end
   else
-  	Result := false;
+  	Result := False;
 end;
 
 {************* TNamespaceProvider *************}
 
 constructor TNamespaceProvider.Create(AName: string; UseCache,
-  IsIndexSupported: Boolean; Min, Max: integer);
+  IsIndexSupported: Boolean; Min, Max: Integer);
 begin
   FName := AName;
   FIsIndexSupported := IsIndexSupported;
@@ -3770,17 +3770,17 @@ begin
   Result := FName;
 end;
 
-function TNamespaceProvider.IsIndexSupported: boolean;
+function TNamespaceProvider.IsIndexSupported: Boolean;
 begin
 	Result := FIsIndexSupported;
 end;
 
-function TNamespaceProvider.UseCache: boolean;
+function TNamespaceProvider.UseCache: Boolean;
 begin
 	Result := FUseCache;
 end;
 
-procedure TNamespaceProvider.GetIndexProperties(var AMin, AMax: integer);
+procedure TNamespaceProvider.GetIndexProperties(var AMin, AMax: Integer);
 begin
   AMin := FMin;
   AMax := FMax;
@@ -3814,7 +3814,7 @@ begin
     Result := FVariables[AVarName].Clone;
 end;
 
-function TStorageNamespaceProvider.GetVariable(AIndex: integer;
+function TStorageNamespaceProvider.GetVariable(AIndex: Integer;
   AVarName: string): TVariableRecord;
 begin
   Result := InternalGetVariable(AVarName);
@@ -3842,12 +3842,12 @@ end;
 constructor TForEachList.Create;
 begin
 	inherited Create;
-	CurrentRecords := TList<integer>.Create;
+	CurrentRecords := TList<Integer>.Create;
 end;
 
 destructor TForEachList.Destroy;
 var
-	I: integer;
+	I: Integer;
 begin
   for I := Count - 1 downto 0 do Items[I].Free;
 	CurrentRecords.Free;
@@ -3865,47 +3865,47 @@ begin
   	CurrentRecords.Delete(CurrentRecords.Count - 1);
 end;
 
-function TForEachList.InForEach: boolean;
+function TForEachList.InForEach: Boolean;
 begin
 	Result := CurrentRecords.Count > 0;
 end;
 
-function TForEachList.FindItemRecord(AItemName: string; out ARecord: TForEachData): boolean;
+function TForEachList.FindItemRecord(AItemName: string; out ARecord: TForEachData): Boolean;
 var
-	I: integer;
+	I: Integer;
 begin
-	Result := false;
+	Result := False;
 	for I := CurrentRecords.Count - 1 downto 0 do
   	if CompareText(AItemName, Items[CurrentRecords[I]].ItemVarName) = 0 then
   	begin
     	ARecord := Items[CurrentRecords[I]];
-      Exit(true);
+      Exit(True);
   	end;
 end;
 
-function TForEachList.FindKeyRecord(AKeyName: string; out ARecord: TForEachData): boolean;
+function TForEachList.FindKeyRecord(AKeyName: string; out ARecord: TForEachData): Boolean;
 var
-	I: integer;
+	I: Integer;
 begin
-	Result := false;
+	Result := False;
 	for I := CurrentRecords.Count - 1 downto 0 do
   	if CompareText(AKeyName, Items[CurrentRecords[I]].KeyVarName) = 0 then
   	begin
     	ARecord := Items[CurrentRecords[I]];
-      Exit(true);
+      Exit(True);
   	end;
 end;
 
 function TForEachList.FindRecord(AName: string;
-	out ARecord: TForEachData): boolean;
+	out ARecord: TForEachData): Boolean;
 var
-	I: integer;
+	I: Integer;
 begin
-	Result := false;
+	Result := False;
   if (CompareText(AName, 'current') = 0) and (CurrentRecords.Count > 0) then
   begin
   	ARecord := Items[CurrentRecords[CurrentRecords.Count-1]];
-    Result := true;
+    Result := True;
   end
   else if AName <> '' then
   begin
@@ -3913,7 +3913,7 @@ begin
       if CompareText(Items[I].Name, AName) = 0 then
       begin
         ARecord := Items[I];
-        Exit(true);
+        Exit(True);
       end;
   end;
 end;
@@ -3923,7 +3923,7 @@ end;
 constructor TCaptureArrayItem.Create;
 begin
   inherited Create;
-  IsActive := false;
+  IsActive := False;
   ItemName := '';
   Index := 0;
   VarData := nil;
@@ -3934,9 +3934,9 @@ begin
   inherited Destroy;
 end;
 
-procedure TCaptureArrayItem.Enter(AName: string; AIndex: integer; AVarData: PVariableArray);
+procedure TCaptureArrayItem.Enter(AName: string; AIndex: Integer; AVarData: PVariableArray);
 begin
-  IsActive := true;
+  IsActive := True;
   ItemName := AName;
   Index := AIndex;
   VarData := AVarData;
@@ -3949,11 +3949,11 @@ end;
 
 procedure TCaptureArrayItem.Exit;
 begin
-  IsActive := false;
+  IsActive := False;
   VarData := nil;
 end;
 
-function TCaptureArrayItem.IsItemName(AName: string): boolean;
+function TCaptureArrayItem.IsItemName(AName: string): Boolean;
 begin
   Result := IsActive and (CompareText(ItemName, AName) = 0);
 end;
@@ -3981,7 +3981,7 @@ end;
 
 procedure TSmartyProvider.ClearCaptureCache;
 var
-  I: integer;
+  I: Integer;
 begin
   for I := FCaptureCache.Count - 1 downto 0 do
   begin
@@ -3991,15 +3991,15 @@ begin
   end;
 end;
 
-function TSmartyProvider.FindCaptureItem(AName: string; var Cache: TCaptureCache): boolean;
+function TSmartyProvider.FindCaptureItem(AName: string; var Cache: TCaptureCache): Boolean;
 var
-  I: integer;
+  I: Integer;
 begin
-  Result := false;
+  Result := False;
   for I := 0 to FCaptureCache.Count - 1 do
   begin
     Cache := FCaptureCache[I];
-    if CompareText(Cache.VariableName, AName) = 0 then Exit(true);
+    if CompareText(Cache.VariableName, AName) = 0 then Exit(True);
   end;
 end;
 
@@ -4023,7 +4023,7 @@ end;
 procedure TSmartyProvider.RemoveCaptureItem(AName: string);
 var
   Cache: TCaptureCache;
-  I: integer;
+  I: Integer;
 begin
   for I := 0 to FCaptureCache.Count - 1 do
   begin
@@ -4043,29 +4043,29 @@ begin
 	Result := 'smarty';
 end;
 
-function TSmartyProvider.IsIndexSupported: boolean;
+function TSmartyProvider.IsIndexSupported: Boolean;
 begin
-  Result := false;
+  Result := False;
 end;
 
-function TSmartyProvider.UseCache: boolean;
+function TSmartyProvider.UseCache: Boolean;
 begin
-  Result := false;
+  Result := False;
 end;
 
-procedure TSmartyProvider.GetIndexProperties(var AMin, AMax: integer);
+procedure TSmartyProvider.GetIndexProperties(var AMin, AMax: Integer);
 begin
   AMin := 0;
   AMax := 0;
 end;
 
-function TSmartyProvider.GetVariable(AIndex: integer; AVarName: string): TVariableRecord;
+function TSmartyProvider.GetVariable(AIndex: Integer; AVarName: string): TVariableRecord;
 begin
 	Result :=  TVariableRecord.Null;
 end;
 
 function TSmartyProvider.GetSmartyVariable(AVarName: string;
-	AVarDetails: TVarList; var NeedFinalize: boolean): TVariableRecord;
+	AVarDetails: TVarList; var NeedFinalize: Boolean): TVariableRecord;
 var
 	S, VarName: string;
   VarDetails: TVarList;
@@ -4073,7 +4073,7 @@ var
   CacheRec: TCaptureCache;
 begin
 	Result :=  TVariableRecord.Null;
-  NeedFinalize := true;
+  NeedFinalize := True;
 
 	if AVarDetails.Count = 0 then
   begin
@@ -4095,7 +4095,7 @@ begin
           	Result := FERec.VarData.Data[FERec.Iteration - 1].Item;
             if VarDetails.Count > 0 then
               Result := FEngine.GetVariableDetails(Result, VarDetails);
-            NeedFinalize := false;
+            NeedFinalize := False;
           end
           else if VarDetails.IsSimpleVariable(VarName) then
           begin
@@ -4110,7 +4110,7 @@ begin
               else if CompareText(VarName, FERec.KeyVarName) = 0 then
               begin
               	Result := string(FERec.VarData.Data[FERec.Iteration - 1].Key);
-                NeedFinalize := false;
+                NeedFinalize := False;
               end;
           end;
         end;
@@ -4128,7 +4128,7 @@ begin
           Result := CacheRec.VariableValue^;
           if VarDetails.Count > 0 then
             Result := FEngine.GetVariableDetails(Result, VarDetails);
-          NeedFinalize := false;
+          NeedFinalize := False;
         end;
       finally
         VarDetails.Finalize;
@@ -4140,7 +4140,7 @@ begin
 end;
 
 function TSmartyProvider.GetDetachVariable(AVarName: string; AVarDetails: TVarList;
-	var NeedFinalize: boolean): TVariableRecord;
+	var NeedFinalize: Boolean): TVariableRecord;
 var
 	FERec: TForEachData;
   VName: string;
@@ -4151,7 +4151,7 @@ begin
     Result := FActiveCapture.VarData.Data[FActiveCapture.Index].Item;
     if AVarDetails.Count > 0 then
       Result := FEngine.GetVariableDetails(Result, AVarDetails);
-    NeedFinalize := false;
+    NeedFinalize := False;
   end
 	else if FForEachList.InForEach then
   begin
@@ -4174,13 +4174,13 @@ begin
         Result := FERec.VarData.Data[FERec.Iteration - 1].Item;
         if AVarDetails.Count > 0 then
           Result := FEngine.GetVariableDetails(Result, AVarDetails);
-        NeedFinalize := false;
+        NeedFinalize := False;
       end;
     end
     else if FForEachList.FindKeyRecord(AVarName, FERec) and (AVarDetails.Count = 0) then
     begin
     	Result := string(FERec.VarData.Data[FERec.Iteration - 1].Key);
-      NeedFinalize := true;
+      NeedFinalize := True;
     end
     else
     	Result :=  TVariableRecord.Null;
@@ -4194,9 +4194,9 @@ end;
 {************* TVariableModifier *************}
 
 class function TVariableModifier.CheckParams(AModifier: TVariableModifierClass;
-	AParams: TStringList; AMin, AMax: integer): boolean;
+	AParams: TStringList; AMin, AMax: Integer): Boolean;
 var
-	Cnt: integer;
+	Cnt: Integer;
 begin
 	if Assigned(AParams) then Cnt := AParams.Count else Cnt := 0;
   Result := (AMin <= Cnt) and (Cnt <= AMax);
@@ -4205,22 +4205,22 @@ begin
     	[Cnt, AMin, AMax, AModifier.GetName]);
 end;
 
-class function TVariableModifier.SetParam(AParams: TStringList; AIndex: integer;
-	var Value: string): boolean;
+class function TVariableModifier.SetParam(AParams: TStringList; AIndex: Integer;
+	var Value: string): Boolean;
 begin
-	Result := false;
+	Result := False;
 	if Assigned(AParams) then
   	if AIndex  < AParams.Count then
     begin
     	Value := AParams[AIndex];
-    	Result := true;
+    	Result := True;
     end;
 end;
 
 class procedure TVariableModifier.ModifyVariable(const AVariable: TVariableRecord;
 	AParams: TStringList);
 var
-	I: integer;
+	I: Integer;
   ArrayData: PVariableArray;
 begin
   if AVariable.IsArray then
@@ -4241,7 +4241,7 @@ begin
 	Result := 'capitalize';
 end;
 
-class function TCapitalizeModifier.CheckInputParams(AParams: TStringList): boolean;
+class function TCapitalizeModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 1);
 end;
@@ -4249,11 +4249,11 @@ end;
 class procedure TCapitalizeModifier.ModVariable(const AVariable: TVariableRecord;
 	AParams: TStringList);
 var
-	CapitalizeNumbers: boolean;
-  B: boolean;
+	CapitalizeNumbers: Boolean;
+  B: Boolean;
   S: string;
 begin
-	CapitalizeNumbers := false;
+	CapitalizeNumbers := False;
   if CheckParams(Self, AParams, 0, 1) and SetParam(AParams, 0, S) and TryStringToBool(S, B) then
     CapitalizeNumbers := B;
 
@@ -4267,7 +4267,7 @@ begin
 	Result := 'cat';
 end;
 
-class function TCatModifier.CheckInputParams(AParams: TStringList): boolean;
+class function TCatModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 1);
 end;
@@ -4289,7 +4289,7 @@ begin
 	Result := 'trim';
 end;
 
-class function TTrimModifier.CheckInputParams(AParams: TStringList): boolean;
+class function TTrimModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 1);
 end;
@@ -4316,7 +4316,7 @@ begin
 	Result := 'count_characters';
 end;
 
-class function TCountCharactersModifier.CheckInputParams(AParams: TStringList): boolean;
+class function TCountCharactersModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 1);
 end;
@@ -4324,11 +4324,11 @@ end;
 class procedure TCountCharactersModifier.ModVariable(const AVariable: TVariableRecord;
 	AParams: TStringList);
 var
-	CountWhitespace: boolean;
-  B: boolean;
+	CountWhitespace: Boolean;
+  B: Boolean;
   S: string;
 begin
-	CountWhitespace := false;
+	CountWhitespace := False;
   if CheckParams(Self, AParams, 0, 1) and SetParam(AParams, 0, S) and TryStringToBool(S, B) then
     CountWhitespace := B;
 
@@ -4342,7 +4342,7 @@ begin
 	Result := 'count_paragraphs';
 end;
 
-class function TCountParagraphsModifier.CheckInputParams(AParams: TStringList): boolean;
+class function TCountParagraphsModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 0);
 end;
@@ -4360,7 +4360,7 @@ begin
 	Result := 'count_words';
 end;
 
-class function TCountWordsModifier.CheckInputParams(AParams: TStringList): boolean;
+class function TCountWordsModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 0);
 end;
@@ -4378,7 +4378,7 @@ begin
 	Result := 'default';
 end;
 
-class function TDefaultModifier.CheckInputParams(AParams: TStringList): boolean;
+class function TDefaultModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 1);
 end;
@@ -4406,7 +4406,7 @@ begin
 	Result := 'html_encode';
 end;
 
-class function THTMLEncodeModifier.CheckInputParams(AParams: TStringList): boolean;
+class function THTMLEncodeModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 0);
 end;
@@ -4424,7 +4424,7 @@ begin
 	Result := 'html_encode_all';
 end;
 
-class function THTMLEncodeAllModifier.CheckInputParams(AParams: TStringList): boolean;
+class function THTMLEncodeAllModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 0);
 end;
@@ -4442,7 +4442,7 @@ begin
 	Result := 'xml_encode';
 end;
 
-class function TXMLEncodeModifier.CheckInputParams(AParams: TStringList): boolean;
+class function TXMLEncodeModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 0);
 end;
@@ -4460,7 +4460,7 @@ begin
 	Result := 'file_encode';
 end;
 
-class function TFileEncodeModifier.CheckInputParams(AParams: TStringList): boolean;
+class function TFileEncodeModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 0);
 end;
@@ -4478,7 +4478,7 @@ begin
 	Result := 'date_format';
 end;
 
-class function TDateFormatModifier.CheckInputParams(AParams: TStringList): boolean;
+class function TDateFormatModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 1);
 end;
@@ -4544,7 +4544,7 @@ begin
 	Result := 'float_format';
 end;
 
-class function TFloatFormatModifier.CheckInputParams(AParams: TStringList): boolean;
+class function TFloatFormatModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 1);
 end;
@@ -4567,7 +4567,7 @@ begin
 	Result := 'lower';
 end;
 
-class function TLowerModifier.CheckInputParams(AParams: TStringList): boolean;
+class function TLowerModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 0);
 end;
@@ -4585,7 +4585,7 @@ begin
 	Result := 'upper';
 end;
 
-class function TUpperModifier.CheckInputParams(AParams: TStringList): boolean;
+class function TUpperModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 0);
 end;
@@ -4603,7 +4603,7 @@ begin
 	Result := 'nl2br';
 end;
 
-class function TNl2BrModifier.CheckInputParams(AParams: TStringList): boolean;
+class function TNl2BrModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 0);
 end;
@@ -4627,7 +4627,7 @@ begin
 	Result := 'truncate';
 end;
 
-class function TTruncateModifier.CheckInputParams(AParams: TStringList): boolean;
+class function TTruncateModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 4);
 end;
@@ -4635,14 +4635,14 @@ end;
 class procedure TTruncateModifier.ModVariable(const AVariable: TVariableRecord;
 	AParams: TStringList);
 var
-  Length, I: integer;
+  Length, I: Integer;
   S, Etc: string;
-  BreakWords, Middle, B: boolean;
+  BreakWords, Middle, B: Boolean;
 begin
   Length := 80;
   Etc := '...';
-  BreakWords := false;
-  Middle := false;
+  BreakWords := False;
+  Middle := False;
 
   if CheckParams(Self, AParams, 0, 4) then
   begin
@@ -4662,7 +4662,7 @@ begin
 	Result := 'strip';
 end;
 
-class function TStripModifier.CheckInputParams(AParams: TStringList): boolean;
+class function TStripModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 1);
 end;
@@ -4685,7 +4685,7 @@ begin
 	Result := 'spacify';
 end;
 
-class function TSpacifyModifier.CheckInputParams(AParams: TStringList): boolean;
+class function TSpacifyModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 1);
 end;
@@ -4708,7 +4708,7 @@ begin
 	Result := 'wordwrap';
 end;
 
-class function TWordwrapModifier.CheckInputParams(AParams: TStringList): boolean;
+class function TWordwrapModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 2);
 end;
@@ -4716,7 +4716,7 @@ end;
 class procedure TWordwrapModifier.ModVariable(const AVariable: TVariableRecord;
 	AParams: TStringList);
 var
-  MaxCol, I: integer;
+  MaxCol, I: Integer;
   S, BreakStr: string;
 begin
   MaxCol := 80;
@@ -4738,7 +4738,7 @@ begin
 	Result := 'indent';
 end;
 
-class function TIndentModifier.CheckInputParams(AParams: TStringList): boolean;
+class function TIndentModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 2);
 end;
@@ -4746,7 +4746,7 @@ end;
 class procedure TIndentModifier.ModVariable(const AVariable: TVariableRecord;
 	AParams: TStringList);
 var
-  IndentCount, I: integer;
+  IndentCount, I: Integer;
   S, IndentStr: string;
 begin
   IndentCount := 4;
@@ -4771,7 +4771,7 @@ begin
 	Result := 'replace';
 end;
 
-class function TReplaceModifier.CheckInputParams(AParams: TStringList): boolean;
+class function TReplaceModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 2, 3);
 end;
@@ -4780,11 +4780,11 @@ class procedure TReplaceModifier.ModVariable(const AVariable: TVariableRecord;
 	AParams: TStringList);
 var
   ReplaceFrom, ReplaceTo, S: string;
-  B, CaseSensitive: boolean;
+  B, CaseSensitive: Boolean;
 begin
   ReplaceFrom := '';
   ReplaceTo := '';
-  CaseSensitive := false;
+  CaseSensitive := False;
 
   if CheckParams(Self, AParams, 2, 3) then
   begin
@@ -4806,7 +4806,7 @@ begin
 	Result := 'strip_tags';
 end;
 
-class function TStripTagsModifier.CheckInputParams(AParams: TStringList): boolean;
+class function TStripTagsModifier.CheckInputParams(AParams: TStringList): Boolean;
 begin
 	Result := CheckParams(Self, AParams, 0, 2);
 end;
@@ -4814,11 +4814,11 @@ end;
 class procedure TStripTagsModifier.ModVariable(const AVariable: TVariableRecord;
 	AParams: TStringList);
 var
-  NoSpace, ParseTags, B: boolean;
+  NoSpace, ParseTags, B: Boolean;
   S: string;
 begin
-  NoSpace := false;
-  ParseTags := false;
+  NoSpace := False;
+  ParseTags := False;
 
   if CheckParams(Self, AParams, 0, 4) then
   begin
@@ -4831,14 +4831,14 @@ end;
 
 {************* TSmartyFunction *************}
 
-class function TSmartyFunction.IsParam(Index: integer;
-	AParams: array of TVariableRecord; var Param: TVariableRecord): boolean;
+class function TSmartyFunction.IsParam(Index: Integer;
+	AParams: array of TVariableRecord; var Param: TVariableRecord): Boolean;
 begin
 	Result := (Index >= 0) and (Index < Length(AParams));
 	if Result then Param := AParams[Index];
 end;
 
-class function TSmartyFunction.GetParam(Index: integer;
+class function TSmartyFunction.GetParam(Index: Integer;
 	AParams: array of TVariableRecord): TVariableRecord;
 begin
 	if (Index >= 0) and (Index < Length(AParams)) then
@@ -4862,7 +4862,7 @@ begin
   Result := 'is_null';
 end;
 
-class function TIsNullFunction.CheckParams(AParamsCount: integer): boolean;
+class function TIsNullFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -4879,7 +4879,7 @@ begin
   Result := 'is_empty';
 end;
 
-class function TIsEmptyFunction.CheckParams(AParamsCount: integer): boolean;
+class function TIsEmptyFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -4896,7 +4896,7 @@ begin
   Result := 'is_bool';
 end;
 
-class function TIsBooleanFunction.CheckParams(AParamsCount: integer): boolean;
+class function TIsBooleanFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -4913,7 +4913,7 @@ begin
   Result := 'is_int';
 end;
 
-class function TIsIntegerFunction.CheckParams(AParamsCount: integer): boolean;
+class function TIsIntegerFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -4930,7 +4930,7 @@ begin
   Result := 'is_float';
 end;
 
-class function TIsFloatFunction.CheckParams(AParamsCount: integer): boolean;
+class function TIsFloatFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -4947,7 +4947,7 @@ begin
   Result := 'is_number';
 end;
 
-class function TIsNumberFunction.CheckParams(AParamsCount: integer): boolean;
+class function TIsNumberFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -4964,7 +4964,7 @@ begin
   Result := 'is_datestrict';
 end;
 
-class function TIsDateStrictFunction.CheckParams(AParamsCount: integer): boolean;
+class function TIsDateStrictFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -4981,7 +4981,7 @@ begin
   Result := 'is_dateloose';
 end;
 
-class function TIsDateLooseFunction.CheckParams(AParamsCount: integer): boolean;
+class function TIsDateLooseFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -4998,7 +4998,7 @@ begin
   Result := 'is_datetime';
 end;
 
-class function TIsDateTimeFunction.CheckParams(AParamsCount: integer): boolean;
+class function TIsDateTimeFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -5015,7 +5015,7 @@ begin
   Result := 'is_date';
 end;
 
-class function TIsDateFunction.CheckParams(AParamsCount: integer): boolean;
+class function TIsDateFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -5032,7 +5032,7 @@ begin
   Result := 'is_string';
 end;
 
-class function TIsStringFunction.CheckParams(AParamsCount: integer): boolean;
+class function TIsStringFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -5049,7 +5049,7 @@ begin
   Result := 'is_array';
 end;
 
-class function TIsArrayFunction.CheckParams(AParamsCount: integer): boolean;
+class function TIsArrayFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -5066,7 +5066,7 @@ begin
   Result := 'array_length';
 end;
 
-class function TArrayLengthFunction.CheckParams(AParamsCount: integer): boolean;
+class function TArrayLengthFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -5091,7 +5091,7 @@ begin
   Result := 'array_index';
 end;
 
-class function TArrayIndexFunction.CheckParams(AParamsCount: integer): boolean;
+class function TArrayIndexFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 2);
 end;
@@ -5099,7 +5099,7 @@ end;
 class function TArrayIndexFunction.Evaluate(AParams: array of TVariableRecord): TVariableRecord;
 var
 	V1, V2: TVariableRecord;
-  I: integer;
+  I: Integer;
 begin
 	V1 := GetParam(0, AParams);
   V2 := GetParam(1, AParams);
@@ -5124,7 +5124,7 @@ begin
   Result := 'array_key';
 end;
 
-class function TArrayKeyFunction.CheckParams(AParamsCount: integer): boolean;
+class function TArrayKeyFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 2);
 end;
@@ -5132,7 +5132,7 @@ end;
 class function TArrayKeyFunction.Evaluate(AParams: array of TVariableRecord): TVariableRecord;
 var
 	V1, V2: TVariableRecord;
-  I: integer;
+  I: Integer;
   S: string;
 begin
 	V1 := GetParam(0, AParams);
@@ -5165,7 +5165,7 @@ begin
   Result := 'count';
 end;
 
-class function TCountFunction.CheckParams(AParamsCount: integer): boolean;
+class function TCountFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -5190,7 +5190,7 @@ begin
   Result := 'echo';
 end;
 
-class function TEchoFunction.CheckParams(AParamsCount: integer): boolean;
+class function TEchoFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -5207,14 +5207,14 @@ begin
   Result := 'print';
 end;
 
-class function TPrintFunction.CheckParams(AParamsCount: integer): boolean;
+class function TPrintFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount >= 0);
 end;
 
 class function TPrintFunction.Evaluate(AParams: array of TVariableRecord): TVariableRecord;
 var
-	I: integer;
+	I: Integer;
   S: string;
 begin
 	S := '';
@@ -5229,7 +5229,7 @@ begin
   Result := 'html_encode';
 end;
 
-class function THTMLEncodeFunction.CheckParams(AParamsCount: integer): boolean;
+class function THTMLEncodeFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -5246,7 +5246,7 @@ begin
   Result := 'html_encode_all';
 end;
 
-class function THTMLEncodeAllFunction.CheckParams(AParamsCount: integer): boolean;
+class function THTMLEncodeAllFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -5263,7 +5263,7 @@ begin
   Result := 'xml_encode';
 end;
 
-class function TXMLEncodeFunction.CheckParams(AParamsCount: integer): boolean;
+class function TXMLEncodeFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -5280,7 +5280,7 @@ begin
   Result := 'file_encode';
 end;
 
-class function TFileEncodeFunction.CheckParams(AParamsCount: integer): boolean;
+class function TFileEncodeFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -5297,7 +5297,7 @@ begin
   Result := 'trim';
 end;
 
-class function TTrimFunction.CheckParams(AParamsCount: integer): boolean;
+class function TTrimFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount >= 1) and (AParamsCount <= 2);
 end;
@@ -5329,7 +5329,7 @@ begin
   Result := 'truncate';
 end;
 
-class function TTruncateFunction.CheckParams(AParamsCount: integer): boolean;
+class function TTruncateFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount >= 1) and (AParamsCount <= 5);
 end;
@@ -5337,9 +5337,9 @@ end;
 class function TTruncateFunction.Evaluate(AParams: array of TVariableRecord): TVariableRecord;
 var
   S, Etc: string;
-  L: integer;
+  L: Integer;
   VR: TVariableRecord;
-  BreakWords, Middle: boolean;
+  BreakWords, Middle: Boolean;
 begin
   S := GetParam(0, AParams).ToString;
   VR := GetParam(1, AParams);
@@ -5347,9 +5347,9 @@ begin
   VR := GetParam(2, AParams);
   if VR.IsNull then Etc := '...' else Etc := VR.ToString;
   VR := GetParam(3, AParams);
-  if VR.IsNull then BreakWords := false else BreakWords := VR.ToBool;
+  if VR.IsNull then BreakWords := False else BreakWords := VR.ToBool;
   VR := GetParam(4, AParams);
-  if VR.IsNull then Middle := false else Middle := VR.ToBool;
+  if VR.IsNull then Middle := False else Middle := VR.ToBool;
 
   Result := TruncateString(S, L, Etc, BreakWords, Middle);
 end;
@@ -5361,7 +5361,7 @@ begin
   Result := 'strip';
 end;
 
-class function TStripFunction.CheckParams(AParamsCount: integer): boolean;
+class function TStripFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount >= 1) and (AParamsCount <= 2);
 end;
@@ -5387,7 +5387,7 @@ begin
   Result := 'strip_tags';
 end;
 
-class function TStripTagsFunction.CheckParams(AParamsCount: integer): boolean;
+class function TStripTagsFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount >= 1) and (AParamsCount <= 3);
 end;
@@ -5395,12 +5395,12 @@ end;
 class function TStripTagsFunction.Evaluate(AParams: array of TVariableRecord): TVariableRecord;
 var
   VR: TVariableRecord;
-  NoSpace, ParseTags: boolean;
+  NoSpace, ParseTags: Boolean;
 begin
   VR := GetParam(1, AParams);
-  if VR.IsNull then NoSpace := true else NoSpace := VR.ToBool;
+  if VR.IsNull then NoSpace := True else NoSpace := VR.ToBool;
   VR := GetParam(2, AParams);
-  if VR.IsNull then ParseTags := true else ParseTags := VR.ToBool;
+  if VR.IsNull then ParseTags := True else ParseTags := VR.ToBool;
 
   Result := StripTags(GetParam(0, AParams).ToString, NoSpace, ParseTags);
 end;
@@ -5412,7 +5412,7 @@ begin
   Result := 'spacify';
 end;
 
-class function TSpacifyFunction.CheckParams(AParamsCount: integer): boolean;
+class function TSpacifyFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount >= 1) and (AParamsCount <= 2);
 end;
@@ -5438,14 +5438,14 @@ begin
   Result := 'wordwrap';
 end;
 
-class function TWordwrapFunction.CheckParams(AParamsCount: integer): boolean;
+class function TWordwrapFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount >= 1) and (AParamsCount <= 3);
 end;
 
 class function TWordwrapFunction.Evaluate(AParams: array of TVariableRecord): TVariableRecord;
 var
-  MaxCol: integer;
+  MaxCol: Integer;
   BreakStr: string;
   VR: TVariableRecord;
 begin
@@ -5472,14 +5472,14 @@ begin
   Result := 'indent';
 end;
 
-class function TIndentFunction.CheckParams(AParamsCount: integer): boolean;
+class function TIndentFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount >= 1) and (AParamsCount <= 3);
 end;
 
 class function TIndentFunction.Evaluate(AParams: array of TVariableRecord): TVariableRecord;
 var
-  I, IndentCount: integer;
+  I, IndentCount: Integer;
   S, IndentStr: string;
   VR: TVariableRecord;
 begin
@@ -5509,7 +5509,7 @@ begin
   Result := 'capitalize';
 end;
 
-class function TCapitalizeFunction.CheckParams(AParamsCount: integer): boolean;
+class function TCapitalizeFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount >= 1) and (AParamsCount <= 2);
 end;
@@ -5517,10 +5517,10 @@ end;
 class function TCapitalizeFunction.Evaluate(AParams: array of TVariableRecord): TVariableRecord;
 var
   VR: TVariableRecord;
-  Digits: boolean;
+  Digits: Boolean;
 begin
   VR := GetParam(1, AParams);
-  if VR.IsNull then Digits := false else Digits := VR.ToBool;
+  if VR.IsNull then Digits := False else Digits := VR.ToBool;
   Result := UCWords(GetParam(0, AParams).ToString, Digits);
 end;
 
@@ -5531,7 +5531,7 @@ begin
   Result := 'count_characters';
 end;
 
-class function TCountCharactersFunction.CheckParams(AParamsCount: integer): boolean;
+class function TCountCharactersFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount >= 1) and (AParamsCount <= 2);
 end;
@@ -5539,10 +5539,10 @@ end;
 class function TCountCharactersFunction.Evaluate(AParams: array of TVariableRecord): TVariableRecord;
 var
   VR: TVariableRecord;
-  CountWhitespace: boolean;
+  CountWhitespace: Boolean;
 begin
   VR := GetParam(1, AParams);
-  if VR.IsNull then CountWhitespace := false else CountWhitespace := VR.ToBool;
+  if VR.IsNull then CountWhitespace := False else CountWhitespace := VR.ToBool;
   Result := CountCharacters(GetParam(0, AParams).ToString, CountWhitespace);
 end;
 
@@ -5553,7 +5553,7 @@ begin
   Result := 'count_words';
 end;
 
-class function TCountWordsFunction.CheckParams(AParamsCount: integer): boolean;
+class function TCountWordsFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -5570,7 +5570,7 @@ begin
   Result := 'count_paragraphs';
 end;
 
-class function TCountParagraphsFunction.CheckParams(AParamsCount: integer): boolean;
+class function TCountParagraphsFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -5587,7 +5587,7 @@ begin
   Result := 'upper_case';
 end;
 
-class function TUpperCaseFunction.CheckParams(AParamsCount: integer): boolean;
+class function TUpperCaseFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -5604,7 +5604,7 @@ begin
   Result := 'lower_case';
 end;
 
-class function TLowerCaseFunction.CheckParams(AParamsCount: integer): boolean;
+class function TLowerCaseFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -5621,7 +5621,7 @@ begin
   Result := 'resembles';
 end;
 
-class function TResemblesFunction.CheckParams(AParamsCount: integer): boolean;
+class function TResemblesFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 2);
 end;
@@ -5638,7 +5638,7 @@ begin
   Result := 'contains';
 end;
 
-class function TContainsFunction.CheckParams(AParamsCount: integer): boolean;
+class function TContainsFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount >= 2) and (AParamsCount <= 3);
 end;
@@ -5646,10 +5646,10 @@ end;
 class function TContainsFunction.Evaluate(AParams: array of TVariableRecord): TVariableRecord;
 var
   VR: TVariableRecord;
-  CaseSensitive: boolean;
+  CaseSensitive: Boolean;
 begin
   VR := GetParam(2, AParams);
-  if VR.IsNull then CaseSensitive := false else CaseSensitive := VR.ToBool;
+  if VR.IsNull then CaseSensitive := False else CaseSensitive := VR.ToBool;
 
   if CaseSensitive then
     Result := AnsiContainsStr(GetParam(0, AParams).ToString, GetParam(1, AParams).ToString)
@@ -5664,7 +5664,7 @@ begin
   Result := 'stars';
 end;
 
-class function TStartsFunction.CheckParams(AParamsCount: integer): boolean;
+class function TStartsFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount >= 2) and (AParamsCount <= 3);
 end;
@@ -5672,10 +5672,10 @@ end;
 class function TStartsFunction.Evaluate(AParams: array of TVariableRecord): TVariableRecord;
 var
   VR: TVariableRecord;
-  CaseSensitive: boolean;
+  CaseSensitive: Boolean;
 begin
   VR := GetParam(2, AParams);
-  if VR.IsNull then CaseSensitive := false else CaseSensitive := VR.ToBool;
+  if VR.IsNull then CaseSensitive := False else CaseSensitive := VR.ToBool;
 
   if CaseSensitive then
     Result := AnsiStartsStr(GetParam(1, AParams).ToString, GetParam(0, AParams).ToString)
@@ -5690,7 +5690,7 @@ begin
   Result := 'ends';
 end;
 
-class function TEndsFunction.CheckParams(AParamsCount: integer): boolean;
+class function TEndsFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount >= 2) and (AParamsCount <= 3);
 end;
@@ -5698,10 +5698,10 @@ end;
 class function TEndsFunction.Evaluate(AParams: array of TVariableRecord): TVariableRecord;
 var
   VR: TVariableRecord;
-  CaseSensitive: boolean;
+  CaseSensitive: Boolean;
 begin
   VR := GetParam(2, AParams);
-  if VR.IsNull then CaseSensitive := false else CaseSensitive := VR.ToBool;
+  if VR.IsNull then CaseSensitive := False else CaseSensitive := VR.ToBool;
 
   if CaseSensitive then
     Result := AnsiEndsStr(GetParam(1, AParams).ToString, GetParam(0, AParams).ToString)
@@ -5716,7 +5716,7 @@ begin
   Result := 'replace';
 end;
 
-class function TReplaceFunction.CheckParams(AParamsCount: integer): boolean;
+class function TReplaceFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount >= 3) and (AParamsCount <= 4);
 end;
@@ -5724,10 +5724,10 @@ end;
 class function TReplaceFunction.Evaluate(AParams: array of TVariableRecord): TVariableRecord;
 var
   VR: TVariableRecord;
-  CaseSensitive: boolean;
+  CaseSensitive: Boolean;
 begin
   VR := GetParam(3, AParams);
-  if VR.IsNull then CaseSensitive := false else CaseSensitive := VR.ToBool;
+  if VR.IsNull then CaseSensitive := False else CaseSensitive := VR.ToBool;
 
   if CaseSensitive then
     Result := AnsiReplaceStr(GetParam(0, AParams).ToString,
@@ -5746,7 +5746,7 @@ begin
   Result := 'float_format';
 end;
 
-class function TFloatFormatFunction.CheckParams(AParamsCount: integer): boolean;
+class function TFloatFormatFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount >= 1) and (AParamsCount <= 2);
 end;
@@ -5772,7 +5772,7 @@ begin
   Result := 'ifthen';
 end;
 
-class function TIfThenFunction.CheckParams(AParamsCount: integer): boolean;
+class function TIfThenFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 3);
 end;
@@ -5792,7 +5792,7 @@ begin
   Result := 'date_format';
 end;
 
-class function TDateFormatFunction.CheckParams(AParamsCount: integer): boolean;
+class function TDateFormatFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount >= 1) and (AParamsCount <= 2);
 end;
@@ -5856,7 +5856,7 @@ begin
   Result := 'full_years';
 end;
 
-class function TFullYearsFunction.CheckParams(AParamsCount: integer): boolean;
+class function TFullYearsFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount >= 1) and (AParamsCount <= 2);
 end;
@@ -5866,7 +5866,7 @@ var
 	V1, V2: TVariableRecord;
   DLFrom, DLTo: TDateRecord;
   DT: TDateTime;
-  Years: integer;
+  Years: Integer;
 begin
 	V1 := GetParam(0, AParams);
   case V1.VarType of
@@ -5949,7 +5949,7 @@ begin
   Result := 'year_of';
 end;
 
-class function TYearOfFunction.CheckParams(AParamsCount: integer): boolean;
+class function TYearOfFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -5995,7 +5995,7 @@ begin
   Result := 'month_of';
 end;
 
-class function TMonthOfFunction.CheckParams(AParamsCount: integer): boolean;
+class function TMonthOfFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -6041,7 +6041,7 @@ begin
   Result := 'day_of';
 end;
 
-class function TDayOfFunction.CheckParams(AParamsCount: integer): boolean;
+class function TDayOfFunction.CheckParams(AParamsCount: Integer): Boolean;
 begin
 	Result := (AParamsCount = 1);
 end;
@@ -6085,7 +6085,7 @@ end;
 
 function TTemplateActions.Execute: string;
 var
-  I: integer;
+  I: Integer;
 begin
   Result := '';
   if Count > 0 then
@@ -6101,18 +6101,18 @@ begin
   FEngine := AEngine;
 end;
 
-class function TTemplateAction.IsComment(var ACommand: string): boolean;
+class function TTemplateAction.IsComment(var ACommand: string): Boolean;
 begin
 	if (ACommand[1] = '*') and (ACommand[Length(ACommand)] = '*') then
-  	Result := true
+  	Result := True
   else begin
-  	Result := false;
+  	Result := False;
   	ACommand := SmartyTrim(ACommand);
   end;
 end;
 
 class function TTemplateAction.IsTag(const ATag: string; const ACommand: string;
-	 AOnlyTag: boolean = false): boolean;
+	 AOnlyTag: Boolean = False): Boolean;
 begin
 	if AOnlyTag then
   	Result := CompareText(ATag, ACommand) = 0
@@ -6121,55 +6121,55 @@ begin
 end;
 
 class function TTemplateAction.IsTagAndGetCommand(const ATag: string;
-	var ACommand: string): boolean;
+	var ACommand: string): Boolean;
 begin
 	if CompareText(ATag, ACommand) = 0 then
   begin
-  	Result := true;
+  	Result := True;
     ACommand := '';
   end
   else if StartsWithSpace(ATag, ACommand) then
   begin
-  	Result := true;
+  	Result := True;
     Delete(ACommand, 1, Length(ATag) + 1);
   end
   else
-  	Result := false;
+  	Result := False;
 end;
 
 class function TTemplateAction.IsExitCommand(const ACommand: string;
-	ABreakAction: TNestAction): boolean;
+	ABreakAction: TNestAction): Boolean;
 begin
 	//IF Tags
-  if IsTag('/if', ACommand, true) or
-  	IsTag('else', ACommand, true) or IsTag('elseif', ACommand) or
+  if IsTag('/if', ACommand, True) or
+  	IsTag('else', ACommand, True) or IsTag('elseif', ACommand) or
     IsTag('elseifdef', ACommand) or IsTag('elseifndef', ACommand) or
     IsTag('elseifempty', ACommand) or IsTag('elseifnempty', ACommand) then
   begin
-  	Result := true;
+  	Result := True;
   	if ABreakAction <> naIf then
     	raise ESmartyException.CreateResFmt(@sInvalidIfCommand, [ACommand]);
   end
   //ForEach Tags
-	else if IsTag('/foreach', ACommand, true) or IsTag('foreachelse', ACommand, true) then
+	else if IsTag('/foreach', ACommand, True) or IsTag('foreachelse', ACommand, True) then
   begin
-  	Result := true;
+  	Result := True;
   	if ABreakAction <> naForEach then
     	raise ESmartyException.CreateResFmt(@sInvalidForEachCommand, [ACommand]);
   end
   else
-  	Result := false;
+  	Result := False;
 end;
 
 class function TTemplateAction.ParseFunction(ACommand: string): TStringList;
 var
-  I: integer;
-  InQuotes: boolean;
+  I: Integer;
+  InQuotes: Boolean;
 	Attribute: string;
-  Ch: char;
+  Ch: Char;
 begin
 	Result := TStringList.Create;
-  InQuotes := false;
+  InQuotes := False;
 	ACommand := SmartyTrim(ACommand);
   I := 1;
   Attribute := '';
@@ -6183,12 +6183,12 @@ begin
     	if InQuotes then
       begin
       	if not (GetChar(ACommand, I) = '"') then
-        	InQuotes := false
+        	InQuotes := False
         else
         	Inc(I);
       end
       else
-      	InQuotes := true
+      	InQuotes := True
     else if IsSpace(Ch) and not InQuotes then
     begin
     	Attribute := SmartyTrim(Attribute);
@@ -6222,17 +6222,17 @@ end;
 class procedure TTemplateAction.CheckFunction(ACommand: TStringList;
 	AValid: array of string);
 var
-	I, J: integer;
+	I, J: Integer;
   ACounts: array of byte;
   Name, Value: string;
-  Found: boolean;
+  Found: Boolean;
 begin
 	SetLength(ACounts, High(AValid) + 1);
 
 	for I := 0 to ACommand.Count - 1 do
   begin
   	ExtractFunctionItem(ACommand, I, Name, Value);
-    Found := false;
+    Found := False;
     for J := 0 to High(AValid) do
     	if CompareText(AValid[J], Name) = 0 then
       begin
@@ -6240,7 +6240,7 @@ begin
         	raise ESmartyException.CreateResFmt(@sDuplicateAttribute, [Name])
         else
         	ACounts[J] := 1;
-        Found := true;
+        Found := True;
         Break;
       end;
 
@@ -6252,7 +6252,7 @@ end;
 class function TTemplateAction.GetAttributeValue(ACommand: TStringList;
 	AAtribute: string; ADefault: string = ''): string;
 var
-	I: integer;
+	I: Integer;
   Name, Value: string;
 begin
 	for I := 0 to ACommand.Count - 1 do
@@ -6271,10 +6271,10 @@ begin
 end;
 
 class procedure TTemplateAction.ExtractFunctionItem(ACommand: TStringList;
-	Index: integer; var Name, Value: string);
+	Index: Integer; var Name, Value: string);
 var
 	S: string;
-  I: integer;
+  I: Integer;
 begin
 	S := ACommand[Index];
   I := Pos('=', S);
@@ -6291,18 +6291,18 @@ end;
 
 class procedure TTemplateAction.ParseVariable(AVariable: string; AVarList: TVarList);
 var
-	I, J: integer;
+	I, J: Integer;
   S: string;
-  Ch: char;
-  InArrayIndex, SkipNextDot: boolean;
+  Ch: Char;
+  InArrayIndex, SkipNextDot: Boolean;
   Part: TVariablePart;
 begin
   AVariable := AnsiUpperCase(AVariable);
 
   I := 1;
   S := '';
-  InArrayIndex := false;
-  SkipNextDot := false;
+  InArrayIndex := False;
+  SkipNextDot := False;
 
   while I <= Length(AVariable) do
   begin
@@ -6311,7 +6311,7 @@ begin
 
     if SkipNextDot then
     begin
-      SkipNextDot := false;
+      SkipNextDot := False;
       if (Ch = '.') then Continue;
     end;
 
@@ -6319,7 +6319,7 @@ begin
     begin
     	if InArrayIndex then
       	raise ESmartyException.CreateResFmt(@sInvalidArrayIndex, [AVariable]);
-      InArrayIndex := true;
+      InArrayIndex := True;
       if S <> '' then
       begin
       	Part := S;
@@ -6331,8 +6331,8 @@ begin
     begin
     	if not InArrayIndex then
       	raise ESmartyException.CreateResFmt(@sUnpairBrackets, [AVariable]);
-      InArrayIndex := false;
-      SkipNextDot := true;
+      InArrayIndex := False;
+      SkipNextDot := True;
       if TryStrToInt(S, J) then
       begin
       	S := '';
@@ -6364,10 +6364,10 @@ begin
 end;
 
 class procedure TTemplateAction.GetVariableProperties(AEngine: TSmartyEngine;
-	AVariable: string; var Namespace: TNamespaceProvider; var Index: integer;
+	AVariable: string; var Namespace: TNamespaceProvider; var Index: Integer;
   var VarName: string; var AVarList: TVarList);
 var
-  NamespaceIndex: integer;
+  NamespaceIndex: Integer;
   NamespaceName: string;
 begin
   ParseVariable(AVariable, AVarList);
@@ -6420,9 +6420,9 @@ begin
 end;
 
 class function TTemplateAction.IsAction(AEngine: TSmartyEngine;
-	ACommand: string; var AAction: TTemplateAction): boolean;
+	ACommand: string; var AAction: TTemplateAction): Boolean;
 begin
-	Result := false;
+	Result := False;
   AAction := nil;
 end;
 
@@ -6446,7 +6446,7 @@ begin
 end;
 
 class function TRawOutputAction.IsAction(AEngine: TSmartyEngine;
-	ACommand: string; var AAction: TTemplateAction): boolean;
+	ACommand: string; var AAction: TTemplateAction): Boolean;
 begin
 	AAction := nil;
   // { symbol
@@ -6479,7 +6479,7 @@ begin
   inherited Create(AEngine);
   FNamespace := nil;
   FVarDetails := TVarList.Create;
-  FModifiers := TObjectList<TModifierAction>.Create(true);
+  FModifiers := TObjectList<TModifierAction>.Create(True);
   FActionType := tatVariableOutput;
 end;
 
@@ -6492,10 +6492,10 @@ end;
 
 function TVariableOutputAction.Execute: string;
 var
-	I: integer;
+	I: Integer;
   VarRec: TVariableRecord;
   Temp: TVariableRecord;
-  NeedFinalize: boolean;
+  NeedFinalize: Boolean;
 begin
   VarRec := FEngine.GetVariable(FNamespace, FIndex, FVarName, FVarDetails, NeedFinalize);
   try
@@ -6530,19 +6530,19 @@ begin
 end;
 
 class function TVariableOutputAction.IsAction(AEngine: TSmartyEngine;
-	ACommand: string; var AAction: TTemplateAction): boolean;
+	ACommand: string; var AAction: TTemplateAction): Boolean;
 var
-	I, J: integer;
+	I, J: Integer;
   VarAction: TVariableOutputAction;
   Ch: Char;
   Modifier, Variable, Param: string;
   Params: TStringList;
-  InQuote: boolean;
+  InQuote: Boolean;
   MAction: TModifierAction;
 begin
 	if (ACommand[1] = '$') then
   begin
-  	Result := true;
+  	Result := True;
   	VarAction := TVariableOutputAction.Create(AEngine);
     AAction := VarAction;
 
@@ -6601,11 +6601,11 @@ begin
         if Ch = ':' then
         begin
           Params := TStringList.Create;
-          InQuote := false;
+          InQuote := False;
           Param := '';
           Inc(I);
 
-          while true do
+          while True do
           begin
             Ch := GetChar(ACommand, I);
             Inc(I);
@@ -6619,9 +6619,9 @@ begin
                   Inc(I);
                 end
                 else
-                  InQuote := false
+                  InQuote := False
               else
-                InQuote := true;
+                InQuote := True;
             end
             else if (Ch = ':') and not InQuote then
             begin
@@ -6667,7 +6667,7 @@ begin
 		VarAction.SetVariable(AEngine, Variable);
   end
   else begin
-  	Result := false;
+  	Result := False;
     AAction := nil;
   end;
 end;
@@ -6678,7 +6678,7 @@ constructor TFuncOutputAction.Create(AEngine: TSmartyEngine);
 begin
   inherited Create(AEngine);
   FOperation := nil;
-  FModifiers := TObjectList<TModifierAction>.Create(true);
+  FModifiers := TObjectList<TModifierAction>.Create(True);
   FActionType := tatFuncOutput;
 end;
 
@@ -6691,10 +6691,10 @@ end;
 
 function TFuncOutputAction.Execute: string;
 var
-	I: integer;
+	I: Integer;
   VarRec: TVariableRecord;
   Temp: TVariableRecord;
-  NeedFinalize: boolean;
+  NeedFinalize: Boolean;
 begin
   VarRec := FOperation.Evaluate(FEngine, NeedFinalize);
   try
@@ -6723,20 +6723,20 @@ begin
 end;
 
 class function TFuncOutputAction.IsAction(AEngine: TSmartyEngine;
-	ACommand: string; var AAction: TTemplateAction): boolean;
+	ACommand: string; var AAction: TTemplateAction): Boolean;
 var
-	I, J: integer;
+	I, J: Integer;
   FuncAction: TFuncOutputAction;
   Ch: Char;
   FuncParams, Modifiers, Modifier, Param: string;
   FuncClass: TSmartyFunctionClass;
   Params: TStringList;
-  InQuote: boolean;
+  InQuote: Boolean;
   MAction: TModifierAction;
 begin
 	if AEngine.IsFunction(ACommand, FuncClass, FuncParams, Modifiers) then
   begin
-  	Result := true;
+  	Result := True;
   	FuncAction := TFuncOutputAction.Create(AEngine);
     FuncAction.FOperation := TOperation.Parse(AEngine, FuncClass.GetName + '(' + FuncParams + ')');
     AAction := FuncAction;
@@ -6776,11 +6776,11 @@ begin
         if Ch = ':' then
         begin
           Params := TStringList.Create;
-          InQuote := false;
+          InQuote := False;
           Param := '';
           Inc(I);
 
-          while true do
+          while True do
           begin
             Ch := GetChar(Modifiers, I);
             Inc(I);
@@ -6794,9 +6794,9 @@ begin
                   Inc(I);
                 end
                 else
-                  InQuote := false
+                  InQuote := False
               else
-                InQuote := true;
+                InQuote := True;
             end
             else if (Ch = ':') and not InQuote then
             begin
@@ -6840,7 +6840,7 @@ begin
     end;
   end
   else begin
-  	Result := false;
+  	Result := False;
     AAction := nil;
   end;
 end;
@@ -6853,7 +6853,7 @@ type
   	constructor Create; virtual;
     destructor Destroy; override;
   	class function ParseItem(AEngine: TSmartyEngine; const S: string;
-      var Index: integer; var Item: TExpressionItem): boolean; virtual;   //only skip spaces and return false
+      var Index: Integer; var Item: TExpressionItem): Boolean; virtual;   //only skip spaces and return False
     function CreateLink(AEngine: TSmartyEngine): TOperation; virtual;
     function GetLink: TOperation; virtual;
     procedure SetNilLink; virtual;
@@ -6867,10 +6867,10 @@ type
     Link: TOpVariable;
   	constructor Create; override;
     destructor Destroy; override;
-    class function IsItem(const S: string; const Index: integer): boolean;
-    procedure ScanStr(const S: string; var Index: integer);
+    class function IsItem(const S: string; const Index: Integer): Boolean;
+    procedure ScanStr(const S: string; var Index: Integer);
   	class function ParseItem(AEngine: TSmartyEngine; const S: string;
-      var Index: integer;	var Item: TExpressionItem): boolean; override;
+      var Index: Integer;	var Item: TExpressionItem): Boolean; override;
     function CreateLink(AEngine: TSmartyEngine): TOperation; override;
     function GetLink: TOperation; override;
     procedure SetNilLink; override;
@@ -6879,17 +6879,17 @@ type
   {$ENDIF}
   end;
 
-  TIdentifierItem = class (TExpressionItem) //true, false, null, shl, shr, is_null (function name)
+  TIdentifierItem = class (TExpressionItem) //True, False, null, shl, shr, is_null (function name)
 		Name: string;
     Link: TOpFunction;
   	constructor Create; override;
     destructor Destroy; override;
-    class function IsItem(const S: string; const Index: integer): boolean;
-    procedure ScanStr(const S: string; var Index: integer);
+    class function IsItem(const S: string; const Index: Integer): Boolean;
+    procedure ScanStr(const S: string; var Index: Integer);
   	class function ParseItem(AEngine: TSmartyEngine; const S: string;
-      var Index: integer;	var Item: TExpressionItem): boolean; override;
-    function IsConstItem(var Item: TExpressionItem): boolean;
-    function IsOperatorItem(var Item: TExpressionItem): boolean;
+      var Index: Integer;	var Item: TExpressionItem): Boolean; override;
+    function IsConstItem(var Item: TExpressionItem): Boolean;
+    function IsOperatorItem(var Item: TExpressionItem): Boolean;
     function CreateLink(AEngine: TSmartyEngine): TOperation; override;
     function GetLink: TOperation; override;
     procedure SetNilLink; override;
@@ -6899,20 +6899,20 @@ type
   end;
 
   TConstItem = class (TExpressionItem)
-  	NeedFinalize: boolean;
+  	NeedFinalize: Boolean;
   	Value: TVariableRecord;
     Link: TOpConst;
   	constructor Create; override;
     destructor Destroy; override;
-    class function IsNumberItem(const S: string; const Index: integer): boolean;
-    class function IsStringItem(const S: string; const Index: integer): boolean;
-    class function IsDateTimeItem(const S: string; const Index: integer): boolean;
-    class function IsDateLooseItem(const S: string; const Index: integer): boolean;
-    procedure ScanNumberItem(const S: string; var Index: integer);
-    procedure ScanStringItem(const S: string; var Index: integer; AParseEsapces: boolean);
-    procedure ScanDateItem(const S: string; Loose: boolean; var Index: integer);
+    class function IsNumberItem(const S: string; const Index: Integer): Boolean;
+    class function IsStringItem(const S: string; const Index: Integer): Boolean;
+    class function IsDateTimeItem(const S: string; const Index: Integer): Boolean;
+    class function IsDateLooseItem(const S: string; const Index: Integer): Boolean;
+    procedure ScanNumberItem(const S: string; var Index: Integer);
+    procedure ScanStringItem(const S: string; var Index: Integer; AParseEsapces: Boolean);
+    procedure ScanDateItem(const S: string; Loose: Boolean; var Index: Integer);
     class function ParseItem(AEngine: TSmartyEngine; const S: string;
-      var Index: integer;	var Item: TExpressionItem): boolean; override;
+      var Index: Integer;	var Item: TExpressionItem): Boolean; override;
     function CreateLink(AEngine: TSmartyEngine): TOperation; override;
     function GetLink: TOperation; override;
     procedure SetNilLink; override;
@@ -6927,10 +6927,10 @@ type
   	constructor Create; override;
     destructor Destroy; override;
     function GetPrecedence: byte;
-    class function IsItem(const S: string; const Index: integer): boolean;
-    procedure ScanStr(const S: string; var Index: integer);
+    class function IsItem(const S: string; const Index: Integer): Boolean;
+    procedure ScanStr(const S: string; var Index: Integer);
   	class function ParseItem(AEngine: TSmartyEngine; const S: string;
-      var Index: integer;	var Item: TExpressionItem): boolean; override;
+      var Index: Integer;	var Item: TExpressionItem): Boolean; override;
     function GetLink: TOperation; override;
     procedure SetNilLink; override;
   {$IFDEF SMARTYDEBUG}
@@ -6944,10 +6944,10 @@ type
     ParenthesisType: TParenthesisType;
   	constructor Create; override;
     destructor Destroy; override;
-    class function IsItem(const S: string; const Index: integer): boolean;
-    procedure ScanStr(const S: string; var Index: integer);
+    class function IsItem(const S: string; const Index: Integer): Boolean;
+    procedure ScanStr(const S: string; var Index: Integer);
   	class function ParseItem(AEngine: TSmartyEngine; const S: string;
-      var Index: integer;	var Item: TExpressionItem): boolean; override;
+      var Index: Integer;	var Item: TExpressionItem): Boolean; override;
 		function GetLink: TOperation; override;
     procedure SetNilLink; override;
   {$IFDEF SMARTYDEBUG}
@@ -6960,7 +6960,7 @@ type
   	constructor Create; override;
     destructor Destroy; override;
   	class function ParseItem(AEngine: TSmartyEngine; const S: string;
-      var Index: integer;	var Item: TExpressionItem): boolean; override;
+      var Index: Integer;	var Item: TExpressionItem): Boolean; override;
 		function GetLink: TOperation; override;
     procedure SetNilLink; override;
   {$IFDEF SMARTYDEBUG}
@@ -6981,9 +6981,9 @@ begin
 end;
 
 class function TExpressionItem.ParseItem(AEngine: TSmartyEngine; const S: string;
-  var Index: integer; var Item: TExpressionItem): boolean;
+  var Index: Integer; var Item: TExpressionItem): Boolean;
 var
-	Ch: char;
+	Ch: Char;
 begin
 	Ch := GetChar(S, Index);
 	while IsSpace(Ch) and not (Ch = #0) do
@@ -6991,7 +6991,7 @@ begin
   	Inc(Index);
     Ch := GetChar(S, Index);
   end;
-	Result := false;
+	Result := False;
 end;
 
 function TExpressionItem.CreateLink(AEngine: TSmartyEngine): TOperation;
@@ -7029,14 +7029,14 @@ begin
   inherited Destroy;
 end;
 
-class function TVariableItem.IsItem(const S: string; const Index: integer): boolean;
+class function TVariableItem.IsItem(const S: string; const Index: Integer): Boolean;
 begin
 	Result := GetChar(S, Index) = '$';
 end;
 
-procedure TVariableItem.ScanStr(const S: string; var Index: integer);
+procedure TVariableItem.ScanStr(const S: string; var Index: Integer);
 var
-	Ch: char;
+	Ch: Char;
 begin
 	Inc(Index);
   Ch := GetChar(S, Index);
@@ -7050,7 +7050,7 @@ begin
 end;
 
 class function TVariableItem.ParseItem(AEngine: TSmartyEngine; const S: string;
-  var Index: integer; var Item: TExpressionItem): boolean;
+  var Index: Integer; var Item: TExpressionItem): Boolean;
 begin
 	inherited;
 
@@ -7101,14 +7101,14 @@ begin
   inherited Destroy;
 end;
 
-class function TIdentifierItem.IsItem(const S: string; const Index: integer): boolean;
+class function TIdentifierItem.IsItem(const S: string; const Index: Integer): Boolean;
 begin
 	Result := CharInSet(GetChar(S, Index), ['A'..'Z','a'..'z','_']);
 end;
 
-procedure TIdentifierItem.ScanStr(const S: string; var Index: integer);
+procedure TIdentifierItem.ScanStr(const S: string; var Index: Integer);
 var
-	Ch: char;
+	Ch: Char;
 begin
   Name := GetChar(S, Index);
 	Inc(Index);
@@ -7122,7 +7122,7 @@ begin
 end;
 
 class function TIdentifierItem.ParseItem(AEngine: TSmartyEngine; const S: string;
-  var Index: integer; var Item: TExpressionItem): boolean;
+  var Index: Integer; var Item: TExpressionItem): Boolean;
 begin
 	inherited;
 
@@ -7134,7 +7134,7 @@ begin
   end;
 end;
 
-function TIdentifierItem.IsConstItem(var Item: TExpressionItem): boolean;
+function TIdentifierItem.IsConstItem(var Item: TExpressionItem): Boolean;
 
 	procedure CreateConstItem(Value: TVariableRecord);
   begin
@@ -7143,14 +7143,14 @@ function TIdentifierItem.IsConstItem(var Item: TExpressionItem): boolean;
   end;
 
 begin
-	Result := true;
-	if CompareText('true', Name) = 0 then CreateConstItem(true)
-  else if CompareText('false', Name) = 0 then CreateConstItem(false)
+	Result := True;
+	if CompareText('true', Name) = 0 then CreateConstItem(True)
+  else if CompareText('false', Name) = 0 then CreateConstItem(False)
   else if CompareText('null', Name) = 0 then CreateConstItem(TVariableRecord.Null)
-  else Result := false;
+  else Result := False;
 end;
 
-function TIdentifierItem.IsOperatorItem(var Item: TExpressionItem): boolean;
+function TIdentifierItem.IsOperatorItem(var Item: TExpressionItem): Boolean;
 
 	procedure CreateOperatorItem(Value: TOperator);
   begin
@@ -7159,7 +7159,7 @@ function TIdentifierItem.IsOperatorItem(var Item: TExpressionItem): boolean;
   end;
 
 begin
-	Result := true;
+	Result := True;
 	if CompareText('eq', Name) = 0 then CreateOperatorItem(opEq)
   else if CompareText('ne', Name) = 0 then CreateOperatorItem(opNeq)
   else if CompareText('neq', Name) = 0 then CreateOperatorItem(opNeq)
@@ -7180,7 +7180,7 @@ begin
   else if CompareText('bitand', Name) = 0 then CreateOperatorItem(opBitwiseAnd)
   else if CompareText('bitor', Name) = 0 then CreateOperatorItem(opBitwiseOr)
   else if CompareText('xor', Name) = 0 then CreateOperatorItem(opBitwiseXor)
-  else Result := false;
+  else Result := False;
 end;
 
 function TIdentifierItem.CreateLink(AEngine: TSmartyEngine): TOperation;
@@ -7216,7 +7216,7 @@ constructor TConstItem.Create;
 begin
 	inherited Create;
   Link := nil;
-  NeedFinalize := true;
+  NeedFinalize := True;
 end;
 
 destructor TConstItem.Destroy;
@@ -7228,39 +7228,39 @@ begin
   inherited Destroy;
 end;
 
-class function TConstItem.IsNumberItem(const S: string; const Index: integer): boolean;
+class function TConstItem.IsNumberItem(const S: string; const Index: Integer): Boolean;
 var
-	Ch: char;
+	Ch: Char;
 begin
 	Ch := GetChar(S, Index);
 	Result := CharInSet(Ch, ['0'..'9','.']) or
   	(((Ch = '+') or (Ch = '-')) and CharInSet(GetChar(S, Index + 1), ['0'..'9','.']));
 end;
 
-class function TConstItem.IsStringItem(const S: string; const Index: integer): boolean;
+class function TConstItem.IsStringItem(const S: string; const Index: Integer): Boolean;
 begin
 	Result := GetChar(S, Index) = '"';
 end;
 
-class function TConstItem.IsDateTimeItem(const S: string; const Index: integer): boolean;
+class function TConstItem.IsDateTimeItem(const S: string; const Index: Integer): Boolean;
 begin
 	Result := (GetChar(S, Index) = 'D') and (GetChar(S, Index + 1) = '"');
 end;
 
-class function TConstItem.IsDateLooseItem(const S: string; const Index: integer): boolean;
+class function TConstItem.IsDateLooseItem(const S: string; const Index: Integer): Boolean;
 begin
 	Result := (GetChar(S, Index) = 'L') and (GetChar(S, Index + 1) = '"');
 end;
 
-procedure TConstItem.ScanNumberItem(const S: string; var Index: integer);
+procedure TConstItem.ScanNumberItem(const S: string; var Index: Integer);
 var
 	Str: string;
-  IntConst: boolean;
-  Ch: char;
-	I, J: integer;
-  D: double;
+  IntConst: Boolean;
+  Ch: Char;
+	I, J: Integer;
+  D: Double;
 begin
-	IntConst := true;
+	IntConst := True;
 	Str := GetChar(S, Index);
 	Inc(Index);
   Ch := GetChar(S, Index);
@@ -7273,7 +7273,7 @@ begin
 
   if Ch = '.' then
   begin
-  	IntConst := false;
+  	IntConst := False;
   	Str := Str + Ch;
 		Inc(Index);
   	Ch := GetChar(S, Index);
@@ -7288,7 +7288,7 @@ begin
 
   if CharInSet(Ch, ['e', 'E']) then
   begin
-  	IntConst := false;
+  	IntConst := False;
   	Str := Str + Ch;
 		Inc(Index);
   	Ch := GetChar(S, Index);
@@ -7325,11 +7325,11 @@ begin
   end;
 end;
 
-procedure TConstItem.ScanStringItem(const S: string; var Index: integer;
-  AParseEsapces: boolean);
+procedure TConstItem.ScanStringItem(const S: string; var Index: Integer;
+  AParseEsapces: Boolean);
 var
 	Str: string;
-  Ch: char;
+  Ch: Char;
 begin
 	Inc(Index);
   Ch := GetChar(S, Index);
@@ -7362,9 +7362,9 @@ begin
     Value := Str;
 end;
 
-procedure TConstItem.ScanDateItem(const S: string; Loose: boolean; var Index: integer);
+procedure TConstItem.ScanDateItem(const S: string; Loose: Boolean; var Index: Integer);
 var
-	I: integer;
+	I: Integer;
   Str: string;
 begin
 	Inc(Index, 2);
@@ -7386,11 +7386,11 @@ begin
 end;
 
 class function TConstItem.ParseItem(AEngine: TSmartyEngine; const S: string;
-  var Index: integer; var Item: TExpressionItem): boolean;
+  var Index: Integer; var Item: TExpressionItem): Boolean;
 begin
 	inherited;
 
-  Result := true;
+  Result := True;
   if IsNumberItem(S, Index) then
   begin
   	Item := TConstItem.Create;
@@ -7404,15 +7404,15 @@ begin
 	else if IsDateTimeItem(S, Index) then
   begin
   	Item := TConstItem.Create;
-    TConstItem(Item).ScanDateItem(S, false, Index);
+    TConstItem(Item).ScanDateItem(S, False, Index);
   end
 	else if IsDateLooseItem(S, Index) then
   begin
   	Item := TConstItem.Create;
-    TConstItem(Item).ScanDateItem(S, true, Index);
+    TConstItem(Item).ScanDateItem(S, True, Index);
   end
 	else
-  	Result := false;
+  	Result := False;
 end;
 
 function TConstItem.CreateLink(AEngine: TSmartyEngine): TOperation;
@@ -7430,7 +7430,7 @@ end;
 procedure TConstItem.SetNilLink;
 begin
 	Link := nil;
-  NeedFinalize := false;
+  NeedFinalize := False;
 end;
 
 {$IFDEF SMARTYDEBUG}
@@ -7460,18 +7460,18 @@ begin
 end;
 
 class function TOperatorItem.IsItem(const S: string;
-	const Index: integer): boolean;
+	const Index: Integer): Boolean;
 var
-	Ch: char;
+	Ch: Char;
 begin
 	Ch := GetChar(S, Index);
 	Result := CharInSet(Ch, ['!', '<', '>', '+', '-', '*', '/', '\', '%',
   	'=', '&', '|', '~', '^']);
 end;
 
-procedure TOperatorItem.ScanStr(const S: string; var Index: integer);
+procedure TOperatorItem.ScanStr(const S: string; var Index: Integer);
 var
-	Ch: char;
+	Ch: Char;
 begin
 	Ch := GetChar(S, Index);
   Inc(Index);
@@ -7553,7 +7553,7 @@ begin
 end;
 
 class function TOperatorItem.ParseItem(AEngine: TSmartyEngine; const S: string;
-  var Index: integer; var Item: TExpressionItem): boolean;
+  var Index: Integer; var Item: TExpressionItem): Boolean;
 begin
 	inherited;
 
@@ -7641,17 +7641,17 @@ begin
   inherited Destroy;
 end;
 
-class function TParenthesisItem.IsItem(const S: string; const Index: integer): boolean;
+class function TParenthesisItem.IsItem(const S: string; const Index: Integer): Boolean;
 var
-	Ch: char;
+	Ch: Char;
 begin
 	Ch := GetChar(S, Index);
 	Result := (Ch = '(') or (Ch = ')') or (Ch = ',');
 end;
 
-procedure TParenthesisItem.ScanStr(const S: string; var Index: integer);
+procedure TParenthesisItem.ScanStr(const S: string; var Index: Integer);
 var
-	Ch: char;
+	Ch: Char;
 begin
 	Ch := GetChar(S, Index);
 	if Ch = '(' then ParenthesisType := ptOpen
@@ -7661,7 +7661,7 @@ begin
 end;
 
 class function TParenthesisItem.ParseItem(AEngine: TSmartyEngine; const S: string;
-  var Index: integer; var Item: TExpressionItem): boolean;
+  var Index: Integer; var Item: TExpressionItem): Boolean;
 begin
 	inherited;
 
@@ -7713,9 +7713,9 @@ begin
 end;
 
 class function TOpItem.ParseItem(AEngine: TSmartyEngine; const S: string;
-  var Index: integer; var Item: TExpressionItem): boolean;
+  var Index: Integer; var Item: TExpressionItem): Boolean;
 begin
-	Result := false;
+	Result := False;
 end;
 
 function TOpItem.GetLink: TOperation;
@@ -7747,7 +7747,7 @@ class function TOperation.Parse(AEngine: TSmartyEngine; S: string): TOperation;
   {$IFDEF SMARTYDEBUG}
   procedure ShowExpr(AExpr: TObjectList<TExpressionItem>);
   var
-  	I: integer;
+  	I: Integer;
     Str: string;
   begin
     Str := '';
@@ -7757,17 +7757,17 @@ class function TOperation.Parse(AEngine: TSmartyEngine; S: string): TOperation;
   end;
   {$ENDIF}
 
-  procedure TransferTo(AFrom, ATo: TObjectList<TExpressionItem>; AIndex: integer);
+  procedure TransferTo(AFrom, ATo: TObjectList<TExpressionItem>; AIndex: Integer);
   begin
   	ATo.Add(AFrom[AIndex]);
-    AFrom.OwnsObjects := false;
+    AFrom.OwnsObjects := False;
     AFrom.Delete(AIndex);
-    AFrom.OwnsObjects := true;
+    AFrom.OwnsObjects := True;
   end;
 
   function AnalyzeParseData(Data: TObjectList<TExpressionItem>): TOperation;
   var
-  	I, J, Stack: integer;
+  	I, J, Stack: Integer;
     EItem, LItem, RItem: TExpressionItem;
     IdItem: TIdentifierItem;
     PnItem: TParenthesisItem;
@@ -7999,7 +7999,7 @@ class function TOperation.Parse(AEngine: TSmartyEngine; S: string): TOperation;
   end;
 
 var
-	Index: integer;
+	Index: Integer;
   Item, Item2: TExpressionItem;
   Expr: TObjectList<TExpressionItem>;
 
@@ -8056,7 +8056,7 @@ begin
   inherited Destroy;
 end;
 
-function TOpVariable.Evaluate(AEngine: TSmartyEngine; var NeedFinalize: boolean): TVariableRecord;
+function TOpVariable.Evaluate(AEngine: TSmartyEngine; var NeedFinalize: Boolean): TVariableRecord;
 begin
 	Result := AEngine.GetVariable(FNamespace, FIndex, FVarName, FVarDetails, NeedFinalize);
 end;
@@ -8081,10 +8081,10 @@ begin
   inherited Destroy;
 end;
 
-function TOpConst.Evaluate(AEngine: TSmartyEngine; var NeedFinalize: boolean): TVariableRecord;
+function TOpConst.Evaluate(AEngine: TSmartyEngine; var NeedFinalize: Boolean): TVariableRecord;
 begin
 	Result := FValue;
-  NeedFinalize := false;
+  NeedFinalize := False;
 end;
 
 {$IFDEF SMARTYDEBUG}
@@ -8109,11 +8109,11 @@ begin
   inherited Destroy;
 end;
 
-function TOpFunction.Evaluate(AEngine: TSmartyEngine; var NeedFinalize: boolean): TVariableRecord;
+function TOpFunction.Evaluate(AEngine: TSmartyEngine; var NeedFinalize: Boolean): TVariableRecord;
 var
 	VarArray: array of TVariableRecord;
-  FinArray: array of boolean;
-  I: integer;
+  FinArray: array of Boolean;
+  I: Integer;
 begin
   if Assigned(FFuncClass) then
   begin
@@ -8133,14 +8133,14 @@ begin
   end
   else begin
     Result := TVariableRecord.Null;
-    NeedFinalize := false;
+    NeedFinalize := False;
   end;
 end;
 
 {$IFDEF SMARTYDEBUG}
 function TOpFunction.AsString: string;
 var
-	I: integer;
+	I: Integer;
 begin
 	Result := ' ' + FFuncClass.GetName + '(';
   for I := 0 to FParams.Count - 1 do
@@ -8167,13 +8167,13 @@ begin
   inherited Destroy;
 end;
 
-function TOpOperator.Evaluate(AEngine: TSmartyEngine; var NeedFinalize: boolean): TVariableRecord;
+function TOpOperator.Evaluate(AEngine: TSmartyEngine; var NeedFinalize: Boolean): TVariableRecord;
 var
   LeftVar, RightVar: TVariableRecord;
-  LeftFinalize, RightFinalize: boolean;
+  LeftFinalize, RightFinalize: Boolean;
 begin
-  LeftFinalize := false;
-  RightFinalize := false;
+  LeftFinalize := False;
+  RightFinalize := False;
 	if not (FOperator in [opLogicalNot, opBitwiseNot]) then
   	LeftVar := FLeftOp.Evaluate(AEngine, LeftFinalize);
   RightVar := FRightOp.Evaluate(AEngine, RightFinalize);
@@ -8319,10 +8319,10 @@ begin
 	inherited Destroy;
 end;
 
-function TSimpleIf.Evaluate: boolean;
+function TSimpleIf.Evaluate: Boolean;
 var
 	VarRec: TVariableRecord;
-  NeedFinalize: boolean;
+  NeedFinalize: Boolean;
 begin
 	if Assigned(FOperation) then
   begin
@@ -8332,7 +8332,7 @@ begin
 
   end
   else
-  	Result := false;
+  	Result := False;
 end;
 
 {************* TVariableIf *************}
@@ -8356,11 +8356,11 @@ begin
 	inherited Destroy;
 end;
 
-function TVariableIf.Evaluate: boolean;
+function TVariableIf.Evaluate: Boolean;
 var
   VarRec: TVariableRecord;
   ArrayData: PVariableArray;
-  NeedFinalize: boolean;
+  NeedFinalize: Boolean;
 begin
 	VarRec := FEngine.GetVariable(FNamespace, FIndex, FVarName, FVarDetails, NeedFinalize);
   try
@@ -8369,15 +8369,15 @@ begin
       ArrayData := VarRec.AValue;
       case FIfType of
         ifDef:
-        	Result := true;
+        	Result := True;
         ifNDef:
-        	Result := false;
+        	Result := False;
         ifEmpty:
         	Result := (ArrayData.Count > 0);
         ifNEmpty:
         	Result := (ArrayData.Count = 0);
       else
-        Result := false;
+        Result := False;
       end;
     end
     else begin
@@ -8391,7 +8391,7 @@ begin
         ifNEmpty:
         	Result := not VarRec.IsEmpty;
       else
-        Result := false;
+        Result := False;
       end;
     end;
   finally
@@ -8401,7 +8401,7 @@ end;
 
 procedure TVariableIf.SetVariable(AEngine: TSmartyEngine; AVariable: string);
 var
-	I: integer;
+	I: Integer;
 begin
 	AVariable := SmartyTrim(AVariable);
   if (Length(AVariable) > 2) and (AVariable[1] = '$') then
@@ -8427,7 +8427,7 @@ constructor TElseIfAction.Create;
 begin
 	inherited Create;
   FCondition := nil;
-  FActions := TTemplateActions.Create(true);
+  FActions := TTemplateActions.Create(True);
 end;
 
 destructor TElseIfAction.Destroy;
@@ -8447,7 +8447,7 @@ begin
   FCondition := nil;
   FThenActions := TTemplateActions.Create;
   FElseActions := TTemplateActions.Create;
-  FElseIfActions := TElseIfActions.Create(true);
+  FElseIfActions := TElseIfActions.Create(True);
 end;
 
 destructor TIfOutputAction.Destroy;
@@ -8460,11 +8460,11 @@ begin
 end;
 
 function TIfOutputAction.ContinueIf(AEngine: TSmartyEngine; ACommand: string;
-	var AState: integer; var AActions: TTemplateActions): boolean;
+	var AState: Integer; var AActions: TTemplateActions): Boolean;
 var
 	ElseAction: TElseIfAction;
 
-  function AddVarIf(AIfType: TIfType; S: string): boolean;
+  function AddVarIf(AIfType: TIfType; S: string): Boolean;
   begin
   	if AState >= 2 then
    		raise ESmartyException.CreateRes(@sElseIfAfterElseBlock);
@@ -8475,24 +8475,24 @@ var
     ElseAction.FCondition := TVariableIf.CreateIf(AEngine, AIfType);
     TVariableIf(ElseAction.FCondition).SetVariable(AEngine, S);
     AActions := ElseAction.FActions;
-    Result := true;
+    Result := True;
   end;
 
 
 begin
-  if IsTag('/if', ACommand, true) then
+  if IsTag('/if', ACommand, True) then
   begin
   	AState := 3;
     AActions := nil;
-    Result := false;
+    Result := False;
   end
-  else if IsTag('else', ACommand, true) then
+  else if IsTag('else', ACommand, True) then
   begin
     if AState >= 2 then
     	raise ESmartyException.CreateRes(@sElseAfterElseBlock);
     AState := 2;
     AActions := FElseActions;
-    Result := true;
+    Result := True;
   end
   else if IsTagAndGetCommand('elseif', ACommand) then
   begin
@@ -8505,19 +8505,19 @@ begin
     ElseAction.FCondition := TSimpleIf.CreateOperation(AEngine, ACommand);
 
     AActions := ElseAction.FActions;
-    Result := true;
+    Result := True;
   end
   else if IsTagAndGetCommand('elseifdef', ACommand) then Result := AddVarIf(ifDef, ACommand)
   else if IsTagAndGetCommand('elseifndef', ACommand) then Result := AddVarIf(ifNDef, ACommand)
   else if IsTagAndGetCommand('elseifempty', ACommand) then Result := AddVarIf(ifEmpty, ACommand)
   else if IsTagAndGetCommand('elseifnempty', ACommand) then Result := AddVarIf(ifNEmpty, ACommand)
   else
-  	Result := false;
+  	Result := False;
 end;
 
 function TIfOutputAction.Execute: string;
 var
-	I: integer;
+	I: Integer;
 begin
   if FCondition.Evaluate then
     Result := FThenActions.Execute
@@ -8530,7 +8530,7 @@ begin
 end;
 
 class function TIfOutputAction.IsAction(AEngine: TSmartyEngine;
-	ACommand: string; var AAction: TTemplateAction): boolean;
+	ACommand: string; var AAction: TTemplateAction): Boolean;
 
   function AddVarIf(AIfType: TIfType; S: string): TIfOutputAction;
   begin
@@ -8564,7 +8564,7 @@ constructor TForEachOutputAction.Create(AEngine: TSmartyEngine);
 begin
   inherited Create(AEngine);
   FActionType := tatForEach;
-  FNamespaceBased := false;
+  FNamespaceBased := False;
 
   FVarDetails := TVarList.Create;
   FBaseActions := TTemplateActions.Create;
@@ -8582,9 +8582,9 @@ end;
 function TForEachOutputAction.Execute: string;
 var
 	List: TForEachData;
-  I, LMin, LMax: integer;
+  I, LMin, LMax: Integer;
   VarRec: TVariableRecord;
-	NeedFinalize: boolean;
+	NeedFinalize: Boolean;
 begin
   if not FNamespaceBased then
 	  VarRec := FEngine.GetVariable(FNamespace, FIndex, FVarName, FVarDetails, NeedFinalize);
@@ -8593,7 +8593,7 @@ begin
   try
   	List := TForEachData.Create;
     List.Name := FForEachName;
-    List.InForEach := false;
+    List.InForEach := False;
     List.ItemVarName := FVariableName;
     List.KeyVarName := FAssocName;
     List.IsNamespace := FNamespaceBased;
@@ -8630,7 +8630,7 @@ begin
     try
       if List.Show then
       begin
-        List.InForEach := true;
+        List.InForEach := True;
 
         for I := 1 to List.Total do
         begin
@@ -8643,7 +8643,7 @@ begin
       else
         Result := FElseActions.Execute;
     finally
-       List.InForEach := false;
+       List.InForEach := False;
        FEngine.FSmartyNamespace.FForEachList.ExitForEach;
     end;
   finally
@@ -8652,36 +8652,36 @@ begin
 end;
 
 function TForEachOutputAction.ContinueForEach(AEngine: TSmartyEngine;
-	ACommand: string; var AState: integer; var AActions: TTemplateActions): boolean;
+	ACommand: string; var AState: Integer; var AActions: TTemplateActions): Boolean;
 begin
-  if IsTag('/foreach', ACommand, true) then
+  if IsTag('/foreach', ACommand, True) then
   begin
   	AState := 2;
     AActions := nil;
-    Result := false;
+    Result := False;
   end
-  else if IsTag('foreachelse', ACommand, true) then
+  else if IsTag('foreachelse', ACommand, True) then
   begin
     if AState >= 2 then
     	raise ESmartyException.CreateRes(@sForEachElseAfterBlockEnd);
     AState := 1;
     AActions := FElseActions;
-    Result := true;
+    Result := True;
   end
   else
-  	Result := false;
+  	Result := False;
 end;
 
 class function TForEachOutputAction.IsAction(AEngine: TSmartyEngine;
-	ACommand: string;	var AAction: TTemplateAction): boolean;
+	ACommand: string;	var AAction: TTemplateAction): Boolean;
 var
 	SL: TStringList;
   S, VarName: string;
-  I, NamespaceIndex: integer;
+  I, NamespaceIndex: Integer;
   NamespaceProvider: TNamespaceProvider;
 begin
 	AAction := nil;
-  Result := false;
+  Result := False;
 	if IsTagAndGetCommand('foreach', ACommand) then
   begin
   	SL := ParseFunction(ACommand);
@@ -8689,7 +8689,7 @@ begin
     	CheckFunction(SL, ['from', 'item', 'key', 'name', 'maxitems']);
       AAction := TForEachOutputAction.Create(AEngine);
 
-      TForEachOutputAction(AAction).FNamespaceBased := false;
+      TForEachOutputAction(AAction).FNamespaceBased := False;
       TForEachOutputAction(AAction).FForEachName := GetAttributeValue(SL, 'name');
       TForEachOutputAction(AAction).FVariableName := GetAttributeValue(SL, 'item', 'item');
       TForEachOutputAction(AAction).FAssocName := GetAttributeValue(SL, 'key', 'key');
@@ -8724,7 +8724,7 @@ begin
               //namespace foreach
               FNamespace := NamespaceProvider;
               FVarName := '';
-              FNamespaceBased := true;
+              FNamespaceBased := True;
             end;
           end;
         end;
@@ -8733,7 +8733,7 @@ begin
       SL.Free;
     end;
 
-  	Result := true;
+  	Result := True;
   end;
 end;
 
@@ -8758,17 +8758,17 @@ end;
 function TCaptureArrayAction.Execute: string;
 var
   VarRec, NewVar, ResVar: TVariableRecord;
-	NeedFinalize, NeedResFinalize, Include: boolean;
+	NeedFinalize, NeedResFinalize, Include: Boolean;
   ARec: PVariableArray;
   I: Integer;
-  Indexes: TList<integer>;
+  Indexes: TList<Integer>;
 begin
   VarRec := FEngine.GetVariable(FNamespace, FIndex, FVarName, FVarDetails, NeedFinalize);
   try
     if VarRec.IsArray then
     begin
       ARec := VarRec.AValue;
-      Indexes := TList<integer>.Create;
+      Indexes := TList<Integer>.Create;
       try
         FEngine.FSmartyNamespace.FActiveCapture.Enter(FItemName, 0, ARec);
         try
@@ -8784,7 +8784,7 @@ begin
               end;
             end
             else
-              Include := true;
+              Include := True;
 
             if Include then Indexes.Add(I);
             FEngine.FSmartyNamespace.FActiveCapture.IncIndex;
@@ -8821,13 +8821,13 @@ begin
 end;
 
 class function TCaptureArrayAction.IsAction(AEngine: TSmartyEngine;
-  ACommand: string; var AAction: TTemplateAction): boolean;
+  ACommand: string; var AAction: TTemplateAction): Boolean;
 var
 	SL: TStringList;
   VarName, S: string;
 begin
 	AAction := nil;
-  Result := false;
+  Result := False;
 	if IsTagAndGetCommand('capturearray', ACommand) then
   begin
   	SL := ParseFunction(ACommand);
@@ -8856,7 +8856,7 @@ begin
       SL.Free;
     end;
 
-  	Result := true;
+  	Result := True;
   end;
 end;
 
@@ -8881,12 +8881,12 @@ begin
 end;
 
 class function TReleaseArrayAction.IsAction(AEngine: TSmartyEngine;
-  ACommand: string; var AAction: TTemplateAction): boolean;
+  ACommand: string; var AAction: TTemplateAction): Boolean;
 var
 	SL: TStringList;
 begin
 	AAction := nil;
-  Result := false;
+  Result := False;
 	if IsTagAndGetCommand('releasearray', ACommand) then
   begin
   	SL := ParseFunction(ACommand);
@@ -8898,7 +8898,7 @@ begin
       SL.Free;
     end;
 
-  	Result := true;
+  	Result := True;
   end;
 end;
 
@@ -8920,7 +8920,7 @@ end;
 function TAssignAction.Execute: string;
 var
   VarValue: TVariableRecord;
-	NeedFinalize: boolean;
+	NeedFinalize: Boolean;
 begin
   if Assigned(FValue) then
   begin
@@ -8932,13 +8932,13 @@ begin
 end;
 
 class function TAssignAction.IsAction(AEngine: TSmartyEngine;
-  ACommand: string; var AAction: TTemplateAction): boolean;
+  ACommand: string; var AAction: TTemplateAction): Boolean;
 var
 	SL: TStringList;
   S: string;
 begin
 	AAction := nil;
-  Result := false;
+  Result := False;
 
   //long assign form
 	if IsTagAndGetCommand('assign', ACommand) then
@@ -8956,7 +8956,7 @@ begin
       SL.Free;
     end;
 
-  	Result := true;
+  	Result := True;
   end
   //short assign form
   else begin
@@ -8984,12 +8984,12 @@ begin
 end;
 
 class function TReleaseAction.IsAction(AEngine: TSmartyEngine;
-  ACommand: string; var AAction: TTemplateAction): boolean;
+  ACommand: string; var AAction: TTemplateAction): Boolean;
 var
 	SL: TStringList;
 begin
 	AAction := nil;
-  Result := false;
+  Result := False;
 	if IsTagAndGetCommand('release', ACommand) then
   begin
   	SL := ParseFunction(ACommand);
@@ -9001,7 +9001,7 @@ begin
       SL.Free;
     end;
 
-  	Result := true;
+  	Result := True;
   end;
 end;
 
@@ -9013,11 +9013,11 @@ begin
 	inherited Create;
 
   FModifiers := TStringList.Create;
-  FModifiers.CaseSensitive := false;
-  FModifiers.Sorted := true;
+  FModifiers.CaseSensitive := False;
+  FModifiers.Sorted := True;
   FFunctions := TStringList.Create;
-  FFunctions.CaseSensitive := false;
-  FFunctions.Sorted := true;
+  FFunctions.CaseSensitive := False;
+  FFunctions.Sorted := True;
 
   Init;
 end;
@@ -9127,7 +9127,7 @@ end;
 
 procedure TSmartyInfoProvider.DeleteFunction(AFunction: TSmartyFunctionClass);
 var
-  I: integer;
+  I: Integer;
 begin
   I := FFunctions.IndexOf(AFunction.GetName);
   if I >= 0 then FFunctions.Delete(I);
@@ -9147,19 +9147,19 @@ constructor TSmartyEngine.Create;
 begin
 	inherited Create;
 
-  FCompiled := false;
+  FCompiled := False;
   FActions := TTemplateActions.Create;
-  FIsCache := true;
+  FIsCache := True;
   FVarCache := TList<TVariableCache>.Create;
 
   FNamespaces := TStringList.Create;
-  FNamespaces.CaseSensitive := false;
-  FNamespaces.Sorted := true;
+  FNamespaces.CaseSensitive := False;
+  FNamespaces.Sorted := True;
 
-  FSilentMode := true;
+  FSilentMode := True;
   FErrors := TStringList.Create;
-  FAutoHTMLEncode := false;
-  FAllowEspacesInStrings := true;
+  FAutoHTMLEncode := False;
+  FAllowEspacesInStrings := True;
   Init;
 end;
 
@@ -9170,7 +9170,7 @@ begin
 	AddNamespace(FSmartyNamespace);
 end;
 
-procedure TSmartyEngine.SetIsCache(Value: boolean);
+procedure TSmartyEngine.SetIsCache(Value: Boolean);
 begin
 	if Value <> FIsCache then
   begin
@@ -9181,7 +9181,7 @@ end;
 
 procedure TSmartyEngine.ClearCache;
 var
-	I: integer;
+	I: Integer;
 begin
   if FVarCache.Count > 0 then
     for I := 0 to FVarCache.Count - 1 do
@@ -9194,7 +9194,7 @@ end;
 
 procedure TSmartyEngine.ClearCache(ANamespace: TNamespaceProvider);
 var
-	I: integer;
+	I: Integer;
 begin
   if FVarCache.Count > 0 then
     for I := FVarCache.Count - 1 downto 0 do
@@ -9207,12 +9207,12 @@ begin
 end;
 
 function TSmartyEngine.GetVariable(const ANamespace: TNamespaceProvider;
-	AIndex: integer; AVariableName: string; ADetails: TVarList;
-  var NeedFinalize: boolean): TVariableRecord;
+	AIndex: Integer; AVariableName: string; ADetails: TVarList;
+  var NeedFinalize: Boolean): TVariableRecord;
 var
-	I: integer;
+	I: Integer;
   CacheItem: TVariableCache;
-  VarFound: boolean;
+  VarFound: Boolean;
   V: TVariableRecord;
 begin
 	if ANamespace = FSmartyNamespace then
@@ -9227,8 +9227,8 @@ begin
   end
   else begin
   	//Find in cache
-    VarFound := false;
-    NeedFinalize := false;
+    VarFound := False;
+    NeedFinalize := False;
 
     if FIsCache then
       for I := 0 to FVarCache.Count - 1 do
@@ -9238,7 +9238,7 @@ begin
            ((AIndex = -1) or (AIndex = CacheItem.Index)) and
            (CacheItem.VariableName = AVariableName) then
         begin
-          VarFound := true;
+          VarFound := True;
           Break;
         end;
       end;
@@ -9289,8 +9289,8 @@ function TSmartyEngine.GetVariableDetails(AVariable: TVariableRecord;
 	ADetails: TVarList): TVariableRecord;
 var
 	Value: string;
-	I, J, Index: integer;
-  ValueSet: boolean;
+	I, J, Index: Integer;
+  ValueSet: Boolean;
   ArrayData: PVariableArray;
 begin
 	if ADetails.Count > 0 then
@@ -9306,13 +9306,13 @@ begin
         begin
         	Value := ADetails[I];
           ArrayData := Result.AValue;
-          ValueSet := false;
+          ValueSet := False;
          	for J := 0 to ArrayData.Count - 1 do
             if (string(ArrayData.Data[J].Key) <> '') and 
             	(CompareText(string(ArrayData.Data[J].Key), Value) = 0) then
             begin
             	Result := ArrayData.Data[J].Item;
-              ValueSet := true;
+              ValueSet := True;
              	Break;
             end;
 
@@ -9338,16 +9338,16 @@ begin
 end;
 
 function TSmartyEngine.IsFunction(ACommand: string; var Func: TSmartyFunctionClass;
-	var Params: string; var Modifiers: string): boolean;
+	var Params: string; var Modifiers: string): Boolean;
 var
-	I, J, K: integer;
+	I, J, K: Integer;
   Ch: Char;
-  InQuote: boolean;
-  Stack: integer;
+  InQuote: Boolean;
+  Stack: Integer;
   SFunc: string;
 begin
 	ACommand := SmartyTrim(ACommand);
-  Result := false;
+  Result := False;
   K := Pos('(', ACommand);
 	if K > 0 then
   begin
@@ -9358,7 +9358,7 @@ begin
     begin
     	Func := TSmartyFunctionClass(SmartyProvider.FFunctions.Objects[I]);
 
-      InQuote := false;
+      InQuote := False;
       Stack := 0;
 
       for J := K to Length(ACommand) do
@@ -9385,23 +9385,23 @@ begin
             end;
           end
           else if Ch = '"' then
-          	InQuote := true;
+          	InQuote := True;
         end
         else if Ch = '"' then
-        	InQuote := false;
+        	InQuote := False;
       end;
 
       if Stack > 0 then
       	raise ESmartyException.CreateResFmt(@sInvalidFunctionDeclaration, [ACommand]);
 
-    	Exit(true);
+    	Exit(True);
     end;
   end;
 end;
 
 function TSmartyEngine.GetFunction(AFunction: string): TSmartyFunctionClass;
 var
-	I: integer;
+	I: Integer;
 begin
 	I := SmartyProvider.FFunctions.IndexOf(AFunction);
 
@@ -9413,7 +9413,7 @@ end;
 
 destructor TSmartyEngine.Destroy;
 var
-	I: integer;
+	I: Integer;
 begin
 	FActions.Free;
 
@@ -9440,54 +9440,54 @@ end;
 
 procedure TSmartyEngine.DeleteNamespace(ANamespace: TNamespaceProvider);
 var
-	I: integer;
+	I: Integer;
 begin
 	I := FNamespaces.IndexOf(ANamespace.GetName);
   if I >= 0 then FNamespaces.Delete(I);
 end;
 
-function TSmartyEngine.Compile(ADocument: string; var Errors: TStringList): boolean;
+function TSmartyEngine.Compile(ADocument: string; var Errors: TStringList): Boolean;
 
-	function SkipAllLiteralEnd(S: string; var IndexStart, IndexEnd: integer): boolean;
+	function SkipAllLiteralEnd(S: string; var IndexStart, IndexEnd: Integer): Boolean;
   var
-  	Pos1, Pos2: integer;
+  	Pos1, Pos2: Integer;
     Str: string;
   begin
-  	while true do
+  	while True do
     begin
       Pos1 := PosEx('{', S, IndexStart);
       if Pos1 > 0 then
       begin
         Pos2 := PosEx('}', S, Pos1);
-        if Pos2 <= 0 then Exit(false);
+        if Pos2 <= 0 then Exit(False);
         Str := Copy(S, Pos1 + 1, Pos2 - Pos1 - 1);
         Str := SmartyTrim(Str);
         if CompareText(Str, '/literal') = 0 then
         begin
         	IndexStart := Pos1;
           IndexEnd := Pos2;
-          Exit(true);
+          Exit(True);
         end
         else
           Inc(IndexStart);
       end
       else
-        Exit(false);
+        Exit(False);
     end;
   end;
 
 	function CompilePart(S: string; AActions: TTemplateActions;
-  	BreakAction: TNestAction; var AStart: integer): string;
+  	BreakAction: TNestAction; var AStart: Integer): string;
   var
   	Output, Return, Smarty: string;
   	Ch: Char;
-  	J, K, State: integer;
-  	InSmarty, InSmartyQuote: boolean;
+  	J, K, State: Integer;
+  	InSmarty, InSmartyQuote: Boolean;
     Action: TTemplateAction;
     Acts: TTemplateActions;
   begin
-	  InSmarty := false;
-  	InSmartyQuote := false;
+	  InSmarty := False;
+  	InSmartyQuote := False;
     Output := '';
     Smarty := '';
 
@@ -9506,7 +9506,7 @@ function TSmartyEngine.Compile(ADocument: string; var Errors: TStringList): bool
         if not InSmarty then
         begin
           Smarty := '';
-          InSmarty := true;
+          InSmarty := True;
         end
         else
           raise ESmartyException.CreateRes(@sOpenBraceInTemplate);
@@ -9573,7 +9573,7 @@ function TSmartyEngine.Compile(ADocument: string; var Errors: TStringList): bool
 
           if InSmartyQuote then
             raise ESmartyException.CreateRes(@sUncloseQuote);
-          InSmarty := false;
+          InSmarty := False;
         end
         else
           raise ESmartyException.CreateRes(@sCloseBraceWithoutTemplate);
@@ -9591,10 +9591,10 @@ function TSmartyEngine.Compile(ADocument: string; var Errors: TStringList): bool
     Result := '';
   end;
 
-  procedure GetLinePosition(APosition: integer; var Line: integer; var Pos: integer);
+  procedure GetLinePosition(APosition: Integer; var Line: Integer; var Pos: Integer);
   var
-  	J: integer;
-    Ch: char;
+  	J: Integer;
+    Ch: Char;
   begin
   	Line := 1;
     Pos := 1;
@@ -9611,11 +9611,11 @@ function TSmartyEngine.Compile(ADocument: string; var Errors: TStringList): bool
 
 var
 	Str: string;
-  I, L, P: integer;
+  I, L, P: Integer;
 
 begin
-	Result := false;
-	FCompiled := false;
+	Result := False;
+	FCompiled := False;
   FActions.Clear;
 	Errors.Clear;
   I := 1;
@@ -9625,8 +9625,8 @@ begin
     if Str <> '' then
     	ESmartyException.CreateResFmt(@sInvalidTemplateDirective, [Str])
     else
-    	FCompiled := true;
-    Result := true;
+    	FCompiled := True;
+    Result := True;
   except
   	on E: ESmartyException do
     begin
@@ -9638,7 +9638,7 @@ end;
 
 function TSmartyEngine.Execute: string;
 var
-  I: integer;
+  I: Integer;
 begin
 	Result := '';
   if FCompiled then
@@ -9649,15 +9649,15 @@ end;
 function DateRecordToStr(Value: TDateRecord): string;
 var
 	Date: TDateTime;
-  IsYear, IsMonth, IsDay: boolean;
+  IsYear, IsMonth, IsDay: Boolean;
   S: string;
 begin
-	IsYear := false;
-  IsMonth := false;
-  IsDay := false;
-  if Value.Year = 0 then Value.Year := YearOf(Now) else IsYear := true;
-  if Value.Month = 0 then Value.Month := 1 else IsMonth := true;
-  if Value.Day = 0 then Value.Day := 1 else IsDay := true;
+	IsYear := False;
+  IsMonth := False;
+  IsDay := False;
+  if Value.Year = 0 then Value.Year := YearOf(Now) else IsYear := True;
+  if Value.Month = 0 then Value.Month := 1 else IsMonth := True;
+  if Value.Day = 0 then Value.Day := 1 else IsDay := True;
   if not IsYear and not IsMonth and not IsDay then Exit('');
 
   if TryEncodeDate(Value.Year, Value.Month, Value.Day, Date) then
@@ -9697,7 +9697,7 @@ end;
 
 function DateTimeFromRecord(Value: TDateRecord): TDateTime;
 var
-	Year, Month, Day: word;
+	Year, Month, Day: Word;
 begin
 	if Value.Year = 0 then Year := YearOf(Now) else Year := Value.Year;
   if Value.Month = 0 then Month := 1 else Month := Value.Month;
@@ -9707,7 +9707,7 @@ end;
 
 function DateTimeToRecord(Value: TDateTime): TDateRecord;
 var
-	Year, Month, Day: word;
+	Year, Month, Day: Word;
 begin
 	DecodeDate(Value, Year, Month, Day);
   Result.Year := Year;
@@ -9715,7 +9715,7 @@ begin
   Result.Day := Day;
 end;
 
-function IsEmpty(Value: TDateRecord): boolean;
+function IsEmpty(Value: TDateRecord): Boolean;
 begin
   Result := (Value.Year = 0) and (Value.Month = 0) and (Value.Day = 0);
 end;
@@ -9763,7 +9763,7 @@ function DoValidIdent(Value: string): string;
     Result := TCharacter.IsLetterOrDigit(C) or (C = '_');
   end;
 var
-	I: integer;
+	I: Integer;
 begin
 	if (Value <> '') and not IsValidIdent(Value) then
   begin
@@ -9800,7 +9800,7 @@ end;
 function GetFileContent(AFilename: string; AEncoding: TEncoding): string;
 var
   Stream: TFileStream;
-  Size: integer;
+  Size: Integer;
   Buffer: TBytes;
   Encoding: TEncoding;
 begin
