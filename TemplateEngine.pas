@@ -3848,8 +3848,7 @@ begin
   FVariables.AddOrSetValue(AnsiUpperCase(AVarName), Value);
 end;
 
-function TStorageNamespaceProvider.InternalGetVariable(
-  AVarName: string): TVariableRecord;
+function TStorageNamespaceProvider.InternalGetVariable(AVarName: string): TVariableRecord;
 begin
   if not FVariables.ContainsKey(AVarName) then
     Result := TVariableRecord.Null
@@ -3857,8 +3856,7 @@ begin
     Result := FVariables[AVarName].Clone;
 end;
 
-function TStorageNamespaceProvider.GetVariable(AIndex: Integer;
-  AVarName: string): TVariableRecord;
+function TStorageNamespaceProvider.GetVariable(AIndex: Integer; AVarName: string): TVariableRecord;
 begin
   Result := InternalGetVariable(AVarName);
 end;
@@ -3868,14 +3866,12 @@ begin
   FVariables.Clear;
 end;
 
-procedure TStorageNamespaceProvider.SetVariable(AVarName: string;
-  const Value: TVariableRecord);
+procedure TStorageNamespaceProvider.SetVariable(AVarName: string; const Value: TVariableRecord);
 begin
   InternalSetVariable(AVarName, Value);
 end;
 
-procedure TStorageNamespaceProvider.SetVariable(AVarName: string;
-  const Values: array of TVariableRecord);
+procedure TStorageNamespaceProvider.SetVariable(AVarName: string; const Values: array of TVariableRecord);
 begin
   InternalSetVariable(AVarName, Arr(Values));
 end;
@@ -9712,6 +9708,8 @@ begin
     FreeAndNil(ErrorList);
   end;
 end;
+
+{************* Utilities *************}
 
 function DateRecordToStr(Value: TDateRecord): string;
 var
