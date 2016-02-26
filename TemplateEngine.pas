@@ -2613,6 +2613,8 @@ var
 	ArrayData: PVariableArray;
   I: Integer;
 begin
+  FillChar(Result, SizeOf(Result), 0);
+
   Result.VarType := Self.VarType;
   case Self.VarType of
     vtNull: ;
