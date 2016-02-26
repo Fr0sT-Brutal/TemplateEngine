@@ -1218,6 +1218,7 @@ type
     FErrors: TStringList;
     FAutoHTMLEncode: Boolean;
     FAllowEspacesInStrings: Boolean;
+    FStripLineBreaksAfterBlocks: Boolean;
 
     //template properties
     FTemplateFolder: string;
@@ -1247,6 +1248,7 @@ type
     property Errors: TStringList read FErrors;
     property AutoHTMLEncode: Boolean read FAutoHTMLEncode write FAutoHTMLEncode;
     property AllowEspacesInStrings: Boolean read FAllowEspacesInStrings write FAllowEspacesInStrings;
+    property StripLineBreaksAfterBlocks: Boolean read FStripLineBreaksAfterBlocks write FStripLineBreaksAfterBlocks;
     property IsCache: Boolean read FIsCache write SetIsCache;
     property TemplateFolder: string read FTemplateFolder write FTemplateFolder;
   end;
@@ -9523,10 +9525,22 @@ function TSmartyEngine.Compile(ADocument: string; var Errors: TStringList): Bool
     end;
   end;
 
+  // Skip exactly one new line (#10 or #13#10)
+	procedure SkipLineBreak(S: string; var IndexStart: Integer);
+  begin
+    case GetChar(S, IndexStart) of
+      Char(#10): 
+        Inc(IndexStart);
+      Char(#13): 
+        if GetChar(S, IndexStart + 1) = Char(#10) then
+          Inc(IndexStart, 2);
+    end;
+  end;
+
 	function CompilePart(S: string; AActions: TTemplateActions;
   	BreakAction: TNestAction; var AStart: Integer): string;
   var
-  	Output, Return, Smarty: string;
+  	Output, Return, Tag: string;
   	Ch: Char;
   	J, K, State: Integer;
   	InSmarty, InSmartyQuote: Boolean;
@@ -9536,7 +9550,7 @@ function TSmartyEngine.Compile(ADocument: string; var Errors: TStringList): Bool
 	  InSmarty := False;
   	InSmartyQuote := False;
     Output := '';
-    Smarty := '';
+    Tag := '';
 
     while AStart <= Length(S) do
     begin
@@ -9546,23 +9560,25 @@ function TSmartyEngine.Compile(ADocument: string; var Errors: TStringList): Bool
       if InSmarty and (Ch = '"') then
       begin
         InSmartyQuote := not InSmartyQuote;
-        Smarty := Smarty + Ch;
+        Tag := Tag + Ch;
       end
+      // Tag started
       else if not InSmartyQuote and (Ch = '{') then
       begin
         if not InSmarty then
         begin
-          Smarty := '';
+          Tag := '';
           InSmarty := True;
         end
         else
           raise ESmartyException.CreateRes(@sOpenBraceInTemplate);
       end
+      // Tag closed
       else if not InSmartyQuote and (Ch = '}') then
       begin
         if InSmarty then
         begin
-          if CompareText(SmartyTrim(Smarty), 'literal') = 0 then
+          if CompareText(SmartyTrim(Tag), 'literal') = 0 then
           begin
             J := AStart;
             if SkipAllLiteralEnd(S, J, K) then
@@ -9577,44 +9593,52 @@ function TSmartyEngine.Compile(ADocument: string; var Errors: TStringList): Bool
           	if Output <> '' then AActions.Add(TRawOutputAction.CreateOutput(Self, Output));
             Output := '';
 
-            if not TTemplateAction.IsComment(Smarty) then
+            if not TTemplateAction.IsComment(Tag) then
 
-            	if TTemplateAction.IsExitCommand(Smarty, BreakAction) then
+            	if TTemplateAction.IsExitCommand(Tag, BreakAction) then
               begin
-              	Exit(Smarty);
+                if FStripLineBreaksAfterBlocks then
+                  SkipLineBreak(S, AStart);
+              	Exit(Tag);
               end
 
-            	else if TRawOutputAction.IsAction(Self, Smarty, Action) or
-              	TVariableOutputAction.IsAction(Self, Smarty, Action) or
-                TFuncOutputAction.IsAction(Self, Smarty, Action) or
-                TCaptureArrayAction.IsAction(Self, Smarty, Action) or
-                TReleaseArrayAction.IsAction(Self, Smarty, Action) or
-                TAssignAction.IsAction(Self, Smarty, Action) or
-                TReleaseAction.IsAction(Self, Smarty, Action) then
+            	else if TRawOutputAction.IsAction(Self, Tag, Action) or
+              	TVariableOutputAction.IsAction(Self, Tag, Action) or
+                TFuncOutputAction.IsAction(Self, Tag, Action) or
+                TCaptureArrayAction.IsAction(Self, Tag, Action) or
+                TReleaseArrayAction.IsAction(Self, Tag, Action) or
+                TAssignAction.IsAction(Self, Tag, Action) or
+                TReleaseAction.IsAction(Self, Tag, Action) then
               begin
               	AActions.Add(Action);
               end
 
-              else if TIfOutputAction.IsAction(Self, Smarty, Action) then
+              else if TIfOutputAction.IsAction(Self, Tag, Action) then
               begin
               	AActions.Add(Action);
                 State := 0;
+                if FStripLineBreaksAfterBlocks then
+                  SkipLineBreak(S, AStart);
+
                	Return := CompilePart(S, TIfOutputAction(Action).FThenActions, naIf, AStart);
 
                 while TIfOutputAction(Action).ContinueIf(Self, Return, State, Acts) do
 									Return := CompilePart(S, Acts, naIf, AStart);
               end
-              else if TForEachOutputAction.IsAction(Self, Smarty, Action) then
+              else if TForEachOutputAction.IsAction(Self, Tag, Action) then
               begin
               	AActions.Add(Action);
                 State := 0;
+                if FStripLineBreaksAfterBlocks then
+                  SkipLineBreak(S, AStart);
+
                	Return := CompilePart(S, TForEachOutputAction(Action).FBaseActions, naForEach, AStart);
 
                 while TForEachOutputAction(Action).ContinueForEach(Self, Return, State, Acts) do
 									Return := CompilePart(S, Acts, naForEach, AStart);
               end
               else
-              	raise ESmartyException.CreateResFmt(@sInvalidTemplateDirective, [Smarty]);
+              	raise ESmartyException.CreateResFmt(@sInvalidTemplateDirective, [Tag]);
 
           end;
 
@@ -9625,11 +9649,12 @@ function TSmartyEngine.Compile(ADocument: string; var Errors: TStringList): Bool
         else
           raise ESmartyException.CreateRes(@sCloseBraceWithoutTemplate);
       end
+      // Tag lasts - collect it
+      else if InSmarty then
+        Tag := Tag + Ch
+      // Raw output lasts - collect it
       else
-        if InSmarty then
-          Smarty := Smarty + Ch
-        else
-        	Output := Output + Ch;
+      	Output := Output + Ch;
     end;
 
     if InSmarty then

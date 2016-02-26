@@ -24,6 +24,7 @@ type
     Panel1: TPanel;
     memResult: TMemo;
     chbNewMethod: TCheckBox;
+    chbStripLineBr: TCheckBox;
     procedure ParseClick(Sender: TObject);
   private
     { Private declarations }
@@ -113,6 +114,7 @@ begin
   else
   begin
     Smarty := TSmartyEngine.Create;
+    Smarty.StripLineBreaksAfterBlocks := chbStripLineBr.Checked;
     Errors := TStringList.Create;
     Namesp := TStorageNamespaceProvider.Create('mynamespace');
     Namesp.SetVariable('string', 'string');

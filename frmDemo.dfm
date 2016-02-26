@@ -42,24 +42,32 @@ object Form1: TForm1
       Width = 511
       Height = 496
       Margins.Left = 5
-      Margins.Top = 20
+      Margins.Top = 50
       Margins.Right = 5
       Margins.Bottom = 5
       Align = alClient
       Lines.Strings = (
-        '{literal}Here you can use any symbols ;) {}{} {/literal}'
-        'Simple variable output: {$mynamespace.string}'
-        'Output with modifiers: {$mynamespace.string | upper}'
-        'Function output: {upper_case($mynamespace.string)}'
-        'Conditional output: {if $mynamespace.string = "string"}'
-        'String is equal to string {else}Oh, no{/if}'
-        'Array functions:'
+        '* Literal:'
+        ' {literal}Here you can use any symbols ;) {}{} {/literal}'
+        '* Simple variable output:'
+        ' {$mynamespace.string}'
+        '* Output with modifiers:'
+        ' {$mynamespace.string | upper}'
+        '* Function output:'
+        ' {upper_case($mynamespace.string)}'
+        '* Conditional output:'
+        '{if $mynamespace.string = "string"}'
+        'String is equal to string'
+        '{else}'
+        'Oh, no'
+        '{/if}'
+        '* Array functions:'
         '{foreach from=$mynamespace.array item=item key=key}'
         
           'Item is - {$item}, key is - {$key}, current iteration - {$smarty' +
           '.foreach.current.iteration}'
         '{/foreach}'
-        'Nested array functions:'
+        '* Nested array functions:'
         '{foreach from=$mynamespace.nested_array item=item}'
         
           'Item is - {$item.name}, current iteration - {$smarty.foreach.cur' +
@@ -95,6 +103,14 @@ object Form1: TForm1
       Height = 17
       Caption = 'Use new simple variable assignment'
       TabOrder = 2
+    end
+    object chbStripLineBr: TCheckBox
+      Left = 8
+      Top = 63
+      Width = 321
+      Height = 17
+      Caption = 'Smarty option: strip line breaks after block tags'
+      TabOrder = 3
     end
   end
   object memResult: TMemo
