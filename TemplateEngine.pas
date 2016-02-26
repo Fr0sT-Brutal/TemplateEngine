@@ -283,6 +283,7 @@ type
     procedure ClearVariables;
     procedure SetVariable(AVarName: string; const Value: TVariableRecord); overload;
     procedure SetVariable(AVarName: string; const Values: array of TVariableRecord); overload;
+    procedure SetVariables(const Variables: array of TVariableArrayItem);
   end;
 
   TForEachData = class
@@ -1233,7 +1234,8 @@ type
   	constructor Create;
     destructor Destroy; override;
     function Compile(ADocument: string; var Errors: TStringList): Boolean;
-    function Execute: string;
+    function Execute: string; overload;
+    function Execute(const Pattern: string; out Errors, Output: string): Boolean; overload;
     procedure ClearCache; overload;
     procedure ClearCache(ANamespace: TNamespaceProvider); overload;
 
@@ -1326,6 +1328,8 @@ function FileEncode(const S: string): string;
 procedure RegisterModifier(AModifier: TVariableModifierClass);
 procedure RegisterFunction(AFunction: TSmartyFunctionClass);
 procedure UnregisterFunction(AFunction: TSmartyFunctionClass);
+function SmartyExec(const Pattern, NamespaceName: string; const Variables: array of TVariableArrayItem;
+                    out Errors, Output: string): Boolean;
 
 function GetFileContent(AFilename: string; AEncoding: TEncoding): string;
 
@@ -1466,6 +1470,22 @@ begin
 	SmartyProvider.DeleteFunction(AFunction);
 end;
 
+function SmartyExec(const Pattern, NamespaceName: string; const Variables: array of TVariableArrayItem;
+                    out Errors, Output: string): Boolean;
+var
+  Namesp: TStorageNamespaceProvider;
+  Smarty: TSmartyEngine;
+begin
+  Namesp := TStorageNamespaceProvider.Create(NamespaceName);
+  Smarty := TSmartyEngine.Create;
+  try
+    Namesp.SetVariables(Variables);
+    Smarty.AddNamespace(Namesp);
+    Result := Smarty.Execute(Pattern, Errors, Output);
+  finally
+    FreeAndNil(Smarty);
+  end;
+end;
 
 const
 	MaxPrecedence = 11;
@@ -3858,6 +3878,14 @@ procedure TStorageNamespaceProvider.SetVariable(AVarName: string;
   const Values: array of TVariableRecord);
 begin
   InternalSetVariable(AVarName, Arr(Values));
+end;
+
+procedure TStorageNamespaceProvider.SetVariables(const Variables: array of TVariableArrayItem);
+var
+  I: Integer;
+begin
+  for I := Low(Variables) to High(Variables) do
+    SetVariable(Variables[I].Key, Variables[I].Item);
 end;
 
 {************* TForEachList *************}
@@ -9667,6 +9695,22 @@ begin
   if FCompiled then
 	  for I := 0 to FActions.Count - 1 do
       Result := Result + FActions[I].Execute;
+end;
+
+function TSmartyEngine.Execute(const Pattern: string; out Errors, Output: string): Boolean;
+var
+  ErrorList: TStringList;
+begin
+  ErrorList := TStringList.Create;
+  try
+    Result := Compile(Pattern, ErrorList);
+    if Result then
+      Output := Execute
+    else
+      Errors := ErrorList.Text;
+  finally
+    FreeAndNil(ErrorList);
+  end;
 end;
 
 function DateRecordToStr(Value: TDateRecord): string;
