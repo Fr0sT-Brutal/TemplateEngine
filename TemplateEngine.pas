@@ -200,7 +200,7 @@ type
   TVarModifierProc = reference to procedure(const Variable: TVariableRecord);
 
   TVariableArrayItem = packed record
-    Key: Pointer;
+    Key: string;
     Item: TVariableRecord;
   end;
 
@@ -2602,7 +2602,7 @@ begin
       begin
         for I := 0 to ArrayData.Count - 1 do
         begin
-          string(ArrayData.Data[I].Key) := '';
+          ArrayData.Data[I].Key := '';
           ArrayData.Data[I].Item.Finalize;
         end;
       	FreeMem(ArrayData.Data, ArrayData.Count * SizeOf(TVariableArrayItem));
@@ -2649,8 +2649,7 @@ begin
       	ArrayData.Data := AllocMem(ArrayData.Count * SizeOf(TVariableArrayItem));
         for I := 0 to ArrayData.Count - 1 do
         begin
-        	ArrayData.Data[I].Key := nil;
-          string(ArrayData.Data[I].Key) := string(PVariableArray(Self.AValue).Data[I].Key);
+          ArrayData.Data[I].Key := PVariableArray(Self.AValue).Data[I].Key;
           ArrayData.Data[I].Item := PVariableArray(Self.AValue).Data[I].Item.Clone;
         end;
       end
@@ -2832,7 +2831,7 @@ begin
   if AInit then
     for I := 0 to AValue - 1 do
     begin
-      ArrayData.Data[I].Key := nil;
+      ArrayData.Data[I].Key := '';
       ArrayData.Data[I].Item := TVariableRecord.Null;
     end;
 end;
@@ -2845,8 +2844,7 @@ begin
   ArrayData := Self.AValue;
   if (AIndex >= 0) and (AIndex < ArrayData.Count) then
   begin
-    ArrayData.Data[AIndex].Key := nil;
- 		string(ArrayData.Data[AIndex].Key) := DoValidIdent(AKey);
+    ArrayData.Data[AIndex].Key := DoValidIdent(AKey);
   	ArrayData.Data[AIndex].Item := AValue;
   end
   else
@@ -2862,8 +2860,7 @@ begin
   Assert((AIndex >= 0) and (AIndex < ArrayData.Count), 'Invalid array item');
   if (AKey = '') or IsValidIdent(AKey) then
   begin  
-    ArrayData.Data[AIndex].Key := nil;
-  	string(ArrayData.Data[AIndex].Key) := AKey;
+    ArrayData.Data[AIndex].Key := AKey;
   	ArrayData.Data[AIndex].Item := AValue;
   end
   else
@@ -4109,7 +4106,7 @@ begin
               else if CompareText(VarName, 'show') = 0 then Result := FERec.Show
               else if CompareText(VarName, FERec.KeyVarName) = 0 then
               begin
-              	Result := string(FERec.VarData.Data[FERec.Iteration - 1].Key);
+              	Result := FERec.VarData.Data[FERec.Iteration - 1].Key;
                 NeedFinalize := False;
               end;
           end;
@@ -4179,7 +4176,7 @@ begin
     end
     else if FForEachList.FindKeyRecord(AVarName, FERec) and (AVarDetails.Count = 0) then
     begin
-    	Result := string(FERec.VarData.Data[FERec.Iteration - 1].Key);
+    	Result := FERec.VarData.Data[FERec.Iteration - 1].Key;
       NeedFinalize := True;
     end
     else
@@ -5144,7 +5141,7 @@ begin
       if S <> '' then
       begin
         for I := 0 to PVariableArray(V1.AValue).Count - 1 do
-          if CompareText(string(PVariableArray(V1.AValue).Data[I].Key), S) = 0 then
+          if CompareText(PVariableArray(V1.AValue).Data[I].Key, S) = 0 then
           begin
             Result := PVariableArray(V1.AValue).Data[I].Item.Clone;
             Break;
@@ -8798,7 +8795,7 @@ begin
           NewVar.SetArrayLength(Indexes.Count);
           for I := 0 to Indexes.Count - 1 do
           begin
-            NewVar.SetArrayItemQ(I, string(ARec.Data[Indexes[I]].Key),
+            NewVar.SetArrayItemQ(I, ARec.Data[Indexes[I]].Key,
               ARec.Data[Indexes[I]].Item.Clone);
           end;
         end
@@ -9308,8 +9305,8 @@ begin
           ArrayData := Result.AValue;
           ValueSet := False;
          	for J := 0 to ArrayData.Count - 1 do
-            if (string(ArrayData.Data[J].Key) <> '') and 
-            	(CompareText(string(ArrayData.Data[J].Key), Value) = 0) then
+            if (ArrayData.Data[J].Key <> '') and
+            	(CompareText(ArrayData.Data[J].Key, Value) = 0) then
             begin
             	Result := ArrayData.Data[J].Item;
               ValueSet := True;
