@@ -166,6 +166,9 @@ type
     class operator Implicit(AValue: TDateRecord): TVariableRecord;
     class operator Implicit(AValue: TDateTime): TVariableRecord;
     class operator Implicit(AValue: string): TVariableRecord;
+    class operator Implicit(AValue: Cardinal): TVariableRecord;
+    class operator Implicit(AValue: Int64): TVariableRecord;
+    class operator Implicit(AValue: UInt64): TVariableRecord;
     class operator Implicit(AValue: Variant): TVariableRecord;
 
     class operator Implicit(ARecord: TVariableRecord): Boolean;
@@ -1375,6 +1378,8 @@ resourcestring
 	sCloseBraceWithoutTemplate = 'Unexpected "}" symbol';
   sBraceDoNotClose = 'Expected "}" but do not found';
   sAtPosition = ' at line: %d; position: %d';
+  sIntegerExceedRangeSigned = 'Integer constant %d exceeds range';
+  sIntegerExceedRangeUnsigned = 'Integer constant %u exceeds range';
 
 implementation
 
@@ -2877,6 +2882,29 @@ begin
   Result.IValue := AValue;
 end;
 
+// UInt64, Int64, Cardinal: check if the value will be truncated on type cast
+
+class operator TVariableRecord.Implicit(AValue: UInt64): TVariableRecord;
+begin
+  if AValue > High(Integer) then
+  	raise ESmartyException.CreateResFmt(@sIntegerExceedRangeUnsigned, [AValue]);
+  Result := Integer(AValue);
+end;
+
+class operator TVariableRecord.Implicit(AValue: Int64): TVariableRecord;
+begin
+  if (AValue > High(Integer)) or (AValue < Low(Integer)) then
+  	raise ESmartyException.CreateResFmt(@sIntegerExceedRangeSigned, [AValue]);
+  Result := Integer(AValue);
+end;
+
+class operator TVariableRecord.Implicit(AValue: Cardinal): TVariableRecord;
+begin
+  if AValue > High(Integer) then
+  	raise ESmartyException.CreateResFmt(@sIntegerExceedRangeUnsigned, [AValue]);
+  Result := Integer(AValue);
+end;
+
 class operator TVariableRecord.Implicit(AValue: Double): TVariableRecord;
 begin
 	Result.VarType := vtFloat;
@@ -2929,9 +2957,9 @@ begin
     varShortInt  : Result := TVarData(AValue).VShortInt;
     varByte      : Result := TVarData(AValue).VByte;
     varWord      : Result := TVarData(AValue).VWord;
-    varLongWord  : Result := Integer(TVarData(AValue).VLongWord);
-    varInt64     : Result := Integer(TVarData(AValue).VInt64);
-    varUInt64    : Result := Integer(TVarData(AValue).VUInt64);
+    varLongWord  : Result := TVarData(AValue).VLongWord;
+    varInt64     : Result := TVarData(AValue).VInt64;
+    varUInt64    : Result := TVarData(AValue).VUInt64;
     varString    : Result := string(TVarData(AValue).VString);
     varUString   : Result := string(TVarData(AValue).VUString);
   end;
