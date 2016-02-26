@@ -1276,17 +1276,11 @@ type
 
 *)
 
-type
-  TMapItem = record
-    Key: string;
-    Value: TVariableRecord;
-  end;
-
 //convertion rountines
 
-function Arr(Items: array of TVariableRecord; Count: Integer = -1): TVariableRecord; overload;
-function Item(Key: string; Value: TVariableRecord): TMapItem; overload;
-function Map(Items: array of TMapItem): TVariableRecord; overload;
+function Arr(Items: array of TVariableRecord; Count: Integer = -1): TVariableRecord;
+function Item(Key: string; Value: TVariableRecord): TVariableArrayItem;
+function Map(Items: array of TVariableArrayItem): TVariableRecord;
 
 function DateRecordToStr(Value: TDateRecord): string;         //use FormatSettings
 function DateRecordToString(Value: TDateRecord): string;      //FormatSettings independent
@@ -1428,6 +1422,7 @@ end;
 function Arr(Items: array of TVariableRecord; Count: Integer): TVariableRecord;
 var I: Integer;
 begin
+  FillChar(Result, SizeOf(Result), 0);
   // -1 = magic value, set new array Length to Items length
   if Count = -1 then
     Count := Length(Items);
@@ -1436,18 +1431,19 @@ begin
     Result.SetArrayItemQ(I, '', Items[I]);
 end;
 
-function Item(Key: string; Value: TVariableRecord): TMapItem; overload;
+function Item(Key: string; Value: TVariableRecord): TVariableArrayItem; 
 begin
   Result.Key := Key;
-  Result.Value := Value;
+  Result.Item := Value;
 end;
 
-function Map(Items: array of TMapItem): TVariableRecord; overload;
+function Map(Items: array of TVariableArrayItem): TVariableRecord; 
 var i: Integer;
 begin
+  FillChar(Result, SizeOf(Result), 0);
   Result.SetArrayLength(Length(Items));
   for I := Low(Items) to High(Items) do
-    Result.SetArrayItemQ(I, Items[I].Key, Items[I].Value);
+    Result.SetArrayItemQ(I, Items[I].Key, Items[I].Item);
 end;
 
 procedure RegisterModifier(AModifier: TVariableModifierClass);
