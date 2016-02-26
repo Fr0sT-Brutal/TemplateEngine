@@ -37,9 +37,9 @@ unit TemplateEngine;
 interface
 
 uses
-  {VCL} Windows, Messages,
+  {VCL}
   Classes, SysUtils, StrUtils, DateUtils, Variants,
-  Character, Generics.Defaults, Generics.Collections;
+  Character, Generics.Collections;
 
 type
 	ESmartyException = class (Exception)
