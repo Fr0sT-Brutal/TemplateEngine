@@ -60,7 +60,7 @@ type
 
   TVariableType = (vtNull,               //Not defined variable, error in evaluation
 								   vtBoolean,
-                   vtInteger,            //Integer variable
+                   vtInt,                //Int64 variable
                    vtFloat,              //Float variable
                    vtDateStrict,         //DateStrict variable TDate
                    vtDateLoose,          //DateLoose variable for fuzzy date
@@ -113,7 +113,7 @@ type
     function IsArray: Boolean;
 
     function IsBoolean: Boolean;
-    function IsInteger: Boolean;
+    function IsInt: Boolean;
     function IsFloat: Boolean;
     function IsNumber: Boolean;
     function IsDateStrict: Boolean;
@@ -123,13 +123,13 @@ type
     function IsString: Boolean;
 
     class function Null: TVariableRecord; static;
-    class function AsInteger(AValue: Integer; ANullValue: Integer = 0): TVariableRecord; static;
+    class function AsInt(AValue: Int64; ANullValue: Int64 = 0): TVariableRecord; static;
     class function AsFloat(AValue: Double; ANullValue: Double = 0): TVariableRecord; static;
     class function AsString(AValue: string; ANullValue: string = ''): TVariableRecord; static;
     class function AsDateRecord(AValue: TDateRecord): TVariableRecord; static;
     procedure SetNull;
     procedure SetBool(AValue: Boolean);
-    procedure SetInt(AValue: Integer);
+    procedure SetInt(AValue: Int64);
     procedure SetFloat(Avalue: Double);
     procedure SetString(AValue: string);
     procedure SetArrayLength(AValue: Integer; AReference: TObject = nil; AInit: Boolean = False);
@@ -137,11 +137,11 @@ type
     procedure SetArrayItemQ(AIndex: Integer; AKey: string; AValue: TVariableRecord);
 
   	function ToBool: Boolean;
-    function ToInt: Integer;
+    function ToInt: Int64;
     function ToFloat: Double;
     function ToString: string;
     function CanConvertToLogical(out Value: Boolean): Boolean;
-    function CanConvertToInt(out Value: Integer): Boolean;
+    function CanConvertToInt(out Value: Int64): Boolean;
     function CanConvertToFloat(out Value: Double): Boolean;
     class function DoCompareRelationship(ALeft, ARight: TVariableRecord;
     	AOperation: TCompareOperation): TVariableRelatioship; static;
@@ -160,13 +160,13 @@ type
 
     class operator Implicit(AValue: Boolean): TVariableRecord;
     class operator Implicit(AValue: Integer): TVariableRecord;
+    class operator Implicit(AValue: Cardinal): TVariableRecord;
     class operator Implicit(AValue: Double): TVariableRecord;
-    class operator Implicit(AValue: extended): TVariableRecord;
+    class operator Implicit(AValue: Extended): TVariableRecord;
     class operator Implicit(AValue: TDate): TVariableRecord;
     class operator Implicit(AValue: TDateRecord): TVariableRecord;
     class operator Implicit(AValue: TDateTime): TVariableRecord;
     class operator Implicit(AValue: string): TVariableRecord;
-    class operator Implicit(AValue: Cardinal): TVariableRecord;
     class operator Implicit(AValue: Int64): TVariableRecord;
     class operator Implicit(AValue: UInt64): TVariableRecord;
     class operator Implicit(AValue: Variant): TVariableRecord;
@@ -191,7 +191,7 @@ type
     case TVariableType of
     	vtNull:        ();
       vtBoolean:  	 (BValue: Boolean);
-      vtInteger:  	 (IValue: Integer);
+      vtInt:      	 (IValue: Int64);
       vtFloat:    	 (FValue: Double);
       vtDateStrict:  (DSValue: TDate);
       vtDateLoose:   (DLValue: TDateRecord);
@@ -226,14 +226,14 @@ type
 
     procedure Finalize;
     function Clone: TVariablePart;
-    class operator Implicit(AValue: Integer): TVariablePart;
+    class operator Implicit(AValue: Int64): TVariablePart;
     class operator Implicit(AValue: string): TVariablePart;
     class operator Implicit(APart: TVariablePart): Integer;
     class operator Implicit(APart: TVariablePart): string;
 
     case TVariablePartType of
     	vptValue: (SValue: Pointer);
-      vptIndex: (IValue: Integer);
+      vptIndex: (IValue: Int64);
   end;
 
   TVarList = class (TList<TVariablePart>)
@@ -2647,7 +2647,7 @@ begin
     vtNull: ;
     vtBoolean:
     	Result.BValue := Self.BValue;
-    vtInteger:
+    vtInt:
     	Result.IValue := Self.IValue;
     vtFloat:
     	Result.FValue := Self.FValue;
@@ -2696,7 +2696,7 @@ begin
     	Result := True;
     vtBoolean:
     	Result := False;
-    vtInteger:
+    vtInt:
     	Result := (Self.IValue = 0);
     vtFloat:
     	Result := (Self.FValue = 0);
@@ -2725,9 +2725,9 @@ begin
 	Result := (Self.VarType = vtBoolean);
 end;
 
-function TVariableRecord.IsInteger: Boolean;
+function TVariableRecord.IsInt: Boolean;
 begin
-	Result := (Self.VarType = vtInteger);
+	Result := (Self.VarType = vtInt);
 end;
 
 function TVariableRecord.IsFloat: Boolean;
@@ -2737,7 +2737,7 @@ end;
 
 function TVariableRecord.IsNumber: Boolean;
 begin
-	Result := (Self.VarType = vtInteger) or (Self.VarType = vtFloat);
+	Result := (Self.VarType = vtInt) or (Self.VarType = vtFloat);
 end;
 
 function TVariableRecord.IsDateStrict: Boolean;
@@ -2771,8 +2771,7 @@ begin
 	Result.VarType := vtNull;
 end;
 
-class function TVariableRecord.AsInteger(AValue: Integer;
-	ANullValue: Integer = 0): TVariableRecord;
+class function TVariableRecord.AsInt(AValue: Int64; ANullValue: Int64): TVariableRecord;
 begin
 	if AValue <> ANullValue then
   	Result := AValue
@@ -2780,7 +2779,7 @@ begin
   	Result.VarType := vtNull;
 end;
 
-class function TVariableRecord.AsFloat(AValue: Double; ANullValue: Double = 0): TVariableRecord;
+class function TVariableRecord.AsFloat(AValue: Double; ANullValue: Double): TVariableRecord;
 begin
 	if AValue <> ANullValue then
   	Result := AValue
@@ -2788,7 +2787,7 @@ begin
   	Result.VarType := vtNull;
 end;
 
-class function TVariableRecord.AsString(AValue: string; ANullValue: string = ''): TVariableRecord;
+class function TVariableRecord.AsString(AValue: string; ANullValue: string): TVariableRecord;
 begin
 	if AValue <> ANullValue then
   	Result := AValue
@@ -2817,10 +2816,10 @@ begin
   BValue := AValue;
 end;
 
-procedure TVariableRecord.SetInt(AValue: Integer);
+procedure TVariableRecord.SetInt(AValue: Int64);
 begin
 	Finalize;
-	VarType := vtInteger;
+	VarType := vtInt;
   IValue := AValue;
 end;
 
@@ -2900,31 +2899,27 @@ end;
 
 class operator TVariableRecord.Implicit(AValue: Integer): TVariableRecord;
 begin
-	Result.VarType := vtInteger;
-  Result.IValue := AValue;
-end;
-
-// UInt64, Int64, Cardinal: check if the value will be truncated on type cast
-
-class operator TVariableRecord.Implicit(AValue: UInt64): TVariableRecord;
-begin
-  if AValue > High(Integer) then
-  	raise ESmartyException.CreateResFmt(@sIntegerExceedRangeUnsigned, [AValue]);
-  Result := Integer(AValue);
-end;
-
-class operator TVariableRecord.Implicit(AValue: Int64): TVariableRecord;
-begin
-  if (AValue > High(Integer)) or (AValue < Low(Integer)) then
-  	raise ESmartyException.CreateResFmt(@sIntegerExceedRangeSigned, [AValue]);
-  Result := Integer(AValue);
+	Result := Int64(AValue);
 end;
 
 class operator TVariableRecord.Implicit(AValue: Cardinal): TVariableRecord;
 begin
-  if AValue > High(Integer) then
+	Result := Int64(AValue);
+end;
+
+class operator TVariableRecord.Implicit(AValue: Int64): TVariableRecord;
+begin
+	Result.VarType := vtInt;
+  Result.IValue := AValue;
+end;
+
+// UInt64: check if the value will be truncated on type cast
+
+class operator TVariableRecord.Implicit(AValue: UInt64): TVariableRecord;
+begin
+  if AValue > High(Int64) then
   	raise ESmartyException.CreateResFmt(@sIntegerExceedRangeUnsigned, [AValue]);
-  Result := Integer(AValue);
+  Result := Int64(AValue);
 end;
 
 class operator TVariableRecord.Implicit(AValue: Double): TVariableRecord;
@@ -2933,7 +2928,7 @@ begin
   Result.FValue := AValue;
 end;
 
-class operator TVariableRecord.Implicit(AValue: extended): TVariableRecord;
+class operator TVariableRecord.Implicit(AValue: Extended): TVariableRecord;
 begin
 	Result.VarType := vtFloat;
   Result.FValue := AValue;
@@ -3017,7 +3012,7 @@ begin
     	Result := False;
     vtBoolean:
     	Result := Self.BValue;
-    vtInteger:
+    vtInt:
     	Result := (Self.IValue <> 0);
     vtFloat:
     	Result := (Self.FValue <> 0);
@@ -3052,14 +3047,14 @@ begin
   end;
 end;
 
-function TVariableRecord.ToInt: Integer;
+function TVariableRecord.ToInt: Int64;
 begin
 	case Self.VarType of
     vtNull:
     	Result := 0;
     vtBoolean:
     	if Self.BValue then Result := 1 else Result := 0;
-    vtInteger:
+    vtInt:
     	Result := Self.IValue;
     vtFloat:
     	Result := Round(Self.FValue);
@@ -3085,7 +3080,7 @@ begin
     	Result := 0;
     vtBoolean:
     	if Self.BValue then Result := 1 else Result := 0;
-    vtInteger:
+    vtInt:
     	Result := Self.IValue;
     vtFloat:
     	Result := Self.FValue;
@@ -3111,7 +3106,7 @@ begin
     	Result := '';
     vtBoolean:
     	if Self.BValue then Result := '1' else Result := '';
-    vtInteger:
+    vtInt:
     	Result := IntToStr(Self.IValue);
     vtFloat:
     	Result := FloatToStr(Self.FValue);
@@ -3138,7 +3133,7 @@ begin
     	Value := Self.BValue;
       Result := True;
     end;
-    vtInteger, vtFloat, vtDateStrict, vtDateLoose, vtDateTime, vtArray:
+    vtInt, vtFloat, vtDateStrict, vtDateLoose, vtDateTime, vtArray:
     	Result := False;
     vtString:
     	Result := TryStrToBool(string(Self.SValue), Value);
@@ -3147,7 +3142,7 @@ begin
   end;
 end;
 
-function TVariableRecord.CanConvertToInt(out Value: Integer): Boolean;
+function TVariableRecord.CanConvertToInt(out Value: Int64): Boolean;
 begin
 	case Self.VarType of
     vtNull:
@@ -3157,7 +3152,7 @@ begin
     	if Self.BValue then Value := 1 else Value := 0;
       Result := True;
     end;
-    vtInteger:
+    vtInt:
     begin
     	Value := Self.IValue;
     	Result := True;
@@ -3170,7 +3165,7 @@ begin
     vtFloat, vtDateLoose, vtDateTime, vtArray:
     	Result := False;
     vtString:
-    	Result := TryStrToInt(string(Self.SValue), Value);
+    	Result := TryStrToInt64(string(Self.SValue), Value);
   else
   	Result := False;
   end;
@@ -3186,7 +3181,7 @@ begin
     	if Self.BValue then Value := 1 else Value := 0;
       Result := True;
     end;
-    vtInteger:
+    vtInt:
     begin
     	Value := Self.IValue;
     	Result := True;
@@ -3223,7 +3218,8 @@ class function TVariableRecord.DoCompareRelationship(ALeft, ARight: TVariableRec
 var
 	CompareType: TVariableType;
   B1, B2: Boolean;
-  I, I1, I2, SCompare: Integer;
+  I, SCompare: Integer;
+  I1, I2: Int64;
   F1, F2, DCompare: Double;
   S1, S2: string;
   DL: TDateRecord;
@@ -3234,13 +3230,13 @@ const
            {Null}     {Bool}     {Int}       {Float}      {Date}      {DateLoose}   {DateTime}    {String}      {Array}
 {Null} ((vtNull,    vtBoolean, vtBoolean,   vtBoolean,   vtBoolean,    vtBoolean,   vtBoolean,   vtBoolean,    vtBoolean),
 {Bool}  (vtBoolean, vtBoolean, vtBoolean,   vtBoolean,   vtBoolean,    vtBoolean,   vtBoolean,   vtBoolean,    vtBoolean),
-{Int}   (vtBoolean, vtBoolean, vtInteger,   vtFloat,     vtInteger,    vtDateLoose, vtFloat,     vtFloat,      vtInteger),
+{Int}   (vtBoolean, vtBoolean, vtInt,       vtFloat,     vtInt,        vtDateLoose, vtFloat,     vtFloat,      vtInt),
 {Float} (vtBoolean, vtBoolean, vtFloat,     vtFloat,     vtFloat,      vtDateLoose, vtFloat,     vtFloat,      vtFloat),
-{Date}  (vtBoolean, vtBoolean, vtInteger,   vtFloat,     vtDateStrict, vtDateLoose, vtDateTime,  vtDateStrict, vtDateStrict),
+{Date}  (vtBoolean, vtBoolean, vtInt,       vtFloat,     vtDateStrict, vtDateLoose, vtDateTime,  vtDateStrict, vtDateStrict),
 {DateL} (vtBoolean, vtBoolean, vtDateLoose, vtDateLoose, vtDateLoose,  vtDateLoose, vtDateLoose, vtDateLoose,  vtDateLoose),
 {DateT} (vtBoolean, vtBoolean, vtFloat,     vtFloat,     vtDateTime,   vtDateLoose, vtDateTime,  vtDateTime,   vtDateTime),
 {Str}   (vtBoolean, vtBoolean, vtFloat,     vtFloat,     vtDateStrict, vtDateLoose, vtDateTime,  vtString,     vtString),
-{Array} (vtBoolean, vtBoolean, vtInteger,   vtFloat,     vtDateStrict, vtDateLoose, vtDateTime,  vtString,     vtArray));
+{Array} (vtBoolean, vtBoolean, vtInt,       vtFloat,     vtDateStrict, vtDateLoose, vtDateTime,  vtString,     vtArray));
 begin
 	if AOperation <> coSEq then
   begin
@@ -3258,7 +3254,7 @@ begin
         else Result := vrLessThan;
       end;
 
-      vtDateStrict, vtInteger:
+      vtDateStrict, vtInt:
       begin
       	I1 := ALeft.ToInt;
         I2 := ARight.ToInt;
@@ -3343,7 +3339,7 @@ begin
           else
           	Result := vrGreaterThan;
 
-        vtInteger:
+        vtInt:
         	if ALeft.IValue = ARight.IValue then
           	Result := vrEqual
           else
@@ -3430,7 +3426,7 @@ end;
 class function TVariableRecord.DoIntFloatOp(ALeft, ARight: TVariableRecord;
 	AOperation: TBinaryOperation): TVariableRecord;
 var
-	I1, I2: Integer;
+	I1, I2: Int64;
   F1, F2: Double;
   CanI1, CanI2, CanF1, CanF2: Boolean;
 begin
@@ -3530,7 +3526,7 @@ end;
 class function TVariableRecord.DoIntOp(ALeft, ARight: TVariableRecord;
 	AOperation: TBinaryOperation): TVariableRecord;
 var
-	I1, I2: Integer;
+	I1, I2: Int64;
   CanI1, CanI2: Boolean;
 begin
   CanI1 := ALeft.CanConvertToInt(I1);
@@ -3698,7 +3694,7 @@ begin
   end;
 end;
 
-class operator TVariablePart.Implicit(AValue: Integer): TVariablePart;
+class operator TVariablePart.Implicit(AValue: Int64): TVariablePart;
 begin
 	Result.PartType := vptIndex;
   Result.IValue := AValue;
@@ -4552,7 +4548,7 @@ begin
       AVariable.SetNull;
       Exit;
     end;
-    vtInteger:
+    vtInt:
     begin
       DT := AVariable.IValue;
       if DateFormat = '' then DateFormat := FormatSettings.ShortDateFormat;
@@ -4969,7 +4965,7 @@ end;
 
 class function TIsIntegerFunction.Evaluate(AParams: array of TVariableRecord): TVariableRecord;
 begin
-	Result := GetParam(0, AParams).IsInteger;
+	Result := GetParam(0, AParams).IsInt;
 end;
 
 {************* TIsFloatFunction *************}
@@ -5868,7 +5864,7 @@ begin
   case V.VarType of
     vtNull, vtBoolean:
       Exit(TVariableRecord.Null);
-    vtInteger:
+    vtInt:
     begin
       DT := V.IValue;
       if DateFormat = '' then DateFormat := FormatSettings.ShortDateFormat;
@@ -5919,7 +5915,7 @@ var
 begin
 	V1 := GetParam(0, AParams);
   case V1.VarType of
-    vtInteger:
+    vtInt:
     	DLFrom := DateTimeToRecord(V1.IValue);
     vtFloat:
     	DLFrom := DateTimeToRecord(V1.FValue);
@@ -5940,7 +5936,7 @@ begin
 
   V2 := GetParam(1, AParams);
   case V2.VarType of
-    vtInteger:
+    vtInt:
       DLTo := DateTimeToRecord(V2.IValue);
     vtFloat:
       DLTo := DateTimeToRecord(V2.FValue);
@@ -6015,7 +6011,7 @@ begin
       	Result := YearOf(Now)
       else
       	Result := 0;
-    vtInteger:
+    vtInt:
     	Result := YearOf(V.IValue);
     vtFloat:
     	Result := YearOf(V.FValue);
@@ -6061,7 +6057,7 @@ begin
       	Result := MonthOf(Now)
       else
       	Result := 0;
-    vtInteger:
+    vtInt:
     	Result := MonthOf(V.IValue);
     vtFloat:
     	Result := MonthOf(V.FValue);
@@ -6107,7 +6103,7 @@ begin
       	Result := DayOf(Now)
       else
       	Result := 0;
-    vtInteger:
+    vtInt:
     	Result := DayOf(V.IValue);
     vtFloat:
     	Result := DayOf(V.FValue);
