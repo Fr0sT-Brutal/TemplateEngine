@@ -39,7 +39,7 @@ type
     function UseCache: boolean; override;
     procedure GetIndexProperties(var AMin, AMax: integer); override;
     function GetVariable(AIndex: integer;
-    	AVarName: string): TVariableRecord; override;
+    	const AVarName: string): TVariableRecord; override;
   end;
 
 var
@@ -73,7 +73,7 @@ begin
 end;
 
 function TMyNamespace.GetVariable(AIndex: integer;
-	AVarName: string): TVariableRecord;
+	const AVarName: string): TVariableRecord;
 begin
   if CompareText(AVarName, 'string') = 0 then Result := 'string'
   else if CompareText(AVarName, 'int') = 0 then Result := 10
