@@ -2408,7 +2408,7 @@ begin
       Char(252): Result := Result + '&uuml;';
       Char(253): Result := Result + '&yacute;';
       Char(254): Result := Result + '&thorn;';
-      #255: Result := Result + '&yuml;';
+      Char(255): Result := Result + '&yuml;';
       #338: Result := Result + '&OElig;';
       #339: Result := Result + '&oelig;';
       #352: Result := Result + '&Scaron;';
