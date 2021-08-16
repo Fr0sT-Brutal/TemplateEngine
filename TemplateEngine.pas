@@ -44,6 +44,9 @@ interface
 
 uses
   {VCL}
+  {$IFDEF MSWINDOWS}
+  Windows,
+  {$ENDIF}
   Classes, SysUtils, StrUtils, DateUtils, Variants, TypInfo,
   Character, Generics.Collections;
 
@@ -1304,7 +1307,7 @@ function Item(const Key: string; const Values: array of TVariableRecord): TVaria
 //   SmartyExec(Template, 'test', FArrOfItems, Errors, Actual)
 function Item(const Key: string; Items: array of TVariableArrayItem): TVariableArrayItem; overload;
 
-function DateRecordToStr(var Value: TDateRecord): string;         //use FormatSettings
+function DateRecordToStr(var Value: TDateRecord; const AFormatSettings: TFormatSettings): string;         //use FormatSettings
 function DateRecordToString(const Value: TDateRecord): string;      //FormatSettings independent
 function StringToDateRecord(const Value: string): TDateRecord;
 function DateTimeFromRecord(const Value: TDateRecord): TDateTime;
@@ -1345,6 +1348,11 @@ function FileEncode(const S: string): string;
 procedure RegisterModifier(AModifier: TVariableModifierClass);
 procedure RegisterFunction(AFunction: TSmartyFunctionClass);
 procedure UnregisterFunction(AFunction: TSmartyFunctionClass);
+// Assign format settings used for all StrTo* and *ToStr operations
+// By default initialized with invariant values returned by SmartyDefaultFormatSettings
+procedure SmartySetFormatSettings(const AFormatSettings: TFormatSettings);
+function SmartyGetFormatSettings: TFormatSettings;
+function SmartyDefaultFormatSettings: TFormatSettings;
 function SmartyExec(const Pattern, NamespaceName: string; const Variables: array of TVariableArrayItem;
                     out Errors, Output: string): Boolean;
 
@@ -1406,7 +1414,8 @@ resourcestring
 implementation
 
 var
- SmartyProvider: TSmartyInfoProvider;
+  SmartyInfoProvider: TSmartyInfoProvider;
+  SmartyFormatSettings: TFormatSettings;
 
 {   = packed record
     Year: Word;         //0 means undefine
@@ -1482,17 +1491,48 @@ end;
 
 procedure RegisterModifier(AModifier: TVariableModifierClass);
 begin
-  SmartyProvider.AddModifier(AModifier);
+  SmartyInfoProvider.AddModifier(AModifier);
 end;
 
 procedure RegisterFunction(AFunction: TSmartyFunctionClass);
 begin
-  SmartyProvider.AddFunction(AFunction);
+  SmartyInfoProvider.AddFunction(AFunction);
 end;
 
 procedure UnregisterFunction(AFunction: TSmartyFunctionClass);
 begin
-  SmartyProvider.DeleteFunction(AFunction);
+  SmartyInfoProvider.DeleteFunction(AFunction);
+end;
+
+procedure SmartySetFormatSettings(const AFormatSettings: TFormatSettings);
+begin
+  SmartyFormatSettings := AFormatSettings;
+end;
+
+function SmartyGetFormatSettings: TFormatSettings;
+begin
+  Result := SmartyFormatSettings;
+end;
+
+function SmartyDefaultFormatSettings: TFormatSettings;
+begin
+  {$IFDEF MSWINDOWS}
+    {$IFDEF DCC}
+    // GetlocaleFormatSettings is deprecated
+    Result := TFormatSettings.Create(LOCALE_INVARIANT);
+    {$ENDIF}
+    {$IFDEF FPC}
+    GetlocaleFormatSettings(LOCALE_INVARIANT, Result);
+    {$ENDIF}
+  {$ELSE}
+    Result := FormatSettings;
+  {$ENDIF}
+  Result.TimeSeparator := ':';
+  Result.ShortTimeFormat := 'hh:nn';
+  Result.LongTimeFormat := 'hh:nn:ss';
+  Result.DateSeparator := '.';
+  Result.ShortDateFormat := 'dd/MM/yyyy';
+  Result.LongDateFormat := 'dd/MM/yyyy HH:mm:ss';
 end;
 
 function SmartyExec(const Pattern, NamespaceName: string; const Variables: array of TVariableArrayItem;
@@ -3122,7 +3162,7 @@ begin
     vtDateTime:
       Result := Self.DTValue;
     vtString:
-      Result := StrToFloatDef(string(Self.SValue), 0);
+      Result := StrToFloatDef(string(Self.SValue), 0, SmartyFormatSettings);
     vtArray:
       if ToBool then Result := 1 else Result := 0;
   else
@@ -3140,13 +3180,13 @@ begin
     vtInt:
       Result := IntToStr(Self.IValue);
     vtFloat:
-      Result := FloatToStr(Self.FValue);
+      Result := FloatToStr(Self.FValue, SmartyFormatSettings);
     vtDateStrict:
-      Result := DateToStr(Self.DSValue);
+      Result := DateToStr(Self.DSValue, SmartyFormatSettings);
     vtDateLoose:
-      Result := DateRecordToStr(Self.DLValue);
+      Result := DateRecordToStr(Self.DLValue, SmartyFormatSettings);
     vtDateTime:
-      Result := DateTimeToStr(Self.DTValue);
+      Result := DateTimeToStr(Self.DTValue, SmartyFormatSettings);
     vtString:
       Result := string(Self.SValue);
     vtArray:
@@ -3238,7 +3278,7 @@ begin
       Result := True;
     end;
     vtString:
-      Result := TryStrToFloat(string(Self.SValue), Value);
+      Result := TryStrToFloat(string(Self.SValue), Value, SmartyFormatSettings);
   else
     Result := False;
   end;
@@ -3865,26 +3905,26 @@ function TForEachList.FindItemRecord(const AItemName: string; out ARecord: TForE
 var
   I: Integer;
 begin
-  Result := False;
   for I := CurrentRecords.Count - 1 downto 0 do
     if SameText(AItemName, Items[CurrentRecords[I]].ItemVarName) then
     begin
       ARecord := Items[CurrentRecords[I]];
       Exit(True);
     end;
+  Result := False;
 end;
 
 function TForEachList.FindKeyRecord(const AKeyName: string; out ARecord: TForEachData): Boolean;
 var
   I: Integer;
 begin
-  Result := False;
   for I := CurrentRecords.Count - 1 downto 0 do
     if SameText(AKeyName, Items[CurrentRecords[I]].KeyVarName) then
     begin
       ARecord := Items[CurrentRecords[I]];
       Exit(True);
     end;
+  Result := False;
 end;
 
 function TForEachList.FindRecord(const AName: string;
@@ -3892,11 +3932,10 @@ function TForEachList.FindRecord(const AName: string;
 var
   I: Integer;
 begin
-  Result := False;
   if SameText(AName, 'current') and (CurrentRecords.Count > 0) then
   begin
     ARecord := Items[CurrentRecords[CurrentRecords.Count-1]];
-    Result := True;
+    Exit(True);
   end
   else if AName <> '' then
   begin
@@ -3907,6 +3946,7 @@ begin
         Exit(True);
       end;
   end;
+  Result := False;
 end;
 
 {************* TCaptureArrayItem *************}
@@ -4485,10 +4525,10 @@ begin
   DateFormat := '';
   if CheckParams(Self, AParams, 0, 1) then SetParam(AParams, 0, DateFormat);
 
-  if SameText(DateFormat, 'shortdate') then DateFormat := FormatSettings.ShortDateFormat
-  else if SameText(DateFormat, 'longdate') then DateFormat := FormatSettings.LongDateFormat
-  else if SameText(DateFormat, 'shorttime') then DateFormat := FormatSettings.ShortTimeFormat
-  else if SameText(DateFormat, 'longtime') then DateFormat := FormatSettings.LongTimeFormat;
+  if SameText(DateFormat, 'shortdate')      then DateFormat := SmartyFormatSettings.ShortDateFormat
+  else if SameText(DateFormat, 'longdate')  then DateFormat := SmartyFormatSettings.LongDateFormat
+  else if SameText(DateFormat, 'shorttime') then DateFormat := SmartyFormatSettings.ShortTimeFormat
+  else if SameText(DateFormat, 'longtime')  then DateFormat := SmartyFormatSettings.LongTimeFormat;
 
   case AVariable.VarType of
     vtNull, vtBoolean:
@@ -4499,26 +4539,26 @@ begin
     vtInt:
     begin
       DT := AVariable.IValue;
-      if DateFormat = '' then DateFormat := FormatSettings.ShortDateFormat;
+      if DateFormat = '' then DateFormat := SmartyFormatSettings.ShortDateFormat;
     end;
     vtFloat: 
       DT := AVariable.FValue;
     vtDateStrict:
     begin
       DT := AVariable.DSValue;
-      if DateFormat = '' then DateFormat := FormatSettings.ShortDateFormat;
+      if DateFormat = '' then DateFormat := SmartyFormatSettings.ShortDateFormat;
     end;
     vtDateLoose:
     begin
       DT := DateTimeFromRecord(AVariable.DLValue);
-      if DateFormat = '' then DateFormat := FormatSettings.ShortDateFormat;
+      if DateFormat = '' then DateFormat := SmartyFormatSettings.ShortDateFormat;
     end;
     vtDateTime:
       DT := AVariable.DTValue;
     vtString:
-      if not TryStrToDate(string(AVariable.SValue), DT) or
-        not TryStrToTime(string(AVariable.SValue), DT) or
-        not TryStrToDateTime(string(AVariable.SValue), DT) then
+      if not TryStrToDate(string(AVariable.SValue), DT, SmartyFormatSettings) or
+        not TryStrToTime(string(AVariable.SValue), DT, SmartyFormatSettings) or
+        not TryStrToDateTime(string(AVariable.SValue), DT, SmartyFormatSettings) then
       begin
         AVariable.SetNull;
         Exit;
@@ -5802,10 +5842,10 @@ begin
   else
     DateFormat := V.ToString;
 
-  if SameText(DateFormat, 'shortdate') then DateFormat := FormatSettings.ShortDateFormat
-  else if SameText(DateFormat, 'longdate') then DateFormat := FormatSettings.LongDateFormat
-  else if SameText(DateFormat, 'shorttime') then DateFormat := FormatSettings.ShortTimeFormat
-  else if SameText(DateFormat, 'longtime') then DateFormat := FormatSettings.LongTimeFormat;
+  if SameText(DateFormat, 'shortdate')      then DateFormat := SmartyFormatSettings.ShortDateFormat
+  else if SameText(DateFormat, 'longdate')  then DateFormat := SmartyFormatSettings.LongDateFormat
+  else if SameText(DateFormat, 'shorttime') then DateFormat := SmartyFormatSettings.ShortTimeFormat
+  else if SameText(DateFormat, 'longtime')  then DateFormat := SmartyFormatSettings.LongTimeFormat;
 
   V := GetParam(0, AParams);
 
@@ -5815,26 +5855,26 @@ begin
     vtInt:
     begin
       DT := V.IValue;
-      if DateFormat = '' then DateFormat := FormatSettings.ShortDateFormat;
+      if DateFormat = '' then DateFormat := SmartyFormatSettings.ShortDateFormat;
     end;
     vtFloat:
       DT := V.FValue;
     vtDateStrict:
     begin
       DT := V.DSValue;
-      if DateFormat = '' then DateFormat := FormatSettings.ShortDateFormat;
+      if DateFormat = '' then DateFormat := SmartyFormatSettings.ShortDateFormat;
     end;
     vtDateLoose:
     begin
       DT := DateTimeFromRecord(V.DLValue);
-      if DateFormat = '' then DateFormat := FormatSettings.ShortDateFormat;
+      if DateFormat = '' then DateFormat := SmartyFormatSettings.ShortDateFormat;
     end;
     vtDateTime:
       DT := V.DTValue;
     vtString:
-      if not TryStrToDate(string(V.SValue), DT) or
-        not TryStrToTime(string(V.SValue), DT) or
-        not TryStrToDateTime(string(V.SValue), DT) then
+      if not TryStrToDate(string(V.SValue), DT, SmartyFormatSettings) or
+        not TryStrToTime(string(V.SValue), DT, SmartyFormatSettings) or
+        not TryStrToDateTime(string(V.SValue), DT, SmartyFormatSettings) then
         Exit(TVariableRecord.Null);
   end;
 
@@ -5874,7 +5914,7 @@ begin
     vtDateTime:
       DLFrom := DateTimeToRecord(V1.DTValue);
     vtString:
-      if TryStrToDateTime(string(V1.SValue), DT) then
+      if TryStrToDateTime(string(V1.SValue), DT, SmartyFormatSettings) then
         DLFrom := DateTimeToRecord(DT)
       else
         Exit(TVariableRecord.Null);
@@ -5895,7 +5935,7 @@ begin
     vtDateTime:
       DLTo := DateTimeToRecord(V2.DTValue);
     vtString:
-      if TryStrToDateTime(string(V2.SValue), DT) then
+      if TryStrToDateTime(string(V2.SValue), DT, SmartyFormatSettings) then
         DLTo := DateTimeToRecord(DT)
       else
         DLTo := DateTimeToRecord(Now);
@@ -5970,7 +6010,7 @@ begin
     vtDateTime:
       Result := YearOf(V.DTValue);
     vtString:
-      if TryStrToDateTime(string(V.SValue), DT) then
+      if TryStrToDateTime(string(V.SValue), DT, SmartyFormatSettings) then
         Result := YearOf(DT)
       else
         Result := 0;
@@ -6016,7 +6056,7 @@ begin
     vtDateTime:
       Result := MonthOf(V.DTValue);
     vtString:
-      if TryStrToDateTime(string(V.SValue), DT) then
+      if TryStrToDateTime(string(V.SValue), DT, SmartyFormatSettings) then
         Result := MonthOf(DT)
       else
         Result := 0;
@@ -6062,7 +6102,7 @@ begin
     vtDateTime:
       Result := DayOf(V.DTValue);
     vtString:
-      if TryStrToDateTime(string(V.SValue), DT) then
+      if TryStrToDateTime(string(V.SValue), DT, SmartyFormatSettings) then
         Result := DayOf(DT)
       else
         Result := 0;
@@ -6636,10 +6676,10 @@ begin
         MAction.FParams := Params;
         VarAction.FModifiers.Add(MAction);
 
-        J := SmartyProvider.FModifiers.IndexOf(Modifier);
+        J := SmartyInfoProvider.FModifiers.IndexOf(Modifier);
         if J >= 0 then
         begin
-          MAction.FModifier := TVariableModifierClass(SmartyProvider.FModifiers.Objects[J]);
+          MAction.FModifier := TVariableModifierClass(SmartyInfoProvider.FModifiers.Objects[J]);
           if not MAction.FModifier.CheckInputParams(Params) then
           begin
             FreeAndNil(AAction);
@@ -6811,10 +6851,10 @@ begin
         MAction.FParams := Params;
         FuncAction.FModifiers.Add(MAction);
 
-        J := SmartyProvider.FModifiers.IndexOf(Modifier);
+        J := SmartyInfoProvider.FModifiers.IndexOf(Modifier);
         if J >= 0 then
         begin
-          MAction.FModifier := TVariableModifierClass(SmartyProvider.FModifiers.Objects[J]);
+          MAction.FModifier := TVariableModifierClass(SmartyInfoProvider.FModifiers.Objects[J]);
           if not MAction.FModifier.CheckInputParams(Params) then
           begin
             FreeAndNil(AAction);
@@ -9366,11 +9406,11 @@ begin
   if K > 0 then
   begin
     SFunc := SmartyTrim(Copy(Command, 1, K - 1));
-    I := SmartyProvider.FFunctions.IndexOf(SFunc);
+    I := SmartyInfoProvider.FFunctions.IndexOf(SFunc);
 
     if I >= 0 then
     begin
-      Func := TSmartyFunctionClass(SmartyProvider.FFunctions.Objects[I]);
+      Func := TSmartyFunctionClass(SmartyInfoProvider.FFunctions.Objects[I]);
 
       InQuote := False;
       Stack := 0;
@@ -9387,8 +9427,8 @@ begin
             Dec(Stack);
             if Stack <= 0 then
             begin
-              Params := SmartyTrim(Copy(Command, Length(SmartyProvider.FFunctions[I]) + 2,
-                J - Length(SmartyProvider.FFunctions[I]) - 2));
+              Params := SmartyTrim(Copy(Command, Length(SmartyInfoProvider.FFunctions[I]) + 2,
+                J - Length(SmartyInfoProvider.FFunctions[I]) - 2));
 
               if Length(Command) > J then
                 Modifiers := SmartyTrim(Copy(Command, J + 1, Length(Command) - J))
@@ -9417,10 +9457,10 @@ class function TSmartyEngine.GetFunction(const AFunction: string): TSmartyFuncti
 var
   I: Integer;
 begin
-  I := SmartyProvider.FFunctions.IndexOf(AFunction);
+  I := SmartyInfoProvider.FFunctions.IndexOf(AFunction);
 
   if I >= 0 then
-    Result := TSmartyFunctionClass(SmartyProvider.FFunctions.Objects[I])
+    Result := TSmartyFunctionClass(SmartyInfoProvider.FFunctions.Objects[I])
   else
     Result := nil;
 end;
@@ -9701,7 +9741,7 @@ end;
 
 {************* Utilities *************}
 
-function DateRecordToStr(var Value: TDateRecord): string;
+function DateRecordToStr(var Value: TDateRecord; const AFormatSettings: TFormatSettings): string;
 var
   Date: TDateTime;
   IsYear, IsMonth, IsDay: Boolean;
@@ -9718,9 +9758,9 @@ begin
   if TryEncodeDate(Value.Year, Value.Month, Value.Day, Date) then
   begin
     if IsYear and IsMonth and IsDay then
-      Result := DateToStr(Date)
+      Result := DateToStr(Date, AFormatSettings)
     else begin
-      S := FormatSettings.ShortDateFormat;
+      S := AFormatSettings.ShortDateFormat;
       if not IsYear then S := StringReplace(S, 'y', '', [rfReplaceAll, rfIgnoreCase]);
       if not IsMonth then S := StringReplace(S, 'm', '', [rfReplaceAll, rfIgnoreCase]);
       if not IsDay then S := StringReplace(S, 'd', '', [rfReplaceAll, rfIgnoreCase]);
@@ -9729,7 +9769,7 @@ begin
       while (Length(S) > 0) and not CharInSet(S[Length(S)], ['D', 'M', 'Y', 'y', 'm', 'd']) do
         Delete(S, Length(S), 1);
       if Length(S) > 0 then
-        DateTimeToString(Result, S, Date)
+        DateTimeToString(Result, S, Date, AFormatSettings)
       else
         Result := '';
     end;
@@ -9878,9 +9918,10 @@ begin
 end;
 
 initialization
-  SmartyProvider := TSmartyInfoProvider.Create;
+  SmartyInfoProvider := TSmartyInfoProvider.Create;
+  SmartyFormatSettings := SmartyDefaultFormatSettings;
 
 finalization
-  SmartyProvider.Free;
+  SmartyInfoProvider.Free;
 
 end.
