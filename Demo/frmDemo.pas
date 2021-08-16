@@ -84,11 +84,11 @@ end;
 function TMyNamespace.GetVariable(AIndex: integer;
 	const AVarName: string): TVariableRecord;
 begin
-  if CompareText(AVarName, 'string') = 0 then Result := 'string'
-  else if CompareText(AVarName, 'int') = 0 then Result := 10
-  else if CompareText(AVarName, 'float') = 0 then Result := 20.0
-  else if CompareText(AVarName, 'bool') = 0 then Result := false
-  else if CompareText(AVarName, 'array') = 0 then
+  if SameText(AVarName, 'string') then Result := 'string'
+  else if SameText(AVarName, 'int') then Result := 10
+  else if SameText(AVarName, 'float') then Result := 20.0
+  else if SameText(AVarName, 'bool') then Result := false
+  else if SameText(AVarName, 'array') then
   begin
     Result.SetArrayLength(4);
     Result.SetArrayItemQ(0, 'str', 'test string');
