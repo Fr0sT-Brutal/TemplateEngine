@@ -47,7 +47,7 @@ uses
   {$IFDEF MSWINDOWS}
   Windows,
   {$ENDIF}
-  Classes, SysUtils, StrUtils, DateUtils, Variants, TypInfo, Types,
+  Classes, SysUtils, StrUtils, DateUtils, Variants, TypInfo, Types, Math,
   Character, Generics.Collections;
 
 type
@@ -3320,27 +3320,21 @@ begin
       begin
         B1 := ALeft.ToBool;
         B2 := ARight.ToBool;
-        if B1 > B2 then Result := GreaterThanValue
-        else if B1 = B2 then Result := EqualsValue
-        else Result := LessThanValue;
+        Result := CompareValue(Ord(B1), Ord(B2));
       end;
 
       vtDateStrict, vtInt:
       begin
         I1 := ALeft.ToInt;
         I2 := ARight.ToInt;
-        if I1 > I2 then Result := GreaterThanValue
-        else if I1 = I2 then Result := EqualsValue
-        else Result := LessThanValue;
+        Result := CompareValue(I1, I2);
       end;
 
       vtFloat, vtDateTime:
       begin
         F1 := ALeft.ToFloat;
         F2 := ARight.ToFloat;
-        if F1 > F2 then Result := GreaterThanValue
-{}        else if F1 = F2 then Result := EqualsValue
-        else Result := LessThanValue;
+        Result := CompareValue(F1, F2);
       end;
 
       vtDateLoose:
@@ -3377,18 +3371,14 @@ begin
         S1 := ALeft.ToString;
         S2 := ARight.ToString;
         SCompare := CompareStr(S1, S2);
-        if SCompare > 0 then Result := GreaterThanValue
-        else if SCompare = 0 then Result := EqualsValue
-        else Result := LessThanValue;
+        Result := Sign(SCompare); // SCompare = -N/0/N, convert to -1/0/1
       end;
 
       vtArray: 
       begin
         I1 := PVariableArray(ALeft.AValue).Count;
         I2 := PVariableArray(ALeft.AValue).Count;
-        if I1 > I2 then Result := GreaterThanValue
-        else if I1 = I2 then Result := EqualsValue
-        else Result := LessThanValue;
+        Result := CompareValue(I1, I2);
       end;
     else
       Result := EqualsValue;
@@ -3417,7 +3407,7 @@ begin
             Result := GreaterThanValue;
 
         vtFloat:
-          if ALeft.FValue = ARight.FValue then
+          if SameValue(ALeft.FValue, ARight.FValue) then
             Result := EqualsValue
           else
             Result := GreaterThanValue;
@@ -3439,7 +3429,7 @@ begin
         end;
 
         vtDateTime:
-          if ALeft.DTValue = ARight.DTValue then
+          if SameDateTime(ALeft.DTValue, ARight.DTValue) then
             Result := EqualsValue
           else
             Result := GreaterThanValue;
