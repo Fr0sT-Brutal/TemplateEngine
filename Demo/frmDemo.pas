@@ -135,15 +135,11 @@ begin
       Arr([
         Map([
           Item('name', 'Foo'),
-          Item('subitems',
-            Arr(['Sub1', 'Sub2'])
-          )
+          Item('subitems', ['Sub1', 'Sub2'])
         ]),
         Map([
           Item('name', 'Bar'),
-          Item('subitems',
-            Arr(['Sub1', 'Sub2'])
-          )
+          Item('subitems', ['Sub1', 'Sub2'])
         ])
       ])
     );
