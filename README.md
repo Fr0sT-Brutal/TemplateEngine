@@ -4,7 +4,7 @@ Source: http://dvdchief.com/delphi
 
 ## Compilers ##
 
-Tested with RAD XE2 and RAD 10.3. FPC 3.3.1: compiles but untested.
+Tested with RAD XE2, RAD 10.3 and FPC 3.3.1.
 
 This repo contains some modifications to the original sources:
 
@@ -16,7 +16,11 @@ This repo contains some modifications to the original sources:
 
 - `TVariableArrayItem.Key` is string instead of Pointer
 
-- [BREAKING] Only Int64 numbers are used instead of Integer. `TVariableRecord.As/Is/Set/ToInteger` => `.As/Is/Set/ToInt`
+- Only Int64 numbers are used instead of Integer. `TVariableRecord.As/Is/Set/ToInteger` => `.As/Is/Set/ToInt`
+
+- All string and record parameters are `const` for better performance. Many parameters marked as `out` instead of `var`.
+
+- `TVariableRecord` class operators removed (wasn't used)
 
 ## Added ##
 
@@ -30,9 +34,9 @@ This repo contains some modifications to the original sources:
       Map([
         Item('Name', 'Manowar'),
         Item('Year', 1980),
-        Item('Genre', 'Heavy metal'),
+        Item('Genre', ['Heavy metal', 'Epic metal']),
         Item('Lineup',
-          Arr([
+          [
             Map([
               Item('Name', 'Eric Adams'),
               Item('Instrument', 'Vocals')
@@ -56,6 +60,22 @@ This repo contains some modifications to the original sources:
 
 - Implemented option for engine to strip line breaks after block tags (`if`, `foreach` etc): `TSmartyEngine.StripLineBreaksAfterBlocks` property
 
+- Unit-local `FormatSettings` and API for changing it: `SmartyDefaultFormatSettings`, `SmartyGetFormatSettings`, `SmartySetFormatSettings`. No more dependency on global `SysUtils.FormatSettings`. By default FormatSettings are invariant having following values:
+```
+  TimeSeparator := ':';
+  ShortTimeFormat := 'hh:nn';
+  LongTimeFormat := 'hh:nn:ss';
+  DateSeparator := '.';
+  ShortDateFormat := 'dd/MM/yyyy';
+  LongDateFormat := 'dd/MM/yyyy HH:mm:ss';
+  DecimalSeparator := '.';
+```
+- Unit test project
+
 # Status #
 
 I'm not going to develop this code actively since I'm not using it much and everything I needed is done already. But PRs are welcome as well as any tests!
+
+# Contributions #
+
+If you find this project useful, you can help by adding tests. Test fixtures are located in Test\TestCases.lst, format is described at the beginning of the file. Many modifiers and functions are waiting to be covered.

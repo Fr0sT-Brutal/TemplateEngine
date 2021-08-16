@@ -1,33 +1,41 @@
-// Test cases for template test
-// [section] - section 
-// 'template' = 'expect result' - test case
-// other lines are ignored
-// Data is:
-    Item('bool', True),
-    Item('float', 10.5),
-    Item('int', 10),
-    Item('str', 'string'),
-    Item('arr', ['Sub1', 'Sub2']),
-    Item('map', [
-      Item('field1', 10),
-      Item('field2', 'foo')
-    ])
+; Test cases for template test
+; [section] - section 
+; 'template' = 'expect result' - test case
+; other lines are ignored
+; Data is:
+;    Item('bool', True),
+;    Item('float', 10.5),
+;    Item('int', 10),
+;    Item('str', 'string'),
+;    Item('arr', ['Sub1', 'Sub2']),
+;  Item('map', [
+;    Item('field1', 10),
+;    Item('field2', 'foo')
+;  ])
 
+; Special constructions
+; TODO: {ldelim} and {rdelim}, {$smarty.ldelim}, {$smarty.rdelim}, etc
 [special]
 '' = ''
 '{* comment *}' = ''
 '{literal} {}{} {/literal}' = ' {}{} '
 
+; Simple variables output
+; TODO: array, map items, datetime, null, ...
 [vars]
 '{$test.bool}' = '1'
 '{$test.float}' = '10.5'
 '{$test.int}' = '10'
 '{$test.str}' = 'string'
 
+; Modifiers
+; TODO: all remaining
 [mods]
 '{$test.str|upper}' = 'STRING'
 '{$test.str|lower|cat:"boo"}' = 'stringboo'
 
+; Functions
+; TODO: all remaining; custom functions
 [functions]
 '{upper_case($test.str)}' = 'STRING'
 '{is_array($test.arr)}' = '1'
@@ -35,6 +43,8 @@
 '{print($test.str,$test.int)}' = 'string10'
 '{ifthen($test.bool, "t", "f")}' = 't'
 
+; Control constructions
+; TODO: foreachelse, foreach.show&.inforeach, {capturearray}, {releasearray}, {ifempty},{elseifempty},{else}
 [control]
 '{if $test.int = 10}yes{else}no{/if}' = 'yes'
 '{if $test.int = 11}yes{else}no{/if}' = 'no'
@@ -46,5 +56,4 @@
 
 '{foreach from=$test.arr item=aItem}{$smarty.foreach.current.iteration}/{$smarty.foreach.current.total}.{$aItem};{/foreach}' = '1/2.Sub1;2/2.Sub2;'
 '{foreach from=$test.map item=aItem key=aKey}{$smarty.foreach.current.iteration}){$aKey}:{$aItem};{/foreach}' = '1)field1:10;2)field2:foo;'
-// foreachelse?
 '{foreach from=$test.arr}{if $smarty.foreach.current.first}first{/if};{if $smarty.foreach.current.first}last{/if}' = 'first;last;'
