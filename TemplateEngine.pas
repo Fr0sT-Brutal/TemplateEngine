@@ -47,7 +47,7 @@ uses
   {$IFDEF MSWINDOWS}
   Windows,
   {$ENDIF}
-  Classes, SysUtils, StrUtils, DateUtils, Variants, TypInfo,
+  Classes, SysUtils, StrUtils, DateUtils, Variants, TypInfo, Types,
   Character, Generics.Collections;
 
 type
@@ -106,8 +106,6 @@ type
                       voAnd, voOr, voXor                 //LogicalIntOps
                       );
 
-  TVariableRelatioship = (vrGreaterThan, vrEqual, vrLessThan);
-
   //variable record for store variable
 
   PVariableRecord = ^TVariableRecord;
@@ -153,7 +151,7 @@ type
     function CanConvertToInt(out Value: Int64): Boolean;
     function CanConvertToFloat(out Value: Double): Boolean;
     class function DoCompareRelationship(const ALeft, ARight: TVariableRecord;
-      AOperation: TCompareOperation): TVariableRelatioship; static;
+      AOperation: TCompareOperation): TValueRelationship; static;
     class function DoCompare(const ALeft, ARight: TVariableRecord;
       AOperation: TCompareOperation): Boolean; static;
     class function DoIntFloatOp(const ALeft, ARight: TVariableRecord;
@@ -1525,6 +1523,7 @@ begin
     GetlocaleFormatSettings(LOCALE_INVARIANT, Result);
     {$ENDIF}
   {$ELSE}
+    // TODO: invariant settings for other platforms
     Result := FormatSettings;
   {$ENDIF}
   Result.TimeSeparator := ':';
@@ -1533,6 +1532,7 @@ begin
   Result.DateSeparator := '.';
   Result.ShortDateFormat := 'dd/MM/yyyy';
   Result.LongDateFormat := 'dd/MM/yyyy HH:mm:ss';
+  Result.DecimalSeparator := '.';
 end;
 
 function SmartyExec(const Pattern, NamespaceName: string; const Variables: array of TVariableArrayItem;
@@ -3285,7 +3285,7 @@ begin
 end;
 
 class function TVariableRecord.DoCompareRelationship(const ALeft, ARight: TVariableRecord;
-  AOperation: TCompareOperation): TVariableRelatioship;
+  AOperation: TCompareOperation): TValueRelationship;
 var
   CompareType: TVariableType;
   B1, B2: Boolean;
@@ -3314,33 +3314,33 @@ begin
     CompareType := CBaseTypes[ALeft.VarType, ARight.VarType];
      case CompareType of
       vtNull:
-        Result := vrEqual;
+        Result := EqualsValue;
 
       vtBoolean:
       begin
         B1 := ALeft.ToBool;
         B2 := ARight.ToBool;
-        if B1 > B2 then Result := vrGreaterThan
-        else if B1 = B2 then Result := vrEqual
-        else Result := vrLessThan;
+        if B1 > B2 then Result := GreaterThanValue
+        else if B1 = B2 then Result := EqualsValue
+        else Result := LessThanValue;
       end;
 
       vtDateStrict, vtInt:
       begin
         I1 := ALeft.ToInt;
         I2 := ARight.ToInt;
-        if I1 > I2 then Result := vrGreaterThan
-        else if I1 = I2 then Result := vrEqual
-        else Result := vrLessThan;
+        if I1 > I2 then Result := GreaterThanValue
+        else if I1 = I2 then Result := EqualsValue
+        else Result := LessThanValue;
       end;
 
       vtFloat, vtDateTime:
       begin
         F1 := ALeft.ToFloat;
         F2 := ARight.ToFloat;
-        if F1 > F2 then Result := vrGreaterThan
-        else if F1 = F2 then Result := vrEqual
-        else Result := vrLessThan;
+        if F1 > F2 then Result := GreaterThanValue
+{}        else if F1 = F2 then Result := EqualsValue
+        else Result := LessThanValue;
       end;
 
       vtDateLoose:
@@ -3352,11 +3352,11 @@ begin
           StartTime := GetStartDate(DL);
           EndTime := GetEndDate(DL);
           if StartTime > DCompare then
-            Result := vrGreaterThan
+            Result := GreaterThanValue
           else if EndTime < DCompare then
-            Result := vrLessThan
+            Result := LessThanValue
           else
-            Result := vrEqual;
+            Result := EqualsValue;
         end
         else begin
           DL := ARight.DLValue;
@@ -3364,11 +3364,11 @@ begin
           StartTime := GetStartDate(DL);
           EndTime := GetEndDate(DL);
           if DCompare < StartTime then
-            Result := vrLessThan
+            Result := LessThanValue
           else if DCompare > EndTime then
-            Result := vrGreaterThan
+            Result := GreaterThanValue
           else
-            Result := vrEqual;
+            Result := EqualsValue;
         end;
       end;
 
@@ -3377,78 +3377,78 @@ begin
         S1 := ALeft.ToString;
         S2 := ARight.ToString;
         SCompare := CompareStr(S1, S2);
-        if SCompare > 0 then Result := vrGreaterThan
-        else if SCompare = 0 then Result := vrEqual
-        else Result := vrLessThan;
+        if SCompare > 0 then Result := GreaterThanValue
+        else if SCompare = 0 then Result := EqualsValue
+        else Result := LessThanValue;
       end;
 
       vtArray: 
       begin
         I1 := PVariableArray(ALeft.AValue).Count;
         I2 := PVariableArray(ALeft.AValue).Count;
-        if I1 > I2 then Result := vrGreaterThan
-        else if I1 = I2 then Result := vrEqual
-        else Result := vrLessThan;
+        if I1 > I2 then Result := GreaterThanValue
+        else if I1 = I2 then Result := EqualsValue
+        else Result := LessThanValue;
       end;
     else
-      Result := vrEqual;
+      Result := EqualsValue;
     end;
 
   end
   else begin
     //SEq operation
     if ALeft.VarType <> ARight.VarType then
-      Result := vrGreaterThan
+      Result := GreaterThanValue
     else begin
       case ALeft.VarType of
         vtNull:
-          Result := vrEqual;
+          Result := EqualsValue;
 
         vtBoolean:
           if ALeft.BValue = ARight.BValue then
-            Result := vrEqual
+            Result := EqualsValue
           else
-            Result := vrGreaterThan;
+            Result := GreaterThanValue;
 
         vtInt:
           if ALeft.IValue = ARight.IValue then
-            Result := vrEqual
+            Result := EqualsValue
           else
-            Result := vrGreaterThan;
+            Result := GreaterThanValue;
 
         vtFloat:
           if ALeft.FValue = ARight.FValue then
-            Result := vrEqual
+            Result := EqualsValue
           else
-            Result := vrGreaterThan;
+            Result := GreaterThanValue;
 
         vtDateStrict:
           if ALeft.DSValue = ARight.DSValue then
-            Result := vrEqual
+            Result := EqualsValue
           else
-            Result := vrGreaterThan;
+            Result := GreaterThanValue;
 
         vtDateLoose:
         begin
           if (ALeft.DLValue.Year = ARight.DLValue.Year) and
              (ALeft.DLValue.Month = ARight.DLValue.Month) and
              (ALeft.DLValue.Day = ARight.DLValue.Day) then
-            Result := vrEqual
+            Result := EqualsValue
           else
-            Result := vrGreaterThan;
+            Result := GreaterThanValue;
         end;
 
         vtDateTime:
           if ALeft.DTValue = ARight.DTValue then
-            Result := vrEqual
+            Result := EqualsValue
           else
-            Result := vrGreaterThan;
+            Result := GreaterThanValue;
 
         vtString:
           if string(ALeft.SValue) = string(ARight.SValue) then
-            Result := vrEqual
+            Result := EqualsValue
           else
-            Result := vrGreaterThan;
+            Result := GreaterThanValue;
 
         vtArray: 
         begin
@@ -3456,20 +3456,20 @@ begin
           VA2 := PVariableArray(ALeft.AValue);
           if VA1.Count = VA2.Count then
           begin
-            Result := vrEqual;
+            Result := EqualsValue;
 
             if VA1.Count > 0 then            
               for I := 0 to VA1.Count - 1 do
               begin
                 Result := DoCompareRelationship(VA1.Data[I].Item, VA2.Data[I].Item, AOperation);
-                if Result <> vrEqual then Break;               
+                if Result <> EqualsValue then Break;               
               end
           end
           else
-            Result := vrGreaterThan;
+            Result := GreaterThanValue;
         end;
       else
-        Result := vrEqual;
+        Result := EqualsValue;
       end;
     end;
   end;
@@ -3478,20 +3478,20 @@ end;
 class function TVariableRecord.DoCompare(const ALeft, ARight: TVariableRecord;
   AOperation: TCompareOperation): Boolean;
 const
-  CRelationshipToBoolean: array [TCompareOperation, TVariableRelatioship] of Boolean =
-  //  vrGreaterThan, vrEqual, vrLessThan
+  CRelationshipToBoolean: array [TCompareOperation, TValueRelationship] of Boolean =
+  //  LessThan , Equal, GreaterThan
     ((False, True,  False),  // coEq
      (True,  False, True),   // coNeq
-     (True,  False, False),  // coGt
-     (False, False, True),   // coLt
-     (True,  True,  False),  // coGte
-     (False, True,  True),   // coLte
+     (False, False, True),   // coGt
+     (True,  False, False),  // coLt
+     (False, True,  True),   // coGte
+     (True,  True,  False),  // coLte
      (False, True,  False)); // coSEq
 var
-  Realationship: TVariableRelatioship;
+  Relationship: TValueRelationship;
 begin
-  Realationship := DoCompareRelationship(ALeft, ARight, AOperation);
-  Result := CRelationshipToBoolean[AOperation, Realationship];
+  Relationship := DoCompareRelationship(ALeft, ARight, AOperation);
+  Result := CRelationshipToBoolean[AOperation, Relationship];
 end;
 
 class function TVariableRecord.DoIntFloatOp(const ALeft, ARight: TVariableRecord;
