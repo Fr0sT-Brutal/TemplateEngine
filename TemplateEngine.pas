@@ -45,7 +45,7 @@ interface
 uses
   {VCL}
   {$IFDEF MSWINDOWS}
-  Windows,
+  Windows, // for invariant FormatSettings
   {$ENDIF}
   Classes, SysUtils, StrUtils, DateUtils, Variants, TypInfo, Types, Math,
   Character, Generics.Collections;
@@ -1559,7 +1559,7 @@ const
     6, {opNeq}
     5, {opGt}
     5, {opLt}
-     5, {opGte}
+    5, {opGte}
     5, {opLte}
     6, {opSEq}
     3, {opAdd}
