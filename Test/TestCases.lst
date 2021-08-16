@@ -1,0 +1,50 @@
+// Test cases for template test
+// [section] - section 
+// 'template' = 'expect result' - test case
+// other lines are ignored
+// Data is:
+    Item('bool', True),
+    Item('float', 10.5),
+    Item('int', 10),
+    Item('str', 'string'),
+    Item('arr', ['Sub1', 'Sub2']),
+    Item('map', [
+      Item('field1', 10),
+      Item('field2', 'foo')
+    ])
+
+[special]
+'' = ''
+'{* comment *}' = ''
+'{literal} {}{} {/literal}' = ' {}{} '
+
+[vars]
+'{$test.bool}' = '1'
+'{$test.float}' = '10.5'
+'{$test.int}' = '10'
+'{$test.str}' = 'string'
+
+[mods]
+'{$test.str|upper}' = 'STRING'
+'{$test.str|lower|cat:"boo"}' = 'stringboo'
+
+[functions]
+'{upper_case($test.str)}' = 'STRING'
+'{is_array($test.arr)}' = '1'
+'{array_length($test.arr)}' = '2'
+'{print($test.str,$test.int)}' = 'string10'
+'{ifthen($test.bool, "t", "f")}' = 't'
+
+[control]
+'{if $test.int = 10}yes{else}no{/if}' = 'yes'
+'{if $test.int = 11}yes{else}no{/if}' = 'no'
+'{if $test.int + 1 = 11}yes{else}no{/if}' = 'yes'
+'{if $test.str = "string"}yes{else}no{/if}' = 'yes'
+'{if $test.nonexist}yes1{elseif $test.bool}yes2{/if}' = 'yes2'
+
+'{ifdef $test.str}yes{else}no{/if}' = 'yes'
+
+'{foreach from=$test.arr item=aItem}{$smarty.foreach.current.iteration}/{$smarty.foreach.current.total}.{$aItem};{/foreach}' = '1/2.Sub1;2/2.Sub2;'
+'{foreach from=$test.map item=aItem key=aKey}{$smarty.foreach.current.iteration}){$aKey}:{$aItem};{/foreach}' = '1)field1:10;2)field2:foo;'
+// foreachelse?
+'{foreach from=$test.arr}{if $smarty.foreach.current.first}first{/if};{if $smarty.foreach.current.first}last{/if}' = 'first;last;'
