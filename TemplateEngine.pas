@@ -1436,7 +1436,7 @@ end;
 function Arr(const Items: array of TVariableRecord; Count: Integer): TVariableRecord;
 var I: Integer;
 begin
-  FillChar(Result, SizeOf(Result), 0);
+  Result := Default(TVariableRecord);
   // -1 = magic value, set new array Length to Items length
   if Count = -1 then
     Count := Length(Items);
@@ -1454,7 +1454,7 @@ end;
 function Map(const Items: array of TVariableArrayItem): TVariableRecord;
 var i: Integer;
 begin
-  FillChar(Result, SizeOf(Result), 0);
+  Result := Default(TVariableRecord);
   Result.SetArrayLength(Length(Items));
   for I := Low(Items) to High(Items) do
     Result.SetArrayItemQ(I, Items[I].Key, Items[I].Item);
@@ -2643,7 +2643,7 @@ var
   ArrayData: PVariableArray;
   I: Integer;
 begin
-  FillChar(Result, SizeOf(Result), 0);
+  Result := Default(TVariableRecord);
 
   Result.VarType := Self.VarType;
   case Self.VarType of
