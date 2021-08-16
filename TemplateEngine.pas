@@ -4563,6 +4563,8 @@ begin
         AVariable.SetNull;
         Exit;
       end;
+    vtArray: // shouldn't happen
+      Abort;
   end;
 
   DateTimeToString(S, DateFormat, DT);
@@ -5876,6 +5878,8 @@ begin
         not TryStrToTime(string(V.SValue), DT, SmartyFormatSettings) or
         not TryStrToDateTime(string(V.SValue), DT, SmartyFormatSettings) then
         Exit(TVariableRecord.Null);
+    vtArray: // shouldn't happen
+      Abort;
   end;
 
   DateTimeToString(S, DateFormat, DT);
