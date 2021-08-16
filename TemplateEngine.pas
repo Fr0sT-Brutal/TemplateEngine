@@ -1449,11 +1449,11 @@ begin
   Result[2] := ADay;
 end;
 
-function TryStringToBool(AValue: string; var B: Boolean): Boolean;
+function TryStringToBool(const AValue: string; var B: Boolean): Boolean;
 begin
   Result := True;
-  if (CompareText('true', AValue) = 0) or (CompareText('1', AValue) = 0) then B := True
-  else if (CompareText('false', AValue) = 0) or (CompareText('0', AValue) = 0) then B := False
+  if SameText(AValue, 'true') or (AValue = '1') then B := True
+  else if SameText(AValue, 'false') or (AValue = '0') then B := False
   else Result := False;
 end;
 
@@ -3801,7 +3801,7 @@ end;
 function TVarList.CheckTopLevel(const AName: string): Boolean;
 begin
   if (Count >= 1) and (Items[0].PartType = vptValue) and
-    (CompareText(Items[0], AName) = 0) then
+    SameText(Items[0], AName) then
   begin
     Result := True;
     DeleteElement(0);
@@ -3952,7 +3952,7 @@ var
 begin
   Result := False;
   for I := CurrentRecords.Count - 1 downto 0 do
-    if CompareText(AItemName, Items[CurrentRecords[I]].ItemVarName) = 0 then
+    if SameText(AItemName, Items[CurrentRecords[I]].ItemVarName) then
     begin
       ARecord := Items[CurrentRecords[I]];
       Exit(True);
@@ -3965,7 +3965,7 @@ var
 begin
   Result := False;
   for I := CurrentRecords.Count - 1 downto 0 do
-    if CompareText(AKeyName, Items[CurrentRecords[I]].KeyVarName) = 0 then
+    if SameText(AKeyName, Items[CurrentRecords[I]].KeyVarName) then
     begin
       ARecord := Items[CurrentRecords[I]];
       Exit(True);
@@ -3978,7 +3978,7 @@ var
   I: Integer;
 begin
   Result := False;
-  if (CompareText(AName, 'current') = 0) and (CurrentRecords.Count > 0) then
+  if SameText(AName, 'current') and (CurrentRecords.Count > 0) then
   begin
     ARecord := Items[CurrentRecords[CurrentRecords.Count-1]];
     Result := True;
@@ -3986,7 +3986,7 @@ begin
   else if AName <> '' then
   begin
     for I := 0 to Count - 1 do
-      if CompareText(Items[I].Name, AName) = 0 then
+      if SameText(Items[I].Name, AName) then
       begin
         ARecord := Items[I];
         Exit(True);
@@ -4031,7 +4031,7 @@ end;
 
 function TCaptureArrayItem.IsItemName(const AName: string): Boolean;
 begin
-  Result := IsActive and (CompareText(ItemName, AName) = 0);
+  Result := IsActive and SameText(ItemName, AName);
 end;
 
 
@@ -4075,7 +4075,7 @@ begin
   for I := 0 to FCaptureCache.Count - 1 do
   begin
     Cache := FCaptureCache[I];
-    if CompareText(Cache.VariableName, AName) = 0 then Exit(True);
+    if SameText(Cache.VariableName, AName) then Exit(True);
   end;
 end;
 
@@ -4104,7 +4104,7 @@ begin
   for I := 0 to FCaptureCache.Count - 1 do
   begin
     Cache := FCaptureCache[I];
-    if CompareText(Cache.VariableName, AName) = 0 then
+    if SameText(Cache.VariableName, AName) then
     begin
       Cache.VariableValue^.Finalize;
       FreeMem(Cache.VariableValue, SizeOf(TVariableRecord));
@@ -4150,17 +4150,18 @@ var
 begin
   Result :=  TVariableRecord.Null;
   NeedFinalize := True;
+  VarName := AnsiLowerCase(AVarName); // ensure case-insensive fast comparisons
 
   if AVarDetails.Count = 0 then
   begin
-    if CompareText(AVarName, 'now') = 0 then Result := Now
-    else if CompareText(AVarName, 'ldelim') = 0 then Result := '{'
-    else if CompareText(AVarName, 'rdelim') = 0 then Result := '}'
-    else if CompareText(AVarName, 'templatedir') = 0 then
+    if VarName = 'now' then Result := Now
+    else if VarName = 'ldelim' then Result := '{'
+    else if VarName = 'rdelim' then Result := '}'
+    else if VarName = 'templatedir' then
       Result := IncludeTrailingPathDelimiter(FEngine.TemplateFolder);
   end
   else begin
-    if CompareText(AVarName, 'foreach') = 0 then
+    if VarName = 'foreach' then
     begin
       VarDetails := AVarDetails.Clone;
       try
@@ -4175,15 +4176,16 @@ begin
           end
           else if VarDetails.IsSimpleVariable(VarName) then
           begin
-            if CompareText(VarName, 'total') = 0 then Result := FERec.Total
-            else if CompareText(VarName, 'inforeach') = 0 then Result := FERec.InForEach
+            VarName := AnsiLowerCase(VarName);
+            if VarName = 'total' then Result := FERec.Total
+            else if VarName = 'inforeach' then Result := FERec.InForEach
             else if FERec.InForEach then
-              if CompareText(VarName, 'iteration') = 0 then Result := FERec.Iteration
-              else if CompareText(VarName, 'start') = 0 then Result := FERec.MinIndex
-              else if CompareText(VarName, 'first') = 0 then Result := FERec.First
-              else if CompareText(VarName, 'last') = 0 then Result := FERec.Last
-              else if CompareText(VarName, 'show') = 0 then Result := FERec.Show
-              else if CompareText(VarName, FERec.KeyVarName) = 0 then
+              if VarName = 'iteration' then Result := FERec.Iteration
+              else if VarName = 'start' then Result := FERec.MinIndex
+              else if VarName = 'first' then Result := FERec.First
+              else if VarName = 'last' then Result := FERec.Last
+              else if VarName = 'show' then Result := FERec.Show
+              else if VarName = FERec.KeyVarName then
               begin
                 Result := FERec.VarData.Data[FERec.Iteration - 1].Key;
                 NeedFinalize := False;
@@ -4195,7 +4197,7 @@ begin
         VarDetails.Finalize;
       end;
     end
-    else if CompareText(AVarName, 'capture') = 0 then
+    else if VarName = 'capture' then
     begin
       VarDetails := AVarDetails.Clone;
       try
@@ -4377,9 +4379,9 @@ var
 begin
   Mode := 'all';
   if CheckParams(Self, AParams, 0, 1) then SetParam(AParams, 0, Mode);
-  if CompareText('left', Mode) = 0 then
+  if SameText('left', Mode) then
     AVariable.SetString(SmartyTrimLeft(AVariable.ToString))
-  else if CompareText('right', Mode) = 0 then
+  else if SameText('right', Mode) then
     AVariable.SetString(SmartyTrimRight(AVariable.ToString))
   else
     AVariable.SetString(SmartyTrim(AVariable.ToString));
@@ -4568,10 +4570,10 @@ begin
   DateFormat := '';
   if CheckParams(Self, AParams, 0, 1) then SetParam(AParams, 0, DateFormat);
 
-  if CompareText(DateFormat, 'shortdate') = 0 then DateFormat := FormatSettings.ShortDateFormat
-  else if CompareText(DateFormat, 'longdate') = 0 then DateFormat := FormatSettings.LongDateFormat
-  else if CompareText(DateFormat, 'shorttime') = 0 then DateFormat := FormatSettings.ShortTimeFormat
-  else if CompareText(DateFormat, 'longtime') = 0 then DateFormat := FormatSettings.LongTimeFormat;
+  if SameText(DateFormat, 'shortdate') then DateFormat := FormatSettings.ShortDateFormat
+  else if SameText(DateFormat, 'longdate') then DateFormat := FormatSettings.LongDateFormat
+  else if SameText(DateFormat, 'shorttime') then DateFormat := FormatSettings.ShortTimeFormat
+  else if SameText(DateFormat, 'longtime') then DateFormat := FormatSettings.LongTimeFormat;
 
   case AVariable.VarType of
     vtNull, vtBoolean:
@@ -5220,7 +5222,7 @@ begin
       if S <> '' then
       begin
         for I := 0 to PVariableArray(V1.AValue).Count - 1 do
-          if CompareText(PVariableArray(V1.AValue).Data[I].Key, S) = 0 then
+          if SameText(PVariableArray(V1.AValue).Data[I].Key, S) then
           begin
             Result := PVariableArray(V1.AValue).Data[I].Item.Clone;
             Break;
@@ -5389,9 +5391,9 @@ begin
     Result := SmartyTrim(S)
   else begin
     Mode := VR.ToString;
-    if CompareText(Mode, 'left') = 0 then
+    if SameText(Mode, 'left') then
       Result := SmartyTrimLeft(S)
-    else if CompareText(Mode, 'right') = 0 then
+    else if SameText(Mode, 'right') then
       Result := SmartyTrimRight(S)
     else
       Result := SmartyTrim(S);
@@ -5885,10 +5887,10 @@ begin
   else
     DateFormat := V.ToString;
 
-  if CompareText(DateFormat, 'shortdate') = 0 then DateFormat := FormatSettings.ShortDateFormat
-  else if CompareText(DateFormat, 'longdate') = 0 then DateFormat := FormatSettings.LongDateFormat
-  else if CompareText(DateFormat, 'shorttime') = 0 then DateFormat := FormatSettings.ShortTimeFormat
-  else if CompareText(DateFormat, 'longtime') = 0 then DateFormat := FormatSettings.LongTimeFormat;
+  if SameText(DateFormat, 'shortdate') then DateFormat := FormatSettings.ShortDateFormat
+  else if SameText(DateFormat, 'longdate') then DateFormat := FormatSettings.LongDateFormat
+  else if SameText(DateFormat, 'shorttime') then DateFormat := FormatSettings.ShortTimeFormat
+  else if SameText(DateFormat, 'longtime') then DateFormat := FormatSettings.LongTimeFormat;
 
   V := GetParam(0, AParams);
 
@@ -6191,15 +6193,15 @@ class function TTemplateAction.IsTag(const ATag: string; const ACommand: string;
    AOnlyTag: Boolean = False): Boolean;
 begin
   if AOnlyTag then
-    Result := CompareText(ATag, ACommand) = 0
+    Result := SameText(ATag, ACommand)
   else
-    Result := StartsWithSpace(ATag, ACommand) or (CompareText(ATag, ACommand) = 0);
+    Result := StartsWithSpace(ATag, ACommand) or SameText(ATag, ACommand);
 end;
 
 class function TTemplateAction.IsTagAndGetCommand(const ATag: string;
   var ACommand: string): Boolean;
 begin
-  if CompareText(ATag, ACommand) = 0 then
+  if SameText(ATag, ACommand) then
   begin
     Result := True;
     ACommand := '';
@@ -6310,7 +6312,7 @@ begin
     ExtractFunctionItem(ACommand, I, Name, Value);
     Found := False;
     for J := 0 to High(AValid) do
-      if CompareText(AValid[J], Name) = 0 then
+      if SameText(AValid[J], Name) then
       begin
         if ACounts[J] > 0 then
           raise ESmartyException.CreateResFmt(@sDuplicateAttribute, [Name])
@@ -6334,7 +6336,7 @@ begin
   for I := 0 to ACommand.Count - 1 do
   begin
     ExtractFunctionItem(ACommand, I, Name, Value);
-    if CompareText(Name, AAtribute) = 0 then
+    if SameText(Name, AAtribute) then
     begin
       if Value = '' then
         Exit(ADefault)
@@ -6526,9 +6528,9 @@ class function TRawOutputAction.IsAction(AEngine: TSmartyEngine;
 begin
   AAction := nil;
   // { symbol
-  if CompareText(ACommand, 'ldelim') = 0 then AAction := TRawOutputAction.CreateOutput(AEngine, '{')
+  if SameText(ACommand, 'ldelim') then AAction := TRawOutputAction.CreateOutput(AEngine, '{')
   // } symbol
-  else if CompareText(ACommand, 'rdelim') = 0 then AAction := TRawOutputAction.CreateOutput(AEngine, '}');
+  else if SameText(ACommand, 'rdelim') then AAction := TRawOutputAction.CreateOutput(AEngine, '}');
 
   Result := Assigned(AAction);
 end;
@@ -6965,7 +6967,7 @@ type
     class function ParseItem(AEngine: TSmartyEngine; const S: string;
       var Index: Integer;  var Item: TExpressionItem): Boolean; override;
     function IsConstItem(var Item: TExpressionItem): Boolean;
-    function IsOperatorItem(var Item: TExpressionItem): Boolean;
+    function IsOperatorItem(out Item: TExpressionItem): Boolean;
     function CreateLink(AEngine: TSmartyEngine): TOperation; override;
     function GetLink: TOperation; override;
     procedure SetNilLink; override;
@@ -7212,7 +7214,7 @@ end;
 
 function TIdentifierItem.IsConstItem(var Item: TExpressionItem): Boolean;
 
-  procedure CreateConstItem(Value: TVariableRecord);
+  procedure CreateConstItem(const Value: TVariableRecord);
   begin
     Item := TConstItem.Create;
     TConstItem(Item).Value := Value;
@@ -7220,43 +7222,51 @@ function TIdentifierItem.IsConstItem(var Item: TExpressionItem): Boolean;
 
 begin
   Result := True;
-  if CompareText('true', Name) = 0 then CreateConstItem(True)
-  else if CompareText('false', Name) = 0 then CreateConstItem(False)
-  else if CompareText('null', Name) = 0 then CreateConstItem(TVariableRecord.Null)
+  if SameText('true', Name) then CreateConstItem(True)
+  else if SameText('false', Name) then CreateConstItem(False)
+  else if SameText('null', Name) then CreateConstItem(TVariableRecord.Null)
   else Result := False;
 end;
 
-function TIdentifierItem.IsOperatorItem(var Item: TExpressionItem): Boolean;
-
-  procedure CreateOperatorItem(Value: TOperator);
-  begin
-    Item := TOperatorItem.Create;
-    TOperatorItem(Item).Op := Value;
-  end;
-
+function TIdentifierItem.IsOperatorItem(out Item: TExpressionItem): Boolean;
+const
+  OperatorNamesToOpMatrix: array[0..19] of record Name: string; Op: TOperator end =
+  (
+    (Name: 'eq'    ; Op: opEq),
+    (Name: 'ne'    ; Op: opNeq),
+    (Name: 'neq'   ; Op: opNeq),
+    (Name: 'gt'    ; Op: opGt),
+    (Name: 'lt'    ; Op: opLt),
+    (Name: 'gte'   ; Op: opGte),
+    (Name: 'ge'    ; Op: opGte),
+    (Name: 'lte'   ; Op: opLte),
+    (Name: 'le'    ; Op: opLte),
+    (Name: 'seq'   ; Op: opSEq),
+    (Name: 'mod'   ; Op: opMod),
+    (Name: 'div'   ; Op: opDiv),
+    (Name: 'shl'   ; Op: opShl),
+    (Name: 'shr'   ; Op: opShr),
+    (Name: 'not'   ; Op: opLogicalNot),
+    (Name: 'and'   ; Op: opLogicalAnd),
+    (Name: 'or'    ; Op: opLogicalOr),
+    (Name: 'bitand'; Op: opBitwiseAnd),
+    (Name: 'bitor' ; Op: opBitwiseOr),
+    (Name: 'xor'   ; Op: opBitwiseXor)
+  );
+var
+  I: Integer;
+  NameLo: string;
 begin
-  Result := True;
-  if CompareText('eq', Name) = 0 then CreateOperatorItem(opEq)
-  else if CompareText('ne', Name) = 0 then CreateOperatorItem(opNeq)
-  else if CompareText('neq', Name) = 0 then CreateOperatorItem(opNeq)
-  else if CompareText('gt', Name) = 0 then CreateOperatorItem(opGt)
-  else if CompareText('lt', Name) = 0 then CreateOperatorItem(opLt)
-  else if CompareText('gte', Name) = 0 then CreateOperatorItem(opGte)
-  else if CompareText('ge', Name) = 0 then CreateOperatorItem(opGte)
-  else if CompareText('lte', Name) = 0 then CreateOperatorItem(opLte)
-  else if CompareText('le', Name) = 0 then CreateOperatorItem(opLte)
-  else if CompareText('seq', Name) = 0 then CreateOperatorItem(opSEq)
-  else if CompareText('mod', Name) = 0 then CreateOperatorItem(opMod)
-  else if CompareText('div', Name) = 0 then CreateOperatorItem(opDiv)
-  else if CompareText('shl', Name) = 0 then CreateOperatorItem(opShl)
-  else if CompareText('shr', Name) = 0 then CreateOperatorItem(opShr)
-  else if CompareText('not', Name) = 0 then CreateOperatorItem(opLogicalNot)
-  else if CompareText('and', Name) = 0 then CreateOperatorItem(opLogicalAnd)
-  else if CompareText('or', Name) = 0 then CreateOperatorItem(opLogicalOr)
-  else if CompareText('bitand', Name) = 0 then CreateOperatorItem(opBitwiseAnd)
-  else if CompareText('bitor', Name) = 0 then CreateOperatorItem(opBitwiseOr)
-  else if CompareText('xor', Name) = 0 then CreateOperatorItem(opBitwiseXor)
-  else Result := False;
+  Item := nil;
+  NameLo := AnsiLowerCase(Name); // ensure case-insensive fast comparisons
+  for I := Low(OperatorNamesToOpMatrix) to High(OperatorNamesToOpMatrix) do
+    if OperatorNamesToOpMatrix[I].Name = NameLo then
+    begin
+      Item := TOperatorItem.Create;
+      TOperatorItem(Item).Op := OperatorNamesToOpMatrix[I].Op;
+      Break;
+    end;
+  Result := Item <> nil;
 end;
 
 function TIdentifierItem.CreateLink(AEngine: TSmartyEngine): TOperation;
@@ -9398,7 +9408,7 @@ begin
           ValueSet := False;
            for J := 0 to ArrayData.Count - 1 do
             if (ArrayData.Data[J].Key <> '') and
-              (CompareText(ArrayData.Data[J].Key, Value) = 0) then
+              SameText(ArrayData.Data[J].Key, Value) then
             begin
               Result := ArrayData.Data[J].Item;
               ValueSet := True;
@@ -9537,7 +9547,7 @@ end;
 
 function TSmartyEngine.Compile(const ADocument: string; var Errors: TStringList): Boolean;
 
-  function SkipAllLiteralEnd(S: string; var IndexStart, IndexEnd: Integer): Boolean;
+  function SkipAllLiteralEnd(const S: string; var IndexStart, IndexEnd: Integer): Boolean;
   var
     Pos1, Pos2: Integer;
     Str: string;
@@ -9551,7 +9561,7 @@ function TSmartyEngine.Compile(const ADocument: string; var Errors: TStringList)
         if Pos2 <= 0 then Exit(False);
         Str := Copy(S, Pos1 + 1, Pos2 - Pos1 - 1);
         Str := SmartyTrim(Str);
-        if CompareText(Str, '/literal') = 0 then
+        if SameText(Str, '/literal') then
         begin
           IndexStart := Pos1;
           IndexEnd := Pos2;
@@ -9566,18 +9576,18 @@ function TSmartyEngine.Compile(const ADocument: string; var Errors: TStringList)
   end;
 
   // Skip exactly one new line (#10 or #13#10)
-  procedure SkipLineBreak(S: string; var IndexStart: Integer);
+  procedure SkipLineBreak(const S: string; var IndexStart: Integer);
   begin
     case GetChar(S, IndexStart) of
-      Char(#10): 
+      Char(#10):
         Inc(IndexStart);
-      Char(#13): 
+      Char(#13):
         if GetChar(S, IndexStart + 1) = Char(#10) then
           Inc(IndexStart, 2);
     end;
   end;
 
-  function CompilePart(S: string; AActions: TTemplateActions;
+  function CompilePart(const S: string; AActions: TTemplateActions;
     BreakAction: TNestAction; var AStart: Integer): string;
   var
     Output, Return, Tag: string;
@@ -9618,7 +9628,7 @@ function TSmartyEngine.Compile(const ADocument: string; var Errors: TStringList)
       begin
         if InSmarty then
         begin
-          if CompareText(SmartyTrim(Tag), 'literal') = 0 then
+          if SameText(SmartyTrim(Tag), 'literal') then
           begin
             J := AStart;
             if SkipAllLiteralEnd(S, J, K) then
