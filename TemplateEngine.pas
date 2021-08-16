@@ -31,8 +31,14 @@ unit TemplateEngine;
 {$B-}    //Boolean short-circuit evaluation
 {$O+}    //Optimization on
 {$R-}    //Range checking off
-{$HIGHCHARUNICODE ON}
+{$IFDEF DCC}
+  {$HIGHCHARUNICODE ON} // Delphi: consider all string literals WideChar
+{$ENDIF}
+
 {.$DEFINE SMARTYDEBUG}
+{$IFDEF FPC}
+  {$MODE Delphi}
+{$ENDIF}
 
 interface
 
@@ -177,8 +183,8 @@ type
     class operator Implicit(const ARecord: TVariableRecord): string;
 
     class operator Add(const ALeft, ARight: TVariableRecord): TVariableRecord;
-		class operator Subtract(const ALeft, ARight: TVariableRecord): TVariableRecord;
-		class operator Multiply(const ALeft, ARight: TVariableRecord): TVariableRecord;
+    class operator Subtract(const ALeft, ARight: TVariableRecord): TVariableRecord;
+    class operator Multiply(const ALeft, ARight: TVariableRecord): TVariableRecord;
     class operator Divide(const ALeft, ARight: TVariableRecord): TVariableRecord;
     class operator IntDivide(const ALeft, ARight: TVariableRecord): TVariableRecord;
     class operator Modulus(const ALeft, ARight: TVariableRecord): TVariableRecord;
@@ -199,8 +205,6 @@ type
       vtString:      (SValue: Pointer);
       vtArray:       (AValue: Pointer);  //PVariableArray
   end;
-
-  TVarModifierProc = reference to procedure(const Variable: TVariableRecord);
 
   TVariableArrayItem = packed record
     Key: string;
@@ -2133,7 +2137,11 @@ begin
     CurChar := Line[Pos];
     if IsLeadChar(CurChar) then
     begin
+      {$IFDEF FPC}
+      {$message 'TODO'}
+      {$ELSE}
       L := CharLength(Line, Pos) div SizeOf(Char) - 1;
+      {$ENDIF}
       Inc(Pos, L);
       Inc(Col, L);
     end
@@ -2332,7 +2340,7 @@ begin
   for I := 1 to Length(AStr) do
   begin
     Ch := AStr[I];
-    case Ch of
+    case WideChar(Ch) of // FPC requires, Delphi - noop
       '&': Result := Result + '&amp;';
       '<': Result := Result + '&lt;';
       '>': Result := Result + '&gt;';
@@ -2979,7 +2987,7 @@ begin
     varWord      : Result := TVarData(AValue).VWord;
     varLongWord  : Result := TVarData(AValue).VLongWord;
     varInt64     : Result := TVarData(AValue).VInt64;
-    varUInt64    : Result := TVarData(AValue).VUInt64;
+    varUInt64    : Result := TVarData(AValue).{$IFDEF DCC}VInt64{$ENDIF} {$IFDEF FPC}vqword{$ENDIF};
     varString    : Result := string(TVarData(AValue).VString);
     varUString   : Result := string(TVarData(AValue).VUString);
   end;
@@ -3009,6 +3017,10 @@ function TVariableRecord.ToBool: Boolean;
 var
   I: Integer;
   ArrayData: PVariableArray;
+{$IF NOT DECLARED(DefaultFalseBoolStr)}
+const
+  DefaultFalseBoolStr = 'False'; // DO NOT LOCALIZE
+{$IFEND}
 begin
   case Self.VarType of
     vtNull:
