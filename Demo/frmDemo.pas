@@ -46,7 +46,7 @@ type
     function GetName: string; override;     //Get Namespace Name
     function IsIndexSupported: boolean; override;
     function UseCache: boolean; override;
-    procedure GetIndexProperties(var AMin, AMax: integer); override;
+    procedure GetIndexProperties(out AMin, AMax: integer); override;
     function GetVariable(AIndex: integer;
     	const AVarName: string): TVariableRecord; override;
   end;
@@ -75,7 +75,7 @@ begin
 	Result := true;
 end;
 
-procedure TMyNamespace.GetIndexProperties(var AMin, AMax: integer);
+procedure TMyNamespace.GetIndexProperties(out AMin, AMax: integer);
 begin
   AMin := 0;
   AMax := 0;

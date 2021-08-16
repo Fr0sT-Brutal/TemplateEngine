@@ -44,7 +44,7 @@ interface
 
 uses
   {VCL}
-  Classes, SysUtils, StrUtils, DateUtils, Variants,
+  Classes, SysUtils, StrUtils, DateUtils, Variants, TypInfo,
   Character, Generics.Collections;
 
 type
@@ -267,7 +267,7 @@ type
     function GetName: string; virtual;      //Get Namespace Name
     function IsIndexSupported: Boolean; virtual;
     function UseCache: Boolean; virtual;
-    procedure GetIndexProperties(var AMin, AMax: Integer); virtual;
+    procedure GetIndexProperties(out AMin, AMax: Integer); virtual;
     function GetVariable(AIndex: Integer;
       const AVarName: string): TVariableRecord; virtual; abstract;
   end;
@@ -347,7 +347,7 @@ type
     FForEachList: TForEachList;
     FActiveCapture: TCaptureArrayItem;
     procedure ClearCaptureCache;
-    function FindCaptureItem(const AName: string; var Cache: TCaptureCache): Boolean;
+    function FindCaptureItem(const AName: string; out Cache: TCaptureCache): Boolean;
     procedure SetCaptureItem(const AName: string; const VariableValue: TVariableRecord);
     procedure RemoveCaptureItem(const AName: string);
   public
@@ -356,7 +356,7 @@ type
     function GetName: string; override;     //Get Namespace Name
     function IsIndexSupported: Boolean; override;
     function UseCache: Boolean; override;
-    procedure GetIndexProperties(var AMin, AMax: Integer); override;
+    procedure GetIndexProperties(out AMin, AMax: Integer); override;
     function GetVariable(AIndex: Integer; const AVarName: string): TVariableRecord; override;
     function GetSmartyVariable(const AVarName: string; AVarDetails: TVarList;
       var NeedFinalize: Boolean): TVariableRecord;
@@ -883,7 +883,7 @@ type
     class function GetAttributeValue(ACommand: TStringList; const AAtribute: string;
       const ADefault: string = ''): string;
     class procedure ExtractFunctionItem(ACommand: TStringList; Index: Integer;
-      var Name, Value: string);
+      out Name, Value: string);
     class procedure ParseVariable(const AVariable: string; AVarList: TVarList);
     class procedure GetVariableProperties(AEngine: TSmartyEngine;
       const AVariable: string; var Namespace: TNamespaceProvider;
@@ -1233,8 +1233,8 @@ type
     function GetVariable(const ANamespace: TNamespaceProvider; AIndex: Integer;
       const AVariableName: string; ADetails: TVarList; var NeedFinalize: Boolean): TVariableRecord;
     function GetVariableDetails(const AVariable: TVariableRecord; ADetails: TVarList): TVariableRecord;
-    class function IsFunction(const ACommand: string; var Func: TSmartyFunctionClass;
-      var Params: string; var Modifiers: string): Boolean;
+    class function IsFunction(const ACommand: string; out Func: TSmartyFunctionClass;
+      out Params: string; out Modifiers: string): Boolean;
     class function GetFunction(const AFunction: string): TSmartyFunctionClass;
     property Namespaces: TStringList read FNamespaces;
     property SmartyNamespace: TSmartyProvider read FSmartyNamespace;
@@ -1413,6 +1413,7 @@ resourcestring
   sAtPosition = ' at line: %d; position: %d';
   sIntegerExceedRangeSigned = 'Integer constant %d exceeds range';
   sIntegerExceedRangeUnsigned = 'Integer constant %u exceeds range';
+  sUnallowedOperator = 'Operator %s is not allowed here';
 
 implementation
 
@@ -1449,7 +1450,7 @@ begin
   Result[2] := ADay;
 end;
 
-function TryStringToBool(const AValue: string; var B: Boolean): Boolean;
+function TryStringToBool(const AValue: string; out B: Boolean): Boolean;
 begin
   Result := True;
   if SameText(AValue, 'true') or (AValue = '1') then B := True
@@ -3467,6 +3468,37 @@ end;
 
 class function TVariableRecord.DoIntFloatOp(const ALeft, ARight: TVariableRecord;
   AOperation: TBinaryOperation): TVariableRecord;
+
+  function DoOp(I1, I2: Int64; AOperation: TBinaryOperation): Int64; overload;
+  begin
+    case AOperation of
+      voAdd:
+        Result := I1 + I2;
+      voSubtract:
+        Result := I1 - I2;
+      voMultiply:
+        Result := I1 * I2;
+      else
+        raise ESmartyException.CreateResFmt(@sUnallowedOperator,
+          [GetEnumName(TypeInfo(TBinaryOperation), Ord(AOperation))]);
+    end;
+  end;
+
+  function DoOp(F1, F2: Double; AOperation: TBinaryOperation): Double; overload;
+  begin
+    case AOperation of
+      voAdd:
+        Result := F1 + F2;
+      voSubtract:
+        Result := F1 - F2;
+      voMultiply:
+        Result := F1 * F2;
+      else
+        raise ESmartyException.CreateResFmt(@sUnallowedOperator,
+          [GetEnumName(TypeInfo(TBinaryOperation), Ord(AOperation))]);
+    end;
+  end;
+
 var
   I1, I2: Int64;
   F1, F2: Double;
@@ -3476,67 +3508,32 @@ begin
   CanI2 := ARight.CanConvertToInt(I2);
   if CanI1 and CanI2 then
   begin
-    case AOperation of
-      voAdd:
-        Result := I1 + I2;
-      voSubtract:
-        Result := I1 - I2;
-      voMultiply:
-        Result := I1 * I2;
-    end;
+    Result := DoOp(I1, I2, AOperation);
   end
   else begin
     CanF1 := ALeft.CanConvertToFloat(F1);
     CanF2 := ARight.CanConvertToFloat(F2);
     if CanF1 and CanF2 then
     begin
-      case AOperation of
-        voAdd:
-          Result := F1 + F2;
-        voSubtract:
-          Result := F1 - F2;
-        voMultiply:
-          Result := F1 * F2;
-      end;
+      Result := DoOp(F1, F2, AOperation);
     end
     else begin
       if CanI1 or CanI2 then
       begin
         if not CanI1 then I1 := ALeft.ToInt;
         if not CanI2 then I2 := ARight.ToInt;
-        case AOperation of
-          voAdd:
-            Result := I1 + I2;
-          voSubtract:
-            Result := I1 - I2;
-          voMultiply:
-            Result := I1 * I2;
-        end;
+        Result := DoOp(I1, I2, AOperation);
       end
       else if CanF1 or CanF2 then
       begin
         if not CanF1 then F1 := ALeft.ToFloat;
         if not CanF2 then F2 := ARight.ToFloat;
-        case AOperation of
-          voAdd:
-            Result := F1 + F2;
-          voSubtract:
-            Result := F1 - F2;
-          voMultiply:
-            Result := F1 * F2;
-        end;
+        Result := DoOp(F1, F2, AOperation);
       end
       else begin
         if not CanI1 then I1 := ALeft.ToInt;
         if not CanI2 then I2 := ARight.ToInt;
-        case AOperation of
-          voAdd:
-            Result := I1 + I2;
-          voSubtract:
-            Result := I1 - I2;
-          voMultiply:
-            Result := I1 * I2;
-        end;
+        Result := DoOp(I1, I2, AOperation);
       end;
     end;
   end;
@@ -3573,44 +3570,26 @@ var
 begin
   CanI1 := ALeft.CanConvertToInt(I1);
   CanI2 := ARight.CanConvertToInt(I2);
-  if CanI1 and CanI2 then
-  begin
-    case AOperation of
-      voAnd:
-        Result := I1 and I2;
-      voOr:
-        Result := I1 or I2;
-      voXor:
-        Result := I1 xor I2;
-      voIntDivide:
-        Result := I1 div I2;
-      voModulus:
-        Result := I1 mod I2;
-      voShl:
-        Result := I1 shl I2;
-      voShr:
-        Result := I1 shr I2;
-    end;
-  end
-  else begin
-    if not CanI1 then I1 := ALeft.ToInt;
-    if not CanI2 then I2 := ARight.ToInt;
-    case AOperation of
-      voAnd:
-        Result := I1 and I2;
-      voOr:
-        Result := I1 or I2;
-      voXor:
-        Result := I1 xor I2;
-      voIntDivide:
-        Result := I1 div I2;
-      voModulus:
-        Result := I1 mod I2;
-      voShl:
-        Result := I1 shl I2;
-      voShr:
-        Result := I1 shr I2;
-    end;
+  if not CanI1 then I1 := ALeft.ToInt;
+  if not CanI2 then I2 := ARight.ToInt;
+  case AOperation of
+    voAnd:
+      Result := I1 and I2;
+    voOr:
+      Result := I1 or I2;
+    voXor:
+      Result := I1 xor I2;
+    voIntDivide:
+      Result := I1 div I2;
+    voModulus:
+      Result := I1 mod I2;
+    voShl:
+      Result := I1 shl I2;
+    voShr:
+      Result := I1 shr I2;
+    else
+      raise ESmartyException.CreateResFmt(@sUnallowedOperator,
+        [GetEnumName(TypeInfo(TBinaryOperation), Ord(AOperation))]);
   end;
 end;
 
@@ -3636,6 +3615,9 @@ begin
       Result := B1 or B2;
     voXor:
       Result := B1 xor B2;
+    else
+      raise ESmartyException.CreateResFmt(@sUnallowedOperator,
+        [GetEnumName(TypeInfo(TBinaryOperation), Ord(AOperation))]);
   end;
 end;
 
@@ -3850,7 +3832,7 @@ begin
   Result := FUseCache;
 end;
 
-procedure TNamespaceProvider.GetIndexProperties(var AMin, AMax: Integer);
+procedure TNamespaceProvider.GetIndexProperties(out AMin, AMax: Integer);
 begin
   AMin := FMin;
   AMax := FMax;
@@ -4067,11 +4049,11 @@ begin
   end;
 end;
 
-function TSmartyProvider.FindCaptureItem(const AName: string; var Cache: TCaptureCache): Boolean;
+function TSmartyProvider.FindCaptureItem(const AName: string; out Cache: TCaptureCache): Boolean;
 var
   I: Integer;
 begin
-  Result := False;
+  Result := False; Cache := Default(TCaptureCache);
   for I := 0 to FCaptureCache.Count - 1 do
   begin
     Cache := FCaptureCache[I];
@@ -4129,7 +4111,7 @@ begin
   Result := False;
 end;
 
-procedure TSmartyProvider.GetIndexProperties(var AMin, AMax: Integer);
+procedure TSmartyProvider.GetIndexProperties(out AMin, AMax: Integer);
 begin
   AMin := 0;
   AMax := 0;
@@ -6305,7 +6287,7 @@ var
   Name, Value: string;
   Found: Boolean;
 begin
-  SetLength(ACounts, High(AValid) + 1);
+  SetLength(ACounts, Length(AValid));
 
   for I := 0 to ACommand.Count - 1 do
   begin
@@ -6349,7 +6331,7 @@ begin
 end;
 
 class procedure TTemplateAction.ExtractFunctionItem(ACommand: TStringList;
-  Index: Integer; var Name, Value: string);
+  Index: Integer; out Name, Value: string);
 var
   S: string;
   I: Integer;
@@ -9436,8 +9418,8 @@ begin
     Result := AVariable;
 end;
 
-class function TSmartyEngine.IsFunction(const ACommand: string; var Func: TSmartyFunctionClass;
-  var Params: string; var Modifiers: string): Boolean;
+class function TSmartyEngine.IsFunction(const ACommand: string; out Func: TSmartyFunctionClass;
+  out Params: string; out Modifiers: string): Boolean;
 var
   I, J, K: Integer;
   Ch: Char;
@@ -9630,7 +9612,7 @@ function TSmartyEngine.Compile(const ADocument: string; var Errors: TStringList)
         begin
           if SameText(SmartyTrim(Tag), 'literal') then
           begin
-            J := AStart;
+            J := AStart; K := 0;
             if SkipAllLiteralEnd(S, J, K) then
             begin
               Output := Output + Copy(S, AStart, J - AStart);
@@ -9713,7 +9695,7 @@ function TSmartyEngine.Compile(const ADocument: string; var Errors: TStringList)
     Result := '';
   end;
 
-  procedure GetLinePosition(APosition: Integer; var Line: Integer; var Pos: Integer);
+  procedure GetLinePosition(APosition: Integer; out Line, Pos: Integer);
   var
     J: Integer;
     Ch: Char;
