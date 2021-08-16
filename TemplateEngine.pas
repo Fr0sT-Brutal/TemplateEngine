@@ -1292,22 +1292,29 @@ type
 
 //convertion rountines
 
-// Helper routine to convert array of variables to a container variable record that
-// could be used with another routines or assigned to bigger variable.
-//   FArrOfItems[N] := Item('arr', Arr(['test string', 29, 2.0, true]));
+// Helper routine to construct value record from an array of values.
+// Items are added with empty key.
+function Arr(const Values: array of TVariableRecord): TVariableRecord;
+// Helper routine to construct value record from an array of name-value pairs
+function Map(const Items: array of TVariableArrayItem): TVariableRecord;
+// Helper routine to construct name-value pair record from a single value
+// JSON analogy: 'foo', 10 => {'foo': 10}
+function Item(const Key: string; const Value: TVariableRecord): TVariableArrayItem; overload;
+// Helper routine to construct name-value pair record from an array of values.
+// Items are added with empty key.
+// JSON analogy: 'foo', [10, true, "str"] => {'foo': [10, true, "str"]}
+//   FArrOfItems[N] := Item('arr', ['test string', 29, 2.0, true]);
 //   SmartyExec(Template, 'test', FArrOfItems, Errors, Actual)
-function Arr(const Items: array of TVariableRecord; Count: Integer = -1): TVariableRecord;
-// Helper routine to construct name-value pair record
-function Item(const Key: string; const Value: TVariableRecord): TVariableArrayItem;
-// Helper routine to create associative array (hash map) from array of name-value records
-// that could be used with another routines or assigned to bigger variable.
+function Item(const Key: string; const Values: array of TVariableRecord): TVariableArrayItem; overload;
+// Helper routine to construct name-value pair record from an array of name-value pairs
+// JSON analogy: 'foo', [{'bar': 1}, {'quz': 2}] => {'foo': [{'bar': 1}, {'quz': 2}]}
 //   FArrOfItems[N] := Item('map',
-//     Map([
+//     [
 //       Item('field1', 123),
 //       Item('field2', 'foo')
 //     ]);
 //   SmartyExec(Template, 'test', FArrOfItems, Errors, Actual)
-function Map(const Items: array of TVariableArrayItem): TVariableRecord;
+function Item(const Key: string; Items: array of TVariableArrayItem): TVariableArrayItem; overload;
 
 function DateRecordToStr(var Value: TDateRecord): string;         //use FormatSettings
 function DateRecordToString(const Value: TDateRecord): string;      //FormatSettings independent
@@ -1450,16 +1457,22 @@ begin
   else Result := False;
 end;
 
-function Arr(const Items: array of TVariableRecord; Count: Integer): TVariableRecord;
+function Arr(const Values: array of TVariableRecord): TVariableRecord;
 var I: Integer;
 begin
   Result := Default(TVariableRecord);
-  // -1 = magic value, set new array Length to Items length
-  if Count = -1 then
-    Count := Length(Items);
-  Result.SetArrayLength(Count);
-  for I := 0 to Count - 1 do
-    Result.SetArrayItemQ(I, '', Items[I]);
+  Result.SetArrayLength(Length(Values));
+  for I := Low(Values) to High(Values) do
+    Result.SetArrayItemQ(I, '', Values[I]);
+end;
+
+function Map(const Items: array of TVariableArrayItem): TVariableRecord;
+var I: Integer;
+begin
+  Result := Default(TVariableRecord);
+  Result.SetArrayLength(Length(Items));
+  for I := Low(Items) to High(Items) do
+    Result.SetArrayItemQ(I, Items[I].Key, Items[I].Item);
 end;
 
 function Item(const Key: string; const Value: TVariableRecord): TVariableArrayItem;
@@ -1468,13 +1481,14 @@ begin
   Result.Item := Value;
 end;
 
-function Map(const Items: array of TVariableArrayItem): TVariableRecord;
-var i: Integer;
+function Item(const Key: string; const Values: array of TVariableRecord): TVariableArrayItem; overload;
 begin
-  Result := Default(TVariableRecord);
-  Result.SetArrayLength(Length(Items));
-  for I := Low(Items) to High(Items) do
-    Result.SetArrayItemQ(I, Items[I].Key, Items[I].Item);
+  Result := Item(Key, Arr(Values));
+end;
+
+function Item(const Key: string; Items: array of TVariableArrayItem): TVariableArrayItem; overload;
+begin
+  Result := Item(Key, Map(Items));
 end;
 
 procedure RegisterModifier(AModifier: TVariableModifierClass);
