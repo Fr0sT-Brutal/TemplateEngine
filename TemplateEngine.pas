@@ -182,18 +182,6 @@ type
     class operator Implicit(const ARecord: TVariableRecord): Double;
     class operator Implicit(const ARecord: TVariableRecord): string;
 
-    class operator Add(const ALeft, ARight: TVariableRecord): TVariableRecord;
-    class operator Subtract(const ALeft, ARight: TVariableRecord): TVariableRecord;
-    class operator Multiply(const ALeft, ARight: TVariableRecord): TVariableRecord;
-    class operator Divide(const ALeft, ARight: TVariableRecord): TVariableRecord;
-    class operator IntDivide(const ALeft, ARight: TVariableRecord): TVariableRecord;
-    class operator Modulus(const ALeft, ARight: TVariableRecord): TVariableRecord;
-    class operator LeftShift(const ALeft, ARight: TVariableRecord): TVariableRecord;
-    class operator RightShift(const ALeft, ARight: TVariableRecord): TVariableRecord;
-    class operator LogicalAnd(const ALeft, ARight: TVariableRecord): TVariableRecord;
-    class operator LogicalOr(const ALeft, ARight: TVariableRecord): TVariableRecord;
-    class operator LogicalXor(const ALeft, ARight: TVariableRecord): TVariableRecord;
-
     case TVariableType of
       vtNull:        ();
       vtBoolean:     (BValue: Boolean);
@@ -3624,61 +3612,6 @@ end;
 class function TVariableRecord.DoLogicalNot(const ARight: TVariableRecord): TVariableRecord;
 begin
   Result := not ARight.ToBool;
-end;
-
-class operator TVariableRecord.Add(const ALeft, ARight: TVariableRecord): TVariableRecord;
-begin
-  DoIntFloatOp(ALeft, ARight, voAdd);
-end;
-
-class operator TVariableRecord.Subtract(const ALeft, ARight: TVariableRecord): TVariableRecord;
-begin
-  DoIntFloatOp(ALeft, ARight, voSubtract);
-end;
-
-class operator TVariableRecord.Multiply(const ALeft, ARight: TVariableRecord): TVariableRecord;
-begin
-  DoIntFloatOp(ALeft, ARight, voMultiply);
-end;
-
-class operator TVariableRecord.Divide(const ALeft, ARight: TVariableRecord): TVariableRecord;
-begin
-  DoFloatOp(ALeft, ARight, voDivide);
-end;
-
-class operator TVariableRecord.IntDivide(const ALeft, ARight: TVariableRecord): TVariableRecord;
-begin
-  DoIntOp(ALeft, ARight, voIntDivide);
-end;
-
-class operator TVariableRecord.Modulus(const ALeft, ARight: TVariableRecord): TVariableRecord;
-begin
-  DoIntOp(ALeft, ARight, voModulus);
-end;
-
-class operator TVariableRecord.LeftShift(const ALeft, ARight: TVariableRecord): TVariableRecord;
-begin
-  DoIntOp(ALeft, ARight, voShl);
-end;
-
-class operator TVariableRecord.RightShift(const ALeft, ARight: TVariableRecord): TVariableRecord;
-begin
-  DoIntOp(ALeft, ARight, voShr);
-end;
-
-class operator TVariableRecord.LogicalAnd(const ALeft, ARight: TVariableRecord): TVariableRecord;
-begin
-  DoLogicalOp(ALeft, ARight, voAnd);
-end;
-
-class operator TVariableRecord.LogicalOr(const ALeft, ARight: TVariableRecord): TVariableRecord;
-begin
-  DoLogicalOp(ALeft, ARight, voOr);
-end;
-
-class operator TVariableRecord.LogicalXor(const ALeft, ARight: TVariableRecord): TVariableRecord;
-begin
-  DoLogicalOp(ALeft, ARight, voXor);
 end;
 
 {************* TVariablePart *************}
