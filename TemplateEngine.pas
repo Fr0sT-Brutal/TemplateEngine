@@ -1292,8 +1292,21 @@ type
 
 //convertion rountines
 
+// Helper routine to convert array of variables to a container variable record that
+// could be used with another routines or assigned to bigger variable.
+//   FArrOfItems[N] := Item('arr', Arr(['test string', 29, 2.0, true]));
+//   SmartyExec(Template, 'test', FArrOfItems, Errors, Actual)
 function Arr(const Items: array of TVariableRecord; Count: Integer = -1): TVariableRecord;
-function Item(const Key: string; Value: TVariableRecord): TVariableArrayItem;
+// Helper routine to construct name-value pair record
+function Item(const Key: string; const Value: TVariableRecord): TVariableArrayItem;
+// Helper routine to create associative array (hash map) from array of name-value records
+// that could be used with another routines or assigned to bigger variable.
+//   FArrOfItems[N] := Item('map',
+//     Map([
+//       Item('field1', 123),
+//       Item('field2', 'foo')
+//     ]);
+//   SmartyExec(Template, 'test', FArrOfItems, Errors, Actual)
 function Map(const Items: array of TVariableArrayItem): TVariableRecord;
 
 function DateRecordToStr(var Value: TDateRecord): string;         //use FormatSettings
@@ -1449,7 +1462,7 @@ begin
     Result.SetArrayItemQ(I, '', Items[I]);
 end;
 
-function Item(const Key: string; Value: TVariableRecord): TVariableArrayItem;
+function Item(const Key: string; const Value: TVariableRecord): TVariableArrayItem;
 begin
   Result.Key := Key;
   Result.Item := Value;
@@ -3834,8 +3847,9 @@ end;
 destructor TStorageNamespaceProvider.Destroy;
 var VarRec: TVariableRecord;
 begin
-  for VarRec in FVariables.Values do
-    VarRec.Finalize;
+  if FVariables <> nil then
+    for VarRec in FVariables.Values do
+      VarRec.Finalize;
   FreeAndNil(FVariables);
   inherited;
 end;
@@ -3845,7 +3859,8 @@ begin
   // lazy init, also saves us from overriding 2 constructors
   if FVariables = nil then
     FVariables := TDictionary<string,TVariableRecord>.Create;
-  FVariables.AddOrSetValue(AnsiUpperCase(AVarName), Value);
+  // ! Clone the record so that the class owns its personal copy and does with it whatever it wants
+  FVariables.AddOrSetValue(AnsiUpperCase(AVarName), Value.Clone);
 end;
 
 function TStorageNamespaceProvider.InternalGetVariable(const AVarName: string): TVariableRecord;
@@ -9478,7 +9493,7 @@ begin
   FActions.Free;
 
   ClearCache;
-   FVarCache.Free;
+  FVarCache.Free;
 
   FErrors.Free;
 
