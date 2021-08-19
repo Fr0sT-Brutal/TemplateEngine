@@ -87,6 +87,13 @@ const
     ExpectResult := Unquote(Trim(Copy(Str, SepPos + SepLen - 1, MaxInt)), QUOTE, QUOTE);
   end;
 
+  // EncodeDate+EncodeTime produce "extended" result in-place; TDateTime typecast
+  // is not allowed, so we need typecast via variable or function
+  function EncodeDateTime(Year, Month, Day, Hour, Min, Sec, MSec: Word): TDateTime;
+  begin
+    Result := EncodeDate(Year, Month, Day) + EncodeTime(Hour, Min, Sec, MSec);
+  end;
+
 var
   sl: TStringList;
   s, CurrSection: string;
@@ -101,6 +108,7 @@ begin
     Item('float', 10.5),
     Item('int', 10),
     Item('str', 'string'),
+    Item('datetime', EncodeDateTime(2000, 1, 2, 3, 4, 5, 6)),
     Item('arr', ['Sub1', 'Sub2']),
     Item('map', [
       Item('field1', 10),

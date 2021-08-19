@@ -7,6 +7,7 @@
 ;    Item('float', 10.5),
 ;    Item('int', 10),
 ;    Item('str', 'string'),
+;    Item('datetime', EncodeDateTime(2000, 1, 2, 3, 4, 5, 6)),
 ;    Item('arr', ['Sub1', 'Sub2']),
 ;  Item('map', [
 ;    Item('field1', 10),
@@ -14,19 +15,30 @@
 ;  ])
 
 ; Special constructions
-; TODO: {ldelim} and {rdelim}, {$smarty.ldelim}, {$smarty.rdelim}, etc
+; TODO: none?
 [special]
 '' = ''
 '{* comment *}' = ''
 '{literal} {}{} {/literal}' = ' {}{} '
+'{ldelim}{rdelim}' = '{}'
+'{$smarty.ldelim}{$smarty.rdelim}' = '{}'
 
 ; Simple variables output
-; TODO: array, map items, datetime, null, ...
+; TODO: none?
 [vars]
+'{$test.null}' = ''
 '{$test.bool}' = '1'
 '{$test.float}' = '10.5'
 '{$test.int}' = '10'
 '{$test.str}' = 'string'
+'{$test.datetime}' = '02.01.2000 03:04:05'
+'{$test.datetime|date_format:"longdate"}' = '02.01.2000 03:04:05'
+'{$test.datetime|date_format:"shortdate"}' = '02.01.2000'
+'{$test.datetime|date_format:"shorttime"}' = '03:04'
+'{$test.datetime|date_format:"longtime"}' = '03:04:05'
+'{$test.arr}' = 'Array'
+'{$test.arr[0]}' = 'Sub1'
+'{$test.map.field1}' = '10'
 
 ; Modifiers
 ; TODO: all remaining
