@@ -3864,7 +3864,7 @@ var
   I: Integer;
 begin
   for I := 0 to Count - 1 do Items[I].Free;
-  CurrentRecords.Free;
+  FreeAndNil(CurrentRecords);
   inherited;
 end;
 
@@ -3973,9 +3973,9 @@ end;
 destructor TSmartyProvider.Destroy;
 begin
   ClearCaptureCache;
-  FCaptureCache.Free;
-  FForEachList.Free;
-  FActiveCapture.Free;
+  FreeAndNil(FCaptureCache);
+  FreeAndNil(FForEachList);
+  FreeAndNil(FActiveCapture);
   inherited;
 end;
 
@@ -6480,7 +6480,7 @@ end;
 destructor TVariableOutputAction.Destroy;
 begin
   FVarDetails.Finalize;
-  FModifiers.Free;
+  FreeAndNil(FModifiers);
   inherited;
 end;
 
@@ -6677,8 +6677,8 @@ end;
 
 destructor TFuncOutputAction.Destroy;
 begin
-  FOperation.Free;
-  FModifiers.Free;
+  FreeAndNil(FOperation);
+  FreeAndNil(FModifiers);
   inherited;
 end;
 
@@ -7199,7 +7199,7 @@ end;
 destructor TConstItem.Destroy;
 begin
   if Assigned(Link) then
-    Link.Free
+    FreeAndNil(Link)
   else
     if NeedFinalize then Value.Finalize;
   inherited;
@@ -7804,7 +7804,7 @@ class function TOperation.Parse(AEngine: TSmartyEngine; const S: string): TOpera
             end;
 
           finally
-            Params.Free;
+            FreeAndNil(Params);
           end;
         end
         else
@@ -7863,7 +7863,7 @@ class function TOperation.Parse(AEngine: TSmartyEngine; const S: string): TOpera
             Data.Insert(I, OItem);
 
           finally
-            Params.Free;
+            FreeAndNil(Params);
           end;
 
         end
@@ -7991,7 +7991,7 @@ begin
 
     Result := AnalyzeParseData(Expr);
   finally
-    Expr.Free;
+    FreeAndNil(Expr);
   end;
 end;
 
@@ -8053,7 +8053,7 @@ end;
 
 destructor TOpFunction.Destroy;
 begin
-  FParams.Free;
+  FreeAndNil(FParams);
   inherited;
 end;
 
@@ -8357,7 +8357,7 @@ end;
 
 constructor TElseIfAction.Create;
 begin
-  inherited Create;
+  inherited;
   FActions := TTemplateActions.Create(True);
 end;
 
@@ -8509,8 +8509,8 @@ end;
 destructor TForEachOutputAction.Destroy;
 begin
   FVarDetails.Finalize;
-  FBaseActions.Free;
-  FElseActions.Free;
+  FreeAndNil(FBaseActions);
+  FreeAndNil(FElseActions);
   inherited;
 end;
 
@@ -8669,7 +8669,7 @@ begin
         end;
 
     finally
-      SL.Free;
+      FreeAndNil(SL);
     end;
 
     Result := True;
@@ -8744,7 +8744,7 @@ begin
           NewVar := TVariableRecord.Null;
 
       finally
-        Indexes.Free;
+        FreeAndNil(Indexes);
       end;
     end
     else begin
@@ -8792,7 +8792,7 @@ begin
       if S <> '' then
         TCaptureArrayAction(AAction).FFilter := TOperation.Parse(AEngine, S);
     finally
-      SL.Free;
+      FreeAndNil(SL);
     end;
 
     Result := True;
@@ -8831,7 +8831,7 @@ begin
       AAction := TReleaseArrayAction.Create(AEngine);
       TReleaseArrayAction(AAction).FVariableName := GetAttributeValue(SL, 'variable', 'var');
     finally
-      SL.Free;
+      FreeAndNil(SL);
     end;
 
     Result := True;
@@ -8889,7 +8889,7 @@ begin
       if S <> '' then
         TAssignAction(AAction).FValue := TOperation.Parse(AEngine, S);
     finally
-      SL.Free;
+      FreeAndNil(SL);
     end;
 
     Result := True;
@@ -8931,7 +8931,7 @@ begin
       AAction := TReleaseAction.Create(AEngine);
       TReleaseAction(AAction).FVariableName := GetAttributeValue(SL, 'variable', 'var');
     finally
-      SL.Free;
+      FreeAndNil(SL);
     end;
 
     Result := True;
@@ -9068,9 +9068,9 @@ end;
 
 destructor TSmartyInfoProvider.Destroy;
 begin
-  FModifiers.Free;
-  FFunctions.Free;
-  inherited Destroy;
+  FreeAndNil(FModifiers);
+  FreeAndNil(FFunctions);
+  inherited;
 end;
 
 
@@ -9088,12 +9088,25 @@ begin
   FNamespaces := TStringList.Create;
   FNamespaces.CaseSensitive := False;
   FNamespaces.Sorted := True;
+  FNamespaces.OwnsObjects := True;
 
   FSilentMode := True;
   FErrors := TStringList.Create;
   FAutoHTMLEncode := False;
   FAllowEspacesInStrings := True;
   Init;
+end;
+
+destructor TSmartyEngine.Destroy;
+begin
+  FreeAndNil(FActions);
+
+  ClearCache;
+  FreeAndNil(FVarCache);
+
+  FreeAndNil(FErrors);
+  FreeAndNil(FNamespaces);
+  inherited;
 end;
 
 procedure TSmartyEngine.Init;
@@ -9342,23 +9355,6 @@ begin
     Result := TSmartyFunctionClass(SmartyInfoProvider.FFunctions.Objects[I])
   else
     Result := nil;
-end;
-
-destructor TSmartyEngine.Destroy;
-var
-  I: Integer;
-begin
-  FActions.Free;
-
-  ClearCache;
-  FVarCache.Free;
-
-  FErrors.Free;
-
-  for I := 0 to FNamespaces.Count - 1 do
-    FNamespaces.Objects[I].Free;
-  FNamespaces.Free;
-  inherited Destroy;
 end;
 
 procedure TSmartyEngine.AddNamespace(ANamespace: TNamespaceProvider);
@@ -9789,7 +9785,7 @@ begin
       Size := TEncoding.GetBufferEncoding(Buffer, Encoding, AEncoding);
       Result := Encoding.GetString(Buffer, Size, Length(Buffer) - Size);
     finally
-      Stream.Free;
+      FreeAndNil(Stream);
     end;
   end
   else
@@ -9801,6 +9797,6 @@ initialization
   SmartyFormatSettings := SmartyDefaultFormatSettings;
 
 finalization
-  SmartyInfoProvider.Free;
+  FreeAndNil(SmartyInfoProvider);
 
 end.
