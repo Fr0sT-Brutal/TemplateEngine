@@ -267,16 +267,12 @@ type
   TStorageNamespaceProvider = class(TNamespaceProvider)
   strict private
     FVariables: TDictionary<string,TVariableRecord>;
-    procedure InternalSetVariable(const AVarName: string; const Value: TVariableRecord); overload;
-  protected
-    function InternalGetVariable(const AVarName: string): TVariableRecord;
+    procedure InternalSetVariable(const AVarName: string; const Value: TVariableRecord);
   public
     destructor Destroy; override;
 
-    function GetVariable(AIndex: Integer;
-      const AVarName: string): TVariableRecord; override;
-
     procedure ClearVariables;
+    function GetVariable(AIndex: Integer; const AVarName: string): TVariableRecord; override;
     procedure SetVariable(const AVarName: string; const Value: TVariableRecord); overload;
     procedure SetVariable(const AVarName: string; const Values: array of TVariableRecord); overload;
     procedure SetVariables(const Variables: array of TVariableArrayItem);
@@ -2726,7 +2722,6 @@ begin
     end;
     vtArray:
     begin
-      Result.AValue := nil;
       Result.AValue := AllocMem(SizeOf(TVariableArray));
       ArrayData := Result.AValue;
       PVariableArray(Result.AValue).Count := PVariableArray(Self.AValue).Count;
@@ -3805,11 +3800,8 @@ end;
 {************* TStorageNamespaceProvider *************}
 
 destructor TStorageNamespaceProvider.Destroy;
-var VarRec: TVariableRecord;
 begin
-  if FVariables <> nil then
-    for VarRec in FVariables.Values do
-      VarRec.Finalize;
+  ClearVariables;
   FreeAndNil(FVariables);
   inherited;
 end;
@@ -3823,7 +3815,7 @@ begin
   FVariables.AddOrSetValue(AnsiUpperCase(AVarName), Value.Clone);
 end;
 
-function TStorageNamespaceProvider.InternalGetVariable(const AVarName: string): TVariableRecord;
+function TStorageNamespaceProvider.GetVariable(AIndex: Integer; const AVarName: string): TVariableRecord;
 begin
   if not FVariables.ContainsKey(AVarName) then
     Result := TVariableRecord.Null
@@ -3831,13 +3823,13 @@ begin
     Result := FVariables[AVarName].Clone;
 end;
 
-function TStorageNamespaceProvider.GetVariable(AIndex: Integer; const AVarName: string): TVariableRecord;
-begin
-  Result := InternalGetVariable(AVarName);
-end;
-
 procedure TStorageNamespaceProvider.ClearVariables;
+var VarRec: TVariableRecord;
 begin
+  if FVariables = nil then Exit;
+
+  for VarRec in FVariables.Values do
+    VarRec.Finalize;
   FVariables.Clear;
 end;
 
@@ -7257,6 +7249,18 @@ begin
 end;
 
 procedure TConstItem.ScanNumberItem(const S: string; var Index: Integer);
+
+  procedure ConsumeDigits(out Ch: Char; var Str: string);
+  begin
+    Ch := GetChar(S, Index);
+    while CharInSet(Ch, ['0'..'9']) do
+    begin
+      Str := Str + Ch;
+      Inc(Index);
+      Ch := GetChar(S, Index);
+    end;
+  end;
+
 var
   Str: string;
   IntConst: Boolean;
@@ -7265,29 +7269,14 @@ var
   D: Double;
 begin
   IntConst := True;
-  Str := GetChar(S, Index);
-  Inc(Index);
-  Ch := GetChar(S, Index);
-  while CharInSet(Ch, ['0'..'9']) do
-  begin
-    Str := Str + Ch;
-    Inc(Index);
-    Ch := GetChar(S, Index);
-  end;
+  ConsumeDigits(Ch, Str);
 
   if Ch = '.' then
   begin
     IntConst := False;
     Str := Str + Ch;
     Inc(Index);
-    Ch := GetChar(S, Index);
-
-    while CharInSet(Ch, ['0'..'9']) do
-    begin
-      Str := Str + Ch;
-      Inc(Index);
-      Ch := GetChar(S, Index);
-    end;
+    ConsumeDigits(Ch, Str);
   end;
 
   if CharInSet(Ch, ['e', 'E']) then
@@ -7295,8 +7284,8 @@ begin
     IntConst := False;
     Str := Str + Ch;
     Inc(Index);
-    Ch := GetChar(S, Index);
 
+    Ch := GetChar(S, Index);
     if CharInSet(Ch, ['-', '+']) then
     begin
       Str := Str + Ch;
@@ -7304,12 +7293,7 @@ begin
       Ch := GetChar(S, Index);
     end;
 
-    while CharInSet(Ch, ['0'..'9']) do
-    begin
-      Str := Str + Ch;
-      Inc(Index);
-      Ch := GetChar(S, Index);
-    end;
+    ConsumeDigits(Ch, Str);
   end;
 
   if IntConst then
