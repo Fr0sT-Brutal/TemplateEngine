@@ -345,9 +345,9 @@ type
     procedure GetIndexProperties(out AMin, AMax: Integer); override;
     function GetVariable(AIndex: Integer; const AVarName: string): TVariableRecord; override;
     function GetSmartyVariable(const AVarName: string; AVarDetails: TVarList;
-      var NeedFinalize: Boolean): TVariableRecord;
+      out NeedFinalize: Boolean): TVariableRecord;
     function GetDetachVariable(const AVarName: string; AVarDetails: TVarList;
-      var NeedFinalize: Boolean): TVariableRecord;
+      out NeedFinalize: Boolean): TVariableRecord;
   end;
 
   //Variable modifier
@@ -875,7 +875,7 @@ type
       const AVariable: string; var Namespace: TNamespaceProvider;
       var Index: Integer; var VarName: string; var AVarList: TVarList);
     class function IsAction(AEngine: TSmartyEngine; const ACommand: string;
-      var AAction: TTemplateAction): Boolean; virtual;
+      out AAction: TTemplateAction): Boolean; virtual;
   end;
 
   TRawOutputAction = class (TTemplateAction)
@@ -888,7 +888,7 @@ type
     constructor CreateOutput(AEngine: TSmartyEngine; const AOutput: string);
     function Execute: string; override;
     class function IsAction(AEngine: TSmartyEngine;  const ACommand: string;
-      var AAction: TTemplateAction): Boolean; override;
+      out AAction: TTemplateAction): Boolean; override;
   end;
 
   TModifierAction = class
@@ -912,7 +912,7 @@ type
     destructor Destroy; override;
     function Execute: string; override;
     class function IsAction(AEngine: TSmartyEngine;
-      const ACommand: string; var AAction: TTemplateAction): Boolean; override;
+      const ACommand: string; out AAction: TTemplateAction): Boolean; override;
   end;
 
   TFuncOutputAction = class (TTemplateAction)
@@ -924,7 +924,7 @@ type
     destructor Destroy; override;
     function Execute: string; override;
     class function IsAction(AEngine: TSmartyEngine;
-      const ACommand: string; var AAction: TTemplateAction): Boolean; override;
+      const ACommand: string; out AAction: TTemplateAction): Boolean; override;
   end;
 
   TOperator = (opEq,      //eq, =
@@ -956,7 +956,7 @@ type
 
   TOperation = class
     constructor Create; virtual;
-    function Evaluate(AEngine: TSmartyEngine; var NeedFinalize: Boolean): TVariableRecord; virtual; abstract;
+    function Evaluate(AEngine: TSmartyEngine; out NeedFinalize: Boolean): TVariableRecord; virtual; abstract;
     class function Parse(AEngine: TSmartyEngine; const S: string): TOperation;
     {$IFDEF SMARTYDEBUG} function AsString: string; virtual; abstract; {$ENDIF}
   end;
@@ -974,7 +974,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
     function Evaluate(AEngine: TSmartyEngine;
-      var NeedFinalize: Boolean): TVariableRecord; override;
+      out NeedFinalize: Boolean): TVariableRecord; override;
     {$IFDEF SMARTYDEBUG} function AsString: string; override; {$ENDIF}
   end;
 
@@ -984,7 +984,7 @@ type
   public
     destructor Destroy; override;
     function Evaluate(AEngine: TSmartyEngine;
-      var NeedFinalize: Boolean): TVariableRecord; override;
+      out NeedFinalize: Boolean): TVariableRecord; override;
     {$IFDEF SMARTYDEBUG} function AsString: string; override; {$ENDIF}
   end;
 
@@ -996,7 +996,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
     function Evaluate(AEngine: TSmartyEngine;
-      var NeedFinalize: Boolean): TVariableRecord; override;
+      out NeedFinalize: Boolean): TVariableRecord; override;
     {$IFDEF SMARTYDEBUG} function AsString: string; override; {$ENDIF}
   end;
 
@@ -1007,7 +1007,7 @@ type
   public
     destructor Destroy; override;
     function Evaluate(AEngine: TSmartyEngine;
-      var NeedFinalize: Boolean): TVariableRecord; override;
+      out NeedFinalize: Boolean): TVariableRecord; override;
     {$IFDEF SMARTYDEBUG} function AsString: string; override; {$ENDIF}
   end;
 
@@ -1065,7 +1065,7 @@ type
     FThenActions, FElseActions: TTemplateActions;
     FElseIfActions: TElseIfActions;
     function ContinueIf(AEngine: TSmartyEngine; const ACommand: string;
-      var AState: Integer; var AActions: TTemplateActions): Boolean;
+      var AState: Integer; out AActions: TTemplateActions): Boolean;
   public
     property ThenActions: TTemplateActions read FThenActions;
     property ElseActions: TTemplateActions read FElseActions;
@@ -1075,7 +1075,7 @@ type
     destructor Destroy; override;
     function Execute: string; override;
     class function IsAction(AEngine: TSmartyEngine;  const ACommand: string;
-      var AAction: TTemplateAction): Boolean; override;
+      out AAction: TTemplateAction): Boolean; override;
   end;
 
   TForEachOutputAction = class (TTemplateAction)
@@ -1107,7 +1107,7 @@ type
     destructor Destroy; override;
     function Execute: string; override;
     class function IsAction(AEngine: TSmartyEngine; const ACommand: string;
-      var AAction: TTemplateAction): Boolean; override;
+      out AAction: TTemplateAction): Boolean; override;
   end;
 
   TCaptureArrayAction = class (TTemplateAction)
@@ -1126,7 +1126,7 @@ type
     destructor Destroy; override;
     function Execute: string; override;
     class function IsAction(AEngine: TSmartyEngine; const ACommand: string;
-      var AAction: TTemplateAction): Boolean; override;
+      out AAction: TTemplateAction): Boolean; override;
   end;
 
   TReleaseArrayAction = class (TTemplateAction)
@@ -1136,7 +1136,7 @@ type
     constructor Create(AEngine: TSmartyEngine); override;
     function Execute: string; override;
     class function IsAction(AEngine: TSmartyEngine; const ACommand: string;
-      var AAction: TTemplateAction): Boolean; override;
+      out AAction: TTemplateAction): Boolean; override;
   end;
 
   TAssignAction = class (TTemplateAction)
@@ -1148,7 +1148,7 @@ type
     destructor Destroy; override;
     function Execute: string; override;
     class function IsAction(AEngine: TSmartyEngine; const ACommand: string;
-      var AAction: TTemplateAction): Boolean; override;
+      out AAction: TTemplateAction): Boolean; override;
   end;
 
   TReleaseAction = class (TTemplateAction)
@@ -1158,7 +1158,7 @@ type
     constructor Create(AEngine: TSmartyEngine); override;
     function Execute: string; override;
     class function IsAction(AEngine: TSmartyEngine; const ACommand: string;
-      var AAction: TTemplateAction): Boolean; override;
+      out AAction: TTemplateAction): Boolean; override;
   end;
 
   TVariableCache = record
@@ -1211,7 +1211,7 @@ type
     procedure SetIsCache(Value: Boolean);
   private // for internal use
     function GetVariable(const ANamespace: TNamespaceProvider; AIndex: Integer;
-      const AVariableName: string; ADetails: TVarList; var NeedFinalize: Boolean): TVariableRecord;
+      const AVariableName: string; ADetails: TVarList; out NeedFinalize: Boolean): TVariableRecord;
     function GetVariableDetails(const AVariable: TVariableRecord; ADetails: TVarList): TVariableRecord;
     class function IsFunction(const ACommand: string; out Func: TSmartyFunctionClass;
       out Params: string; out Modifiers: string): Boolean;
@@ -4065,7 +4065,7 @@ begin
 end;
 
 function TSmartyProvider.GetSmartyVariable(const AVarName: string;
-  AVarDetails: TVarList; var NeedFinalize: Boolean): TVariableRecord;
+  AVarDetails: TVarList; out NeedFinalize: Boolean): TVariableRecord;
 var
   S, VarName: string;
   VarDetails: TVarList;
@@ -4142,7 +4142,7 @@ begin
 end;
 
 function TSmartyProvider.GetDetachVariable(const AVarName: string; AVarDetails: TVarList;
-  var NeedFinalize: Boolean): TVariableRecord;
+  out NeedFinalize: Boolean): TVariableRecord;
 var
   FERec: TForEachData;
   VName: string;
@@ -6422,7 +6422,7 @@ begin
 end;
 
 class function TTemplateAction.IsAction(AEngine: TSmartyEngine;
-  const ACommand: string; var AAction: TTemplateAction): Boolean;
+  const ACommand: string; out AAction: TTemplateAction): Boolean;
 begin
   Result := False;
   AAction := nil;
@@ -6448,7 +6448,7 @@ begin
 end;
 
 class function TRawOutputAction.IsAction(AEngine: TSmartyEngine;
-  const ACommand: string; var AAction: TTemplateAction): Boolean;
+  const ACommand: string; out AAction: TTemplateAction): Boolean;
 begin
   AAction := nil;
   // { symbol
@@ -6524,7 +6524,7 @@ begin
 end;
 
 class function TVariableOutputAction.IsAction(AEngine: TSmartyEngine;
-  const ACommand: string; var AAction: TTemplateAction): Boolean;
+  const ACommand: string; out AAction: TTemplateAction): Boolean;
 var
   I, J: Integer;
   VarAction: TVariableOutputAction;
@@ -6716,7 +6716,7 @@ begin
 end;
 
 class function TFuncOutputAction.IsAction(AEngine: TSmartyEngine;
-  const ACommand: string; var AAction: TTemplateAction): Boolean;
+  const ACommand: string; out AAction: TTemplateAction): Boolean;
 var
   I, J: Integer;
   FuncAction: TFuncOutputAction;
@@ -6846,7 +6846,7 @@ type
   public
     constructor Create; virtual;
     class function ParseItem(AEngine: TSmartyEngine; const S: string;
-      var Index: Integer; var Item: TExpressionItem): Boolean; virtual;   //only skip spaces and return False
+      var Index: Integer; out Item: TExpressionItem): Boolean; virtual;   //only skip spaces and return False
     function CreateLink(AEngine: TSmartyEngine): TOperation; virtual;
     function GetLink: TOperation; virtual;
     procedure SetNilLink; virtual;
@@ -6864,7 +6864,7 @@ type
     class function IsItem(const S: string; const Index: Integer): Boolean;
     procedure ScanStr(const S: string; var Index: Integer);
     class function ParseItem(AEngine: TSmartyEngine; const S: string;
-      var Index: Integer;  var Item: TExpressionItem): Boolean; override;
+      var Index: Integer; out Item: TExpressionItem): Boolean; override;
     function CreateLink(AEngine: TSmartyEngine): TOperation; override;
     function GetLink: TOperation; override;
     procedure SetNilLink; override;
@@ -6882,8 +6882,8 @@ type
     class function IsItem(const S: string; const Index: Integer): Boolean;
     procedure ScanStr(const S: string; var Index: Integer);
     class function ParseItem(AEngine: TSmartyEngine; const S: string;
-      var Index: Integer;  var Item: TExpressionItem): Boolean; override;
-    function IsConstItem(var Item: TExpressionItem): Boolean;
+      var Index: Integer; out Item: TExpressionItem): Boolean; override;
+    function IsConstItem(out Item: TExpressionItem): Boolean;
     function IsOperatorItem(out Item: TExpressionItem): Boolean;
     function CreateLink(AEngine: TSmartyEngine): TOperation; override;
     function GetLink: TOperation; override;
@@ -6910,7 +6910,7 @@ type
     procedure ScanStringItem(const S: string; var Index: Integer; AParseEsapces: Boolean);
     procedure ScanDateItem(const S: string; Loose: Boolean; var Index: Integer);
     class function ParseItem(AEngine: TSmartyEngine; const S: string;
-      var Index: Integer;  var Item: TExpressionItem): Boolean; override;
+      var Index: Integer; out Item: TExpressionItem): Boolean; override;
     function CreateLink(AEngine: TSmartyEngine): TOperation; override;
     function GetLink: TOperation; override;
     procedure SetNilLink; override;
@@ -6930,7 +6930,7 @@ type
     class function IsItem(const S: string; const Index: Integer): Boolean;
     procedure ScanStr(const S: string; var Index: Integer);
     class function ParseItem(AEngine: TSmartyEngine; const S: string;
-      var Index: Integer;  var Item: TExpressionItem): Boolean; override;
+      var Index: Integer; out Item: TExpressionItem): Boolean; override;
     function CreateLink(AEngine: TSmartyEngine): TOperation; override;
     function GetLink: TOperation; override;
     procedure SetNilLink; override;
@@ -6949,7 +6949,7 @@ type
     class function IsItem(const S: string; const Index: Integer): Boolean;
     procedure ScanStr(const S: string; var Index: Integer);
     class function ParseItem(AEngine: TSmartyEngine; const S: string;
-      var Index: Integer;  var Item: TExpressionItem): Boolean; override;
+      var Index: Integer; out Item: TExpressionItem): Boolean; override;
     function GetLink: TOperation; override;
     procedure SetNilLink; override;
   {$IFDEF SMARTYDEBUG}
@@ -6964,7 +6964,7 @@ type
   public
     destructor Destroy; override;
     class function ParseItem(AEngine: TSmartyEngine; const S: string;
-      var Index: Integer;  var Item: TExpressionItem): Boolean; override;
+      var Index: Integer; out Item: TExpressionItem): Boolean; override;
     function GetLink: TOperation; override;
     procedure SetNilLink; override;
   {$IFDEF SMARTYDEBUG}
@@ -6982,7 +6982,7 @@ begin
 end;
 
 class function TExpressionItem.ParseItem(AEngine: TSmartyEngine; const S: string;
-  var Index: Integer; var Item: TExpressionItem): Boolean;
+  var Index: Integer; out Item: TExpressionItem): Boolean;
 var
   Ch: Char;
 begin
@@ -6993,6 +6993,7 @@ begin
     Ch := GetChar(S, Index);
   end;
   Result := False;
+  Item := nil;
 end;
 
 function TExpressionItem.CreateLink(AEngine: TSmartyEngine): TOperation;
@@ -7045,7 +7046,7 @@ begin
 end;
 
 class function TVariableItem.ParseItem(AEngine: TSmartyEngine; const S: string;
-  var Index: Integer; var Item: TExpressionItem): Boolean;
+  var Index: Integer; out Item: TExpressionItem): Boolean;
 begin
   inherited;
 
@@ -7111,7 +7112,7 @@ begin
 end;
 
 class function TIdentifierItem.ParseItem(AEngine: TSmartyEngine; const S: string;
-  var Index: Integer; var Item: TExpressionItem): Boolean;
+  var Index: Integer; out Item: TExpressionItem): Boolean;
 begin
   inherited;
 
@@ -7123,7 +7124,7 @@ begin
   end;
 end;
 
-function TIdentifierItem.IsConstItem(var Item: TExpressionItem): Boolean;
+function TIdentifierItem.IsConstItem(out Item: TExpressionItem): Boolean;
 
   procedure CreateConstItem(const Value: TVariableRecord);
   begin
@@ -7132,7 +7133,7 @@ function TIdentifierItem.IsConstItem(var Item: TExpressionItem): Boolean;
   end;
 
 begin
-  Result := True;
+  Result := True; Item := nil;
   if SameText('true', FName) then CreateConstItem(True)
   else if SameText('false', FName) then CreateConstItem(False)
   else if SameText('null', FName) then CreateConstItem(TVariableRecord.Null)
@@ -7374,7 +7375,7 @@ begin
 end;
 
 class function TConstItem.ParseItem(AEngine: TSmartyEngine; const S: string;
-  var Index: Integer; var Item: TExpressionItem): Boolean;
+  var Index: Integer; out Item: TExpressionItem): Boolean;
 begin
   inherited;
 
@@ -7532,7 +7533,7 @@ begin
 end;
 
 class function TOperatorItem.ParseItem(AEngine: TSmartyEngine; const S: string;
-  var Index: Integer; var Item: TExpressionItem): Boolean;
+  var Index: Integer; out Item: TExpressionItem): Boolean;
 begin
   inherited;
 
@@ -7632,7 +7633,7 @@ begin
 end;
 
 class function TParenthesisItem.ParseItem(AEngine: TSmartyEngine; const S: string;
-  var Index: Integer; var Item: TExpressionItem): Boolean;
+  var Index: Integer; out Item: TExpressionItem): Boolean;
 begin
   inherited;
 
@@ -7678,7 +7679,7 @@ begin
 end;
 
 class function TOpItem.ParseItem(AEngine: TSmartyEngine; const S: string;
-  var Index: Integer; var Item: TExpressionItem): Boolean;
+  var Index: Integer; out Item: TExpressionItem): Boolean;
 begin
   Result := False;
 end;
@@ -8025,7 +8026,7 @@ begin
   inherited;
 end;
 
-function TOpVariable.Evaluate(AEngine: TSmartyEngine; var NeedFinalize: Boolean): TVariableRecord;
+function TOpVariable.Evaluate(AEngine: TSmartyEngine; out NeedFinalize: Boolean): TVariableRecord;
 begin
   Result := AEngine.GetVariable(FNamespace, FIndex, FVarName, FVarDetails, NeedFinalize);
 end;
@@ -8045,7 +8046,7 @@ begin
   inherited;
 end;
 
-function TOpConst.Evaluate(AEngine: TSmartyEngine; var NeedFinalize: Boolean): TVariableRecord;
+function TOpConst.Evaluate(AEngine: TSmartyEngine; out NeedFinalize: Boolean): TVariableRecord;
 begin
   Result := FValue;
   NeedFinalize := False;
@@ -8072,7 +8073,7 @@ begin
   inherited;
 end;
 
-function TOpFunction.Evaluate(AEngine: TSmartyEngine; var NeedFinalize: Boolean): TVariableRecord;
+function TOpFunction.Evaluate(AEngine: TSmartyEngine; out NeedFinalize: Boolean): TVariableRecord;
 var
   VarArray: array of TVariableRecord;
   FinArray: array of Boolean;
@@ -8121,7 +8122,7 @@ begin
   inherited;
 end;
 
-function TOpOperator.Evaluate(AEngine: TSmartyEngine; var NeedFinalize: Boolean): TVariableRecord;
+function TOpOperator.Evaluate(AEngine: TSmartyEngine; out NeedFinalize: Boolean): TVariableRecord;
 var
   LeftVar, RightVar: TVariableRecord;
   LeftFinalize, RightFinalize: Boolean;
@@ -8405,7 +8406,7 @@ begin
 end;
 
 function TIfOutputAction.ContinueIf(AEngine: TSmartyEngine; const ACommand: string;
-  var AState: Integer; var AActions: TTemplateActions): Boolean;
+  var AState: Integer; out AActions: TTemplateActions): Boolean;
 var
   ElseAction: TElseIfAction;
 
@@ -8426,6 +8427,7 @@ var
 var
   Command: string;
 begin
+  AActions := nil;
   Command := ACommand;
   if IsTag('/if', Command, True) then
   begin
@@ -8477,7 +8479,7 @@ begin
 end;
 
 class function TIfOutputAction.IsAction(AEngine: TSmartyEngine;
-  const ACommand: string; var AAction: TTemplateAction): Boolean;
+  const ACommand: string; out AAction: TTemplateAction): Boolean;
 
   function AddVarIf(AIfType: TIfType; S: string): TIfOutputAction;
   begin
@@ -8626,7 +8628,7 @@ begin
 end;
 
 class function TForEachOutputAction.IsAction(AEngine: TSmartyEngine;
-  const ACommand: string; var AAction: TTemplateAction): Boolean;
+  const ACommand: string; out AAction: TTemplateAction): Boolean;
 var
   SL: TStringList;
   S, VarName, Command: string;
@@ -8774,7 +8776,7 @@ begin
 end;
 
 class function TCaptureArrayAction.IsAction(AEngine: TSmartyEngine;
-  const ACommand: string; var AAction: TTemplateAction): Boolean;
+  const ACommand: string; out AAction: TTemplateAction): Boolean;
 var
   SL: TStringList;
   VarName, S, Command: string;
@@ -8830,7 +8832,7 @@ begin
 end;
 
 class function TReleaseArrayAction.IsAction(AEngine: TSmartyEngine;
-  const ACommand: string; var AAction: TTemplateAction): Boolean;
+  const ACommand: string; out AAction: TTemplateAction): Boolean;
 var
   SL: TStringList;
   Command: string;
@@ -8882,7 +8884,7 @@ begin
 end;
 
 class function TAssignAction.IsAction(AEngine: TSmartyEngine;
-  const ACommand: string; var AAction: TTemplateAction): Boolean;
+  const ACommand: string; out AAction: TTemplateAction): Boolean;
 var
   SL: TStringList;
   S, Command: string;
@@ -8930,7 +8932,7 @@ begin
 end;
 
 class function TReleaseAction.IsAction(AEngine: TSmartyEngine;
-  const ACommand: string; var AAction: TTemplateAction): Boolean;
+  const ACommand: string; out AAction: TTemplateAction): Boolean;
 var
   SL: TStringList;
   Command: string;
@@ -9168,7 +9170,7 @@ end;
 
 function TSmartyEngine.GetVariable(const ANamespace: TNamespaceProvider;
   AIndex: Integer; const AVariableName: string; ADetails: TVarList;
-  var NeedFinalize: Boolean): TVariableRecord;
+  out NeedFinalize: Boolean): TVariableRecord;
 var
   I: Integer;
   CacheItem: TVariableCache;
