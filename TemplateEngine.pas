@@ -298,8 +298,9 @@ type
   end;
 
   TForEachList = class (TList<TForEachData>)
-  private
-    CurrentRecords: TList<Integer>;
+  strict private
+    FCurrentRecords: TList<Integer>;
+  private // for use from other classes inside unit
     procedure EnterForEach(AList: TForEachData);
     procedure ExitForEach;
     function InForEach: Boolean;
@@ -1578,7 +1579,7 @@ begin
   Result := (C <= ' ') or TCharacter.IsWhiteSpace(C);
 end;
 
-function GetChar(S: string; Index: Integer): Char; inline;
+function GetChar(const S: string; Index: Integer): Char; inline;
 begin
   if Index <= Length(S) then
     Result := S[Index]
@@ -3863,7 +3864,7 @@ end;
 constructor TForEachList.Create;
 begin
   inherited;
-  CurrentRecords := TList<Integer>.Create;
+  FCurrentRecords := TList<Integer>.Create;
 end;
 
 destructor TForEachList.Destroy;
@@ -3871,34 +3872,34 @@ var
   I: Integer;
 begin
   for I := 0 to Count - 1 do Items[I].Free;
-  FreeAndNil(CurrentRecords);
+  FreeAndNil(FCurrentRecords);
   inherited;
 end;
 
 procedure TForEachList.EnterForEach(AList: TForEachData);
 begin
-  CurrentRecords.Add(Add(AList));
+  FCurrentRecords.Add(Add(AList));
 end;
 
 procedure TForEachList.ExitForEach;
 begin
-  if (CurrentRecords.Count > 0) then
-    CurrentRecords.Delete(CurrentRecords.Count - 1);
+  if (FCurrentRecords.Count > 0) then
+    FCurrentRecords.Delete(FCurrentRecords.Count - 1);
 end;
 
 function TForEachList.InForEach: Boolean;
 begin
-  Result := CurrentRecords.Count > 0;
+  Result := FCurrentRecords.Count > 0;
 end;
 
 function TForEachList.FindItemRecord(const AItemName: string; out ARecord: TForEachData): Boolean;
 var
   I: Integer;
 begin
-  for I := CurrentRecords.Count - 1 downto 0 do
-    if SameText(AItemName, Items[CurrentRecords[I]].ItemVarName) then
+  for I := FCurrentRecords.Count - 1 downto 0 do
+    if SameText(AItemName, Items[FCurrentRecords[I]].ItemVarName) then
     begin
-      ARecord := Items[CurrentRecords[I]];
+      ARecord := Items[FCurrentRecords[I]];
       Exit(True);
     end;
   Result := False;
@@ -3908,10 +3909,10 @@ function TForEachList.FindKeyRecord(const AKeyName: string; out ARecord: TForEac
 var
   I: Integer;
 begin
-  for I := CurrentRecords.Count - 1 downto 0 do
-    if SameText(AKeyName, Items[CurrentRecords[I]].KeyVarName) then
+  for I := FCurrentRecords.Count - 1 downto 0 do
+    if SameText(AKeyName, Items[FCurrentRecords[I]].KeyVarName) then
     begin
-      ARecord := Items[CurrentRecords[I]];
+      ARecord := Items[FCurrentRecords[I]];
       Exit(True);
     end;
   Result := False;
@@ -3922,9 +3923,9 @@ function TForEachList.FindRecord(const AName: string;
 var
   I: Integer;
 begin
-  if SameText(AName, 'current') and (CurrentRecords.Count > 0) then
+  if SameText(AName, 'current') and (FCurrentRecords.Count > 0) then
   begin
-    ARecord := Items[CurrentRecords[CurrentRecords.Count-1]];
+    ARecord := Items[FCurrentRecords[FCurrentRecords.Count-1]];
     Exit(True);
   end
   else if AName <> '' then
@@ -6850,6 +6851,7 @@ end;
 
 type
   TExpressionItem = class (TObject)
+  public
     constructor Create; virtual;
     class function ParseItem(AEngine: TSmartyEngine; const S: string;
       var Index: Integer; var Item: TExpressionItem): Boolean; virtual;   //only skip spaces and return False
@@ -6862,8 +6864,10 @@ type
   end;
 
   TVariableItem = class (TExpressionItem)  //$person.year
-    VarName: string;
-    Link: TOpVariable;
+  strict private
+    FVarName: string;
+    FLink: TOpVariable;
+  public
     destructor Destroy; override;
     class function IsItem(const S: string; const Index: Integer): Boolean;
     procedure ScanStr(const S: string; var Index: Integer);
@@ -6878,8 +6882,10 @@ type
   end;
 
   TIdentifierItem = class (TExpressionItem) //True, False, null, shl, shr, is_null (function name)
-    Name: string;
-    Link: TOpFunction;
+  strict private
+    FName: string;
+    FLink: TOpFunction;
+  public
     destructor Destroy; override;
     class function IsItem(const S: string; const Index: Integer): Boolean;
     procedure ScanStr(const S: string; var Index: Integer);
@@ -6893,12 +6899,15 @@ type
   {$IFDEF SMARTYDEBUG}
     function AsString: string; override;
   {$ENDIF}
+    property Name: string read FName;
   end;
 
   TConstItem = class (TExpressionItem)
-    NeedFinalize: Boolean;
-    Value: TVariableRecord;
-    Link: TOpConst;
+  strict private
+    FNeedFinalize: Boolean;
+    FValue: TVariableRecord;
+    FLink: TOpConst;
+  public
     constructor Create; override;
     destructor Destroy; override;
     class function IsNumberItem(const S: string; const Index: Integer): Boolean;
@@ -6916,28 +6925,35 @@ type
   {$IFDEF SMARTYDEBUG}
     function AsString: string; override;
   {$ENDIF}
+    property Value: TVariableRecord read FValue write FValue;
   end;
 
   TOperatorItem = class (TExpressionItem)
-    Op: TOperator;
-    Link: TOpOperator;
+  strict private
+    FOp: TOperator;
+    FLink: TOpOperator;
+  public
     destructor Destroy; override;
     function GetPrecedence: byte;
     class function IsItem(const S: string; const Index: Integer): Boolean;
     procedure ScanStr(const S: string; var Index: Integer);
     class function ParseItem(AEngine: TSmartyEngine; const S: string;
       var Index: Integer;  var Item: TExpressionItem): Boolean; override;
+    function CreateLink(AEngine: TSmartyEngine): TOperation; override;
     function GetLink: TOperation; override;
     procedure SetNilLink; override;
   {$IFDEF SMARTYDEBUG}
     function AsString: string; override;
   {$ENDIF}
+    property Op: TOperator read FOp write FOp;
   end;
 
   TParenthesisType = (ptOpen {(}, ptClose {)}, ptComma {,});
 
   TParenthesisItem = class (TExpressionItem)
-    ParenthesisType: TParenthesisType;
+  strict private
+    FParenthesisType: TParenthesisType;
+  public
     class function IsItem(const S: string; const Index: Integer): Boolean;
     procedure ScanStr(const S: string; var Index: Integer);
     class function ParseItem(AEngine: TSmartyEngine; const S: string;
@@ -6947,10 +6963,13 @@ type
   {$IFDEF SMARTYDEBUG}
     function AsString: string; override;
   {$ENDIF}
+    property ParenthesisType: TParenthesisType read FParenthesisType;
   end;
 
   TOpItem = class (TExpressionItem)
-    Link: TOperation;
+  strict private
+    FLink: TOperation;
+  public
     destructor Destroy; override;
     class function ParseItem(AEngine: TSmartyEngine; const S: string;
       var Index: Integer;  var Item: TExpressionItem): Boolean; override;
@@ -6959,6 +6978,7 @@ type
   {$IFDEF SMARTYDEBUG}
     function AsString: string; override;
   {$ENDIF}
+    property Link: TOperation read FLink write FLink; // only write is used
   end;
 
 {************* TExpressionItem *************}
@@ -7008,7 +7028,7 @@ end;
 
 destructor TVariableItem.Destroy;
 begin
-  FreeAndNil(Link);
+  FreeAndNil(FLink);
   inherited;
 end;
 
@@ -7023,10 +7043,10 @@ var
 begin
   Inc(Index);
   Ch := GetChar(S, Index);
-  VarName := '';
+  FVarName := '';
   while CharInSet(Ch, ['A'..'Z','a'..'z','_','.', '[', ']', '0'..'9']) do
   begin
-    VarName := VarName + Ch;
+    FVarName := FVarName + Ch;
     Inc(Index);
     Ch := GetChar(S, Index);
   end;
@@ -7047,26 +7067,26 @@ end;
 
 function TVariableItem.CreateLink(AEngine: TSmartyEngine): TOperation;
 begin
-  Link := TOpVariable.Create;
-  Result := Link;
-  TTemplateAction.GetVariableProperties(AEngine, VarName, Link.FNamespace,
-    Link.FIndex, Link.FVarName, Link.FVarDetails);
+  FLink := TOpVariable.Create;
+  Result := FLink;
+  TTemplateAction.GetVariableProperties(AEngine, FVarName, FLink.FNamespace,
+    FLink.FIndex, FLink.FVarName, FLink.FVarDetails);
 end;
 
 function TVariableItem.GetLink: TOperation;
 begin
-  Result := Link;
+  Result := FLink;
 end;
 
 procedure TVariableItem.SetNilLink;
 begin
-  Link := nil;
+  FLink := nil;
 end;
 
 {$IFDEF SMARTYDEBUG}
 function TVariableItem.AsString: string;
 begin
-  Result := ' VAR%' + VarName + '% ';
+  Result := ' VAR%' + FVarName + '% ';
 end;
 {$ENDIF}
 
@@ -7074,7 +7094,7 @@ end;
 
 destructor TIdentifierItem.Destroy;
 begin
-  FreeAndNil(Link);
+  FreeAndNil(FLink);
   inherited;
 end;
 
@@ -7087,12 +7107,12 @@ procedure TIdentifierItem.ScanStr(const S: string; var Index: Integer);
 var
   Ch: Char;
 begin
-  Name := GetChar(S, Index);
+  FName := GetChar(S, Index);
   Inc(Index);
   Ch := GetChar(S, Index);
   while CharInSet(Ch, ['A'..'Z','a'..'z','_', '0'..'9']) do
   begin
-    Name := Name + Ch;
+    FName := FName + Ch;
     Inc(Index);
     Ch := GetChar(S, Index);
   end;
@@ -7121,9 +7141,9 @@ function TIdentifierItem.IsConstItem(var Item: TExpressionItem): Boolean;
 
 begin
   Result := True;
-  if SameText('true', Name) then CreateConstItem(True)
-  else if SameText('false', Name) then CreateConstItem(False)
-  else if SameText('null', Name) then CreateConstItem(TVariableRecord.Null)
+  if SameText('true', FName) then CreateConstItem(True)
+  else if SameText('false', FName) then CreateConstItem(False)
+  else if SameText('null', FName) then CreateConstItem(TVariableRecord.Null)
   else Result := False;
 end;
 
@@ -7157,7 +7177,7 @@ var
   NameLo: string;
 begin
   Item := nil;
-  NameLo := AnsiLowerCase(Name); // ensure case-insensive fast comparisons
+  NameLo := AnsiLowerCase(FName); // ensure case-insensive fast comparisons
   for I := Low(OperatorNamesToOpMatrix) to High(OperatorNamesToOpMatrix) do
     if OperatorNamesToOpMatrix[I].Name = NameLo then
     begin
@@ -7170,27 +7190,27 @@ end;
 
 function TIdentifierItem.CreateLink(AEngine: TSmartyEngine): TOperation;
 begin
-  Link := TOpFunction.Create;
-  Result := Link;
-  Link.FFuncClass := AEngine.GetFunction(Name);
-  if not Assigned(Link.FFuncClass) then
-    raise ESmartyException.CreateResFmt(@sInvalidFunction, [Name]);
+  FLink := TOpFunction.Create;
+  Result := FLink;
+  FLink.FFuncClass := AEngine.GetFunction(FName);
+  if not Assigned(FLink.FFuncClass) then
+    raise ESmartyException.CreateResFmt(@sInvalidFunction, [FName]);
 end;
 
 function TIdentifierItem.GetLink: TOperation;
 begin
-  Result := Link;
+  Result := FLink;
 end;
 
 procedure TIdentifierItem.SetNilLink;
 begin
-  Link := nil;
+  FLink := nil;
 end;
 
 {$IFDEF SMARTYDEBUG}
 function TIdentifierItem.AsString: string;
 begin
-  Result := ' IDENT%' + Name + '% ';
+  Result := ' IDENT%' + FName + '% ';
 end;
 {$ENDIF}
 
@@ -7200,15 +7220,15 @@ end;
 constructor TConstItem.Create;
 begin
   inherited;
-  NeedFinalize := True;
+  FNeedFinalize := True;
 end;
 
 destructor TConstItem.Destroy;
 begin
-  if Assigned(Link) then
-    FreeAndNil(Link)
+  if Assigned(FLink) then
+    FreeAndNil(FLink)
   else
-    if NeedFinalize then Value.Finalize;
+    if FNeedFinalize then FValue.Finalize;
   inherited;
 end;
 
@@ -7296,14 +7316,14 @@ begin
   begin
     Val(Str, I, J);
     if J = 0 then
-      Value := I
+      FValue := I
     else
       raise ESmartyException.CreateResFmt(@sInvalidIntegerConst, [Str]);
   end
   else begin
     Val(Str, D, J);
     if J = 0 then
-      Value := D
+      FValue := D
     else
       raise ESmartyException.CreateResFmt(@sInvalidFloatConst, [Str]);
   end;
@@ -7341,9 +7361,9 @@ begin
   end;
 
   if AParseEsapces then
-    Value := ParseEscapes(Str)
+    FValue := ParseEscapes(Str)
   else
-    Value := Str;
+    FValue := Str;
 end;
 
 procedure TConstItem.ScanDateItem(const S: string; Loose: Boolean; var Index: Integer);
@@ -7360,9 +7380,9 @@ begin
 
     try
       if Loose then
-        Value := DateLooseFromString(Str)
+        FValue := DateLooseFromString(Str)
       else
-        Value := DateTimeFromString(Str);
+        FValue := DateTimeFromString(Str);
     except
       raise ESmartyException.CreateResFmt(@sInvalidDateConst, [Str]);
     end;
@@ -7401,26 +7421,26 @@ end;
 
 function TConstItem.CreateLink(AEngine: TSmartyEngine): TOperation;
 begin
-  Link := TOpConst.Create;
-  Result := Link;
-  Link.FValue := Value;
+  FLink := TOpConst.Create;
+  Result := FLink;
+  FLink.FValue := FValue;
 end;
 
 function TConstItem.GetLink: TOperation;
 begin
-  Result := Link;
+  Result := FLink;
 end;
 
 procedure TConstItem.SetNilLink;
 begin
-  Link := nil;
-  NeedFinalize := False;
+  FLink := nil;
+  FNeedFinalize := False;
 end;
 
 {$IFDEF SMARTYDEBUG}
 function TConstItem.AsString: string;
 begin
-  Result := ' CONST%' + Value.ToString + '% ';
+  Result := ' CONST%' + FValue.ToString + '% ';
 end;
 {$ENDIF}
 
@@ -7428,22 +7448,19 @@ end;
 
 destructor TOperatorItem.Destroy;
 begin
-  FreeAndNil(Link);
+  FreeAndNil(FLink);
   inherited;
 end;
 
 function TOperatorItem.GetPrecedence: byte;
 begin
-  Result := OperatorPrecedence[Op];
+  Result := OperatorPrecedence[FOp];
 end;
 
 class function TOperatorItem.IsItem(const S: string;
   const Index: Integer): Boolean;
-var
-  Ch: Char;
 begin
-  Ch := GetChar(S, Index);
-  Result := CharInSet(Ch, ['!', '<', '>', '+', '-', '*', '/', '\', '%',
+  Result := CharInSet(GetChar(S, Index), ['!', '<', '>', '+', '-', '*', '/', '\', '%',
     '=', '&', '|', '~', '^']);
 end;
 
@@ -7458,9 +7475,9 @@ begin
       begin
         case GetChar(S, Index) of
           '=':
-            begin Op := opNeq; Inc(Index); end;
+            begin FOp := opNeq; Inc(Index); end;
         else
-          Op := opLogicalNot;
+          FOp := opLogicalNot;
         end;
       end;
 
@@ -7468,65 +7485,65 @@ begin
       begin
         case GetChar(S, Index) of
           '=':
-            begin Op := opGte; Inc(Index); end;
+            begin FOp := opGte; Inc(Index); end;
           '>':
-            begin Op := opShr; Inc(Index); end;
+            begin FOp := opShr; Inc(Index); end;
         else
-          Op := opGt;
+          FOp := opGt;
         end;
       end;
     '<' :
       begin
         case GetChar(S, Index) of
           '>':
-            begin Op := opNeq; Inc(Index); end;
+            begin FOp := opNeq; Inc(Index); end;
           '=':
-            begin Op := opLte; Inc(Index); end;
+            begin FOp := opLte; Inc(Index); end;
           '<':
-            begin Op := opShl; Inc(Index); end;
+            begin FOp := opShl; Inc(Index); end;
         else
-          Op := opLt;
+          FOp := opLt;
         end;
       end;
 
     '+' :
-      Op := opAdd;
+      FOp := opAdd;
     '-' :
-      Op := opSub;
+      FOp := opSub;
     '*' :
-      Op := opMply;
+      FOp := opMply;
     '/' :
-      Op := opDivide;
+      FOp := opDivide;
     '\' :
-      Op := opDiv;
+      FOp := opDiv;
     '%' :
-      Op := opMod;
+      FOp := opMod;
     '=' :
       if GetChar(S, Index) = '=' then
       begin
-        Op := opSEq; Inc(Index);
+        FOp := opSEq; Inc(Index);
       end
       else
-        Op := opEq;
+        FOp := opEq;
 
     '&' :
       if GetChar(S, Index) = '&' then
       begin
-        Op := opLogicalAnd; Inc(Index);
+        FOp := opLogicalAnd; Inc(Index);
       end
       else
-      Op := opBitwiseAnd;
+      FOp := opBitwiseAnd;
     '|' :
       if GetChar(S, Index) = '|' then
       begin
-        Op := opLogicalOr; Inc(Index);
+        FOp := opLogicalOr; Inc(Index);
       end
       else
-        Op := opBitwiseOr;
+        FOp := opBitwiseOr;
     '~' :
-      Op := opBitwiseNot;
+      FOp := opBitwiseNot;
     '^' :
-      Op := opBitwiseXor;
+      FOp := opBitwiseXor;
   end;
 end;
 
@@ -7543,20 +7560,26 @@ begin
   end;
 end;
 
+function TOperatorItem.CreateLink(AEngine: TSmartyEngine): TOperation;
+begin
+  FLink := TOpOperator.Create;
+  Result := FLink;
+end;
+
 function TOperatorItem.GetLink: TOperation;
 begin
-  Result := Link;
+  Result := FLink;
 end;
 
 procedure TOperatorItem.SetNilLink;
 begin
-  Link := nil;
+  FLink := nil;
 end;
 
 {$IFDEF SMARTYDEBUG}
 function TOperatorItem.AsString: string;
 begin
-  case Op of
+  case FOp of
     opEq:
       Result := ' = ';
     opNeq:
@@ -7610,21 +7633,17 @@ end;
 {************* TParenthesisItem *************}
 
 class function TParenthesisItem.IsItem(const S: string; const Index: Integer): Boolean;
-var
-  Ch: Char;
 begin
-  Ch := GetChar(S, Index);
-  Result := (Ch = '(') or (Ch = ')') or (Ch = ',');
+  Result := CharInSet(GetChar(S, Index), ['(', ')', ',']);
 end;
 
 procedure TParenthesisItem.ScanStr(const S: string; var Index: Integer);
-var
-  Ch: Char;
 begin
-  Ch := GetChar(S, Index);
-  if Ch = '(' then ParenthesisType := ptOpen
-  else if Ch = ')' then ParenthesisType := ptClose
-  else if Ch = ',' then ParenthesisType := ptComma;
+  case GetChar(S, Index) of
+    '(': FParenthesisType := ptOpen;
+    ')': FParenthesisType := ptClose;
+    ',': FParenthesisType := ptComma;
+  end;
   Inc(Index);
 end;
 
@@ -7670,7 +7689,7 @@ end;
 
 destructor TOpItem.Destroy;
 begin
-  FreeAndNil(Link);
+  FreeAndNil(FLink);
   inherited;
 end;
 
@@ -7682,12 +7701,12 @@ end;
 
 function TOpItem.GetLink: TOperation;
 begin
-  Result := Link;
+  Result := FLink;
 end;
 
 procedure TOpItem.SetNilLink;
 begin
-  Link := nil;
+  FLink := nil;
 end;
 
 {$IFDEF SMARTYDEBUG}
@@ -7815,7 +7834,7 @@ class function TOperation.Parse(AEngine: TSmartyEngine; const S: string): TOpera
           end;
         end
         else
-          raise  ESmartyException.CreateResFmt(@sFunctionParamsMiss, [IdItem.Name]);
+          raise ESmartyException.CreateResFmt(@sFunctionParamsMiss, [IdItem.Name]);
       end
       else if EItem is TParenthesisItem then
       begin
@@ -7884,7 +7903,6 @@ class function TOperation.Parse(AEngine: TSmartyEngine; const S: string): TOpera
         Inc(I);
     end;
 
-
     for J := 1 to MaxPrecedence do
     begin
       I := 0;
@@ -7905,9 +7923,12 @@ class function TOperation.Parse(AEngine: TSmartyEngine; const S: string): TOpera
               ROp := RItem.GetLink;
               if Assigned(ROp) then
               begin
-                OpItem.Link := TOpOperator.Create;
-                OpItem.Link.FOperator := OpItem.Op;
-                OpItem.Link.FRightOp := ROp;
+                OpItem.CreateLink(AEngine);
+                with OpItem.GetLink as TOpOperator do
+                begin
+                  FOperator := OpItem.Op;
+                  FRightOp := ROp;
+                end;
                 RItem.SetNilLink;
                 Data.Delete(I+1);
                 Inc(I);
@@ -7928,10 +7949,13 @@ class function TOperation.Parse(AEngine: TSmartyEngine; const S: string): TOpera
               ROp := RItem.GetLink;
               if Assigned(LOp) and Assigned(ROp) then
               begin
-                OpItem.Link := TOpOperator.Create;
-                OpItem.Link.FOperator := OpItem.Op;
-                OpItem.Link.FLeftOp := LOp;
-                OpItem.Link.FRightOp := ROp;
+                OpItem.CreateLink(AEngine);
+                with OpItem.GetLink as TOpOperator do
+                begin
+                  FOperator := OpItem.Op;
+                  FLeftOp := LOp;
+                  FRightOp := ROp;
+                end;
                 LItem.SetNilLink;
                 RItem.SetNilLink;
                 Data.Delete(I+1);
@@ -9079,7 +9103,6 @@ begin
   FreeAndNil(FFunctions);
   inherited;
 end;
-
 
 {************* TSmartyEngine *************}
 
