@@ -17,20 +17,14 @@ uses
   TemplateEngine;
 
 type
-  TVariableArrayItemArr = array of TVariableArrayItem;
-
   TTestCaseData = record
     Section, Template, ExpectResult: string;
   end;
 
   TTplTest = class(TTestCase)
   private
-    // These values are class ones b/c c-tor of testcase class is called for every
-    // test method and we want to init values only once
     class var
     FTotalAssertCount: Integer;     // count of all asserts
-    FData: TVariableArrayItemArr;   // source values for test
-    FTests: array of TTestCaseData; // test fixtures
   protected
     procedure CheckTpl(const TCData: TTestCaseData);
     procedure CheckSection(const Section: string);
@@ -38,7 +32,6 @@ type
     procedure RunTest; override;
     {$ENDIF}
   public
-    constructor Create{$IFDEF DCC}(MethodName: string){$ENDIF}; override;
     class property TotalAssertCnt: Integer read FTotalAssertCount;
   published
     procedure Special;
@@ -48,24 +41,34 @@ type
     procedure Control;
   end;
 
+procedure LoadData;
+procedure FinData;
+
 implementation
 
-function Unquote(const Str: string; Left, Right: Char): string;
-begin
-  if (Length(Str) < 2) or ( (Str[1] <> Left) or (Str[Length(Str)] <> Right) ) then
-    raise Exception.Create('Error unquoting ' + Str);
-  Result := Copy(Str, 2, Length(Str) - 2);
-end;
+type
+  TVariableArrayItemArr = array of TVariableArrayItem;
 
-{ TTplTest }
+// Source data and test cases. Should better be class members but Data is finalized
+// before class d-tor thus causing mem leak.
+var
+  Data: TVariableArrayItemArr;   // source values for test
+  TestCases: array of TTestCaseData; // test fixtures
 
-// This constructor is called for every test method
-constructor TTplTest.Create{$IFDEF DCC}(MethodName: string){$ENDIF};
+// Load variables
+procedure LoadData;
 
 const
   QUOTE = Char('''');
   SEP_NO_SP = QUOTE + '=' + QUOTE;
   SEP_SP = QUOTE + ' = ' + QUOTE;
+
+  function Unquote(const Str: string; Left, Right: Char): string;
+  begin
+    if (Length(Str) < 2) or ( (Str[1] <> Left) or (Str[Length(Str)] <> Right) ) then
+      raise Exception.Create('Error unquoting ' + Str);
+    Result := Copy(Str, 2, Length(Str) - 2);
+  end;
 
   procedure SplitLine(const Str: string; out Template, ExpectResult: string);
   var SepPos, SepLen: Integer;
@@ -99,11 +102,7 @@ var
   s, CurrSection: string;
   TCData: TTestCaseData;
 begin
-  inherited;
-
-  if Length(FData) > 0 then Exit; // Not a 1st call, values and fixtures are loaded already
-
-  FData := TVariableArrayItemArr.Create(
+  Data := TVariableArrayItemArr.Create(
     Item('bool', True),
     Item('float', 10.5),
     Item('int', 10),
@@ -129,18 +128,26 @@ begin
         begin
           TCData.Section := CurrSection;
           SplitLine(s, TCData.Template, TCData.ExpectResult);
-          SetLength(FTests, Length(FTests) + 1);
-          FTests[High(FTests)] := TCData;
+          SetLength(TestCases, Length(TestCases) + 1);
+          TestCases[High(TestCases)] := TCData;
         end;
     end;
   end;
   FreeAndNil(sl);
 end;
 
+// TVariableRecord is not auto-destructible so finalize data manually
+procedure FinData;
+var i: Integer;
+begin
+  for i := Low(Data) to High(Data) do
+    Data[i].Item.Finalize;
+end;
+
 procedure TTplTest.CheckTpl(const TCData: TTestCaseData);
 var Actual, Errors: string;
 begin
-  CheckTrue(SmartyExec(TCData.Template, 'test', FData, Errors, Actual), 'Exec is true, template ' + TCData.Template);
+  CheckTrue(SmartyExec(TCData.Template, 'test', Data, Errors, Actual), 'Exec is true, template ' + TCData.Template);
   CheckEquals(Errors, '', 'Errors are empty, template ' + TCData.Template);
   CheckEquals(TCData.ExpectResult, Actual, 'Results are equal, template ' + TCData.Template);
   {$IFDEF DCC}
@@ -151,7 +158,7 @@ end;
 procedure TTplTest.CheckSection(const Section: string);
 var data: TTestCaseData;
 begin
-  for data in FTests do
+  for data in TestCases do
     if data.Section = Section then
       CheckTpl(data);
 end;
@@ -191,10 +198,13 @@ begin
 end;
 
 initialization
+  LoadData;
   {$IFDEF DCC}
   RegisterTest(TTplTest.Suite);
   {$ENDIF}
   {$IFDEF FPC}
   RegisterTest(TTplTest);
   {$ENDIF}
+finalization
+  FinData;
 end.

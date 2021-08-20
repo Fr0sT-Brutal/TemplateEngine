@@ -18,10 +18,18 @@ uses
 var
   App: TTestRunner;
 {$ENDIF}
+{$IFDEF DCC}
+var
+  Res: TObject;
+{$ENDIF}
 
 begin
   {$IFDEF DCC}
-  TextTestRunner.RunRegisteredTests(rxbHaltOnFailures);
+  ReportMemoryLeaksOnShutdown := True;
+  // RunRegisteredTests returns result object that holds reference to the whole test suite
+  // so lots of stuff won't be autodestroyed without freeing the result
+  Res := TextTestRunner.RunRegisteredTests(rxbHaltOnFailures);
+  FreeAndNil(Res);
   {$ENDIF}
 
   {$IFDEF FPC}
