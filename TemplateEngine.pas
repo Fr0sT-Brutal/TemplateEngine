@@ -1,4 +1,4 @@
-// // DVDChi Template Engine Version 1.0.0 for Delphi XE/XE2/XE3
+// // DVDChi Template Engine Version 1.0.1 for Delphi XE+ and FreePascal
 //
 // SOFTWARE CAN NOT BE USED IN ANY HOME INVENTORY OR CATALOGING SOFTWARE
 // (FREEWARE OR SHAREWARE) WITHOUT OUR WRITTEN PERMISSION
@@ -20,6 +20,8 @@
 //
 // The initial developer of the original code is Adit Software
 // written by Denis Sletkov (dvd@dvdchief.com, dvdchief.com/delphi).
+//
+// Current developer is Fr0sT-Brutal (https://github.com/Fr0sT-Brutal/TemplateEngine)
 
 unit TemplateEngine;
 
@@ -323,9 +325,6 @@ type
     procedure IncIndex;
     procedure Exit;
     function IsItemName(const AName: string): Boolean;
-  public
-    constructor Create;
-    destructor Destroy; override;
   end;
 
   //smarty provider
@@ -899,7 +898,6 @@ type
     FModifier: TVariableModifierClass;
     FParams: TStringList;
   public
-    constructor Create;
     destructor Destroy; override;
   end;
 
@@ -986,7 +984,6 @@ type
   private
     FValue: TVariableRecord;
   public
-    constructor Create; override;
     destructor Destroy; override;
     function Evaluate(AEngine: TSmartyEngine;
       var NeedFinalize: Boolean): TVariableRecord; override;
@@ -1010,7 +1007,6 @@ type
     FOperator: TOperator;
     FLeftOp, FRightOp: TOperation;
   public
-    constructor Create; override;
     destructor Destroy; override;
     function Evaluate(AEngine: TSmartyEngine;
       var NeedFinalize: Boolean): TVariableRecord; override;
@@ -1034,8 +1030,7 @@ type
   private
     FOperation: TOperation;
   public
-    constructor Create(AEngine: TSmartyEngine); override;
-    constructor CreateOperation(AEngine: TSmartyEngine; AExpr: string);
+    constructor CreateOperation(AEngine: TSmartyEngine; const AExpr: string);
     destructor Destroy; override;
      function Evaluate: Boolean; override;
   end;
@@ -1141,7 +1136,6 @@ type
     FVariableName: string;
   public
     constructor Create(AEngine: TSmartyEngine); override;
-    destructor Destroy; override;
     function Execute: string; override;
     class function IsAction(AEngine: TSmartyEngine; const ACommand: string;
       var AAction: TTemplateAction): Boolean; override;
@@ -1164,7 +1158,6 @@ type
     FVariableName: string;
   public
     constructor Create(AEngine: TSmartyEngine); override;
-    destructor Destroy; override;
     function Execute: string; override;
     class function IsAction(AEngine: TSmartyEngine; const ACommand: string;
       var AAction: TTemplateAction): Boolean; override;
@@ -3862,7 +3855,7 @@ end;
 
 constructor TForEachList.Create;
 begin
-  inherited Create;
+  inherited;
   CurrentRecords := TList<Integer>.Create;
 end;
 
@@ -3870,9 +3863,9 @@ destructor TForEachList.Destroy;
 var
   I: Integer;
 begin
-  for I := Count - 1 downto 0 do Items[I].Free;
+  for I := 0 to Count - 1 do Items[I].Free;
   CurrentRecords.Free;
-  inherited Destroy;
+  inherited;
 end;
 
 procedure TForEachList.EnterForEach(AList: TForEachData);
@@ -3941,20 +3934,6 @@ end;
 
 {************* TCaptureArrayItem *************}
 
-constructor TCaptureArrayItem.Create;
-begin
-  inherited Create;
-  IsActive := False;
-  ItemName := '';
-  Index := 0;
-  VarData := nil;
-end;
-
-destructor TCaptureArrayItem.Destroy;
-begin
-  inherited Destroy;
-end;
-
 procedure TCaptureArrayItem.Enter(const AName: string; AIndex: Integer; AVarData: PVariableArray);
 begin
   IsActive := True;
@@ -3997,7 +3976,7 @@ begin
   FCaptureCache.Free;
   FForEachList.Free;
   FActiveCapture.Free;
-  inherited Destroy;
+  inherited;
 end;
 
 procedure TSmartyProvider.ClearCaptureCache;
@@ -4228,6 +4207,8 @@ begin
       [Cnt, AMin, AMax, AModifier.GetName]);
 end;
 
+// Assign value of AIndex-th parameter stored in AParams in Value and return True
+// If no params exists, return False and leave Value unmodified
 class function TVariableModifier.SetParam(AParams: TStringList; AIndex: Integer;
   var Value: string): Boolean;
 begin
@@ -4300,7 +4281,6 @@ class procedure TCatModifier.ModVariable(const AVariable: TVariableRecord;
 var
   Add: string;
 begin
-  Add := '';
   if CheckParams(Self, AParams, 0, 1) then SetParam(AParams, 0, Add);
   AVariable.SetString(AVariable.ToString + Add);
 end;
@@ -4411,7 +4391,6 @@ class procedure TDefaultModifier.ModVariable(const AVariable: TVariableRecord;
 var
   DefValue: string;
 begin
-  DefValue := '';
   if CheckParams(Self, AParams, 0, 1) then SetParam(AParams, 0, DefValue);
 
   case AVariable.VarType of
@@ -4512,7 +4491,6 @@ var
   S, DateFormat: string;
   DT: TDateTime;
 begin
-  DateFormat := '';
   if CheckParams(Self, AParams, 0, 1) then SetParam(AParams, 0, DateFormat);
 
   if SameText(DateFormat, 'shortdate')      then DateFormat := SmartyFormatSettings.ShortDateFormat
@@ -4579,7 +4557,6 @@ class procedure TFloatFormatModifier.ModVariable(const AVariable: TVariableRecor
 var
   Format: string;
 begin
-  Format := '';
   if CheckParams(Self, AParams, 0, 1) then SetParam(AParams, 0, Format);
 
   AVariable.SetString(FormatFloat(Format, AVariable.ToFloat));
@@ -4807,8 +4784,6 @@ var
   ReplaceFrom, ReplaceTo, S: string;
   B, CaseSensitive: Boolean;
 begin
-  ReplaceFrom := '';
-  ReplaceTo := '';
   CaseSensitive := False;
 
   if CheckParams(Self, AParams, 2, 3) then
@@ -5243,7 +5218,7 @@ var
   S: string;
 begin
   S := '';
-  for I := 0 to High(AParams) do S := S + AParams[I].ToString;
+  for I := Low(AParams) to High(AParams) do S := S + AParams[I].ToString;
   Result := S;
 end;
 
@@ -6457,7 +6432,7 @@ end;
 
 constructor TRawOutputAction.Create(AEngine: TSmartyEngine);
 begin
-  inherited Create(AEngine);
+  inherited;
   FActionType := tatRawOutput;
 end;
 
@@ -6486,25 +6461,17 @@ end;
 
 {************* TModifierAction *************}
 
-constructor TModifierAction.Create;
-begin
-  inherited Create;
-  FModifier := nil;
-  FParams := nil;
-end;
-
 destructor TModifierAction.Destroy;
 begin
-  if Assigned(FParams) then FParams.Free;
-  inherited Destroy;
+  FreeAndNil(FParams);
+  inherited;
 end;
 
 {************* TVariableOutputAction *************}
 
 constructor TVariableOutputAction.Create(AEngine: TSmartyEngine);
 begin
-  inherited Create(AEngine);
-  FNamespace := nil;
+  inherited;
   FVarDetails := TVarList.Create;
   FModifiers := TObjectList<TModifierAction>.Create(True);
   FActionType := tatVariableOutput;
@@ -6514,7 +6481,7 @@ destructor TVariableOutputAction.Destroy;
 begin
   FVarDetails.Finalize;
   FModifiers.Free;
-  inherited Destroy;
+  inherited;
 end;
 
 function TVariableOutputAction.Execute: string;
@@ -6703,8 +6670,7 @@ end;
 
 constructor TFuncOutputAction.Create(AEngine: TSmartyEngine);
 begin
-  inherited Create(AEngine);
-  FOperation := nil;
+  inherited;
   FModifiers := TObjectList<TModifierAction>.Create(True);
   FActionType := tatFuncOutput;
 end;
@@ -6713,7 +6679,7 @@ destructor TFuncOutputAction.Destroy;
 begin
   FOperation.Free;
   FModifiers.Free;
-  inherited Destroy;
+  inherited;
 end;
 
 function TFuncOutputAction.Execute: string;
@@ -6878,7 +6844,6 @@ end;
 type
   TExpressionItem = class (TObject)
     constructor Create; virtual;
-    destructor Destroy; override;
     class function ParseItem(AEngine: TSmartyEngine; const S: string;
       var Index: Integer; var Item: TExpressionItem): Boolean; virtual;   //only skip spaces and return False
     function CreateLink(AEngine: TSmartyEngine): TOperation; virtual;
@@ -6892,7 +6857,6 @@ type
   TVariableItem = class (TExpressionItem)  //$person.year
     VarName: string;
     Link: TOpVariable;
-    constructor Create; override;
     destructor Destroy; override;
     class function IsItem(const S: string; const Index: Integer): Boolean;
     procedure ScanStr(const S: string; var Index: Integer);
@@ -6909,7 +6873,6 @@ type
   TIdentifierItem = class (TExpressionItem) //True, False, null, shl, shr, is_null (function name)
     Name: string;
     Link: TOpFunction;
-    constructor Create; override;
     destructor Destroy; override;
     class function IsItem(const S: string; const Index: Integer): Boolean;
     procedure ScanStr(const S: string; var Index: Integer);
@@ -6951,7 +6914,6 @@ type
   TOperatorItem = class (TExpressionItem)
     Op: TOperator;
     Link: TOpOperator;
-    constructor Create; override;
     destructor Destroy; override;
     function GetPrecedence: byte;
     class function IsItem(const S: string; const Index: Integer): Boolean;
@@ -6969,8 +6931,6 @@ type
 
   TParenthesisItem = class (TExpressionItem)
     ParenthesisType: TParenthesisType;
-    constructor Create; override;
-    destructor Destroy; override;
     class function IsItem(const S: string; const Index: Integer): Boolean;
     procedure ScanStr(const S: string; var Index: Integer);
     class function ParseItem(AEngine: TSmartyEngine; const S: string;
@@ -6984,7 +6944,6 @@ type
 
   TOpItem = class (TExpressionItem)
     Link: TOperation;
-    constructor Create; override;
     destructor Destroy; override;
     class function ParseItem(AEngine: TSmartyEngine; const S: string;
       var Index: Integer;  var Item: TExpressionItem): Boolean; override;
@@ -6997,14 +6956,10 @@ type
 
 {************* TExpressionItem *************}
 
+// Just to make c-tor virtual for overriding in descendants
 constructor TExpressionItem.Create;
 begin
-  inherited Create;
-end;
-
-destructor TExpressionItem.Destroy;
-begin
-  inherited Destroy;
+  inherited;
 end;
 
 class function TExpressionItem.ParseItem(AEngine: TSmartyEngine; const S: string;
@@ -7044,16 +6999,10 @@ end;
 
 {************* TVariableItem *************}
 
-constructor TVariableItem.Create;
-begin
-  inherited Create;
-  Link := nil;
-end;
-
 destructor TVariableItem.Destroy;
 begin
-  if Assigned(Link) then Link.Free;
-  inherited Destroy;
+  FreeAndNil(Link);
+  inherited;
 end;
 
 class function TVariableItem.IsItem(const S: string; const Index: Integer): Boolean;
@@ -7116,16 +7065,10 @@ end;
 
 {************* TIdentifierItem *************}
 
-constructor TIdentifierItem.Create;
-begin
-  inherited Create;
-  Link := nil;
-end;
-
 destructor TIdentifierItem.Destroy;
 begin
-  if Assigned(Link) then Link.Free;
-  inherited Destroy;
+  FreeAndNil(Link);
+  inherited;
 end;
 
 class function TIdentifierItem.IsItem(const S: string; const Index: Integer): Boolean;
@@ -7249,8 +7192,7 @@ end;
 
 constructor TConstItem.Create;
 begin
-  inherited Create;
-  Link := nil;
+  inherited;
   NeedFinalize := True;
 end;
 
@@ -7260,7 +7202,7 @@ begin
     Link.Free
   else
     if NeedFinalize then Value.Finalize;
-  inherited Destroy;
+  inherited;
 end;
 
 class function TConstItem.IsNumberItem(const S: string; const Index: Integer): Boolean;
@@ -7477,16 +7419,10 @@ end;
 
 {************* TOperatorItem *************}
 
-constructor TOperatorItem.Create;
-begin
-  inherited Create;
-  Link := nil;
-end;
-
 destructor TOperatorItem.Destroy;
 begin
-  if Assigned(Link) then Link.Free;
-  inherited Destroy;
+  FreeAndNil(Link);
+  inherited;
 end;
 
 function TOperatorItem.GetPrecedence: byte;
@@ -7666,16 +7602,6 @@ end;
 
 {************* TParenthesisItem *************}
 
-constructor TParenthesisItem.Create;
-begin
-  inherited Create;
-end;
-
-destructor TParenthesisItem.Destroy;
-begin
-  inherited Destroy;
-end;
-
 class function TParenthesisItem.IsItem(const S: string; const Index: Integer): Boolean;
 var
   Ch: Char;
@@ -7735,16 +7661,10 @@ end;
 
 {************* TOpItem *************}
 
-constructor TOpItem.Create;
-begin
-  inherited Create;
-  Link := nil;
-end;
-
 destructor TOpItem.Destroy;
 begin
-  if Assigned(Link) then Link.Free;
-  inherited Destroy;
+  FreeAndNil(Link);
+  inherited;
 end;
 
 class function TOpItem.ParseItem(AEngine: TSmartyEngine; const S: string;
@@ -7772,9 +7692,10 @@ end;
 
 {************* TOperation *************}
 
+// Just make c-tor virtual
 constructor TOperation.Create;
 begin
-  inherited Create;
+  inherited;
 end;
 
 class function TOperation.Parse(AEngine: TSmartyEngine; const S: string): TOperation;
@@ -8078,17 +7999,15 @@ end;
 
 constructor TOpVariable.Create;
 begin
-  inherited Create;
-  FNamespace := nil;
+  inherited;
   FIndex := -1;
-  FVarName := '';
   FVarDetails := TVarList.Create;
 end;
 
 destructor TOpVariable.Destroy;
 begin
   FVarDetails.Finalize;
-  inherited Destroy;
+  inherited;
 end;
 
 function TOpVariable.Evaluate(AEngine: TSmartyEngine; var NeedFinalize: Boolean): TVariableRecord;
@@ -8105,15 +8024,10 @@ end;
 
 {************* TOpConst *************}
 
-constructor TOpConst.Create;
-begin
-  inherited Create;
-end;
-
 destructor TOpConst.Destroy;
 begin
   FValue.Finalize;
-  inherited Destroy;
+  inherited;
 end;
 
 function TOpConst.Evaluate(AEngine: TSmartyEngine; var NeedFinalize: Boolean): TVariableRecord;
@@ -8133,15 +8047,14 @@ end;
 
 constructor TOpFunction.Create;
 begin
-  inherited Create;
-  FFuncClass := nil;
+  inherited;
   FParams := TOperationList.Create;
 end;
 
 destructor TOpFunction.Destroy;
 begin
   FParams.Free;
-  inherited Destroy;
+  inherited;
 end;
 
 function TOpFunction.Evaluate(AEngine: TSmartyEngine; var NeedFinalize: Boolean): TVariableRecord;
@@ -8186,18 +8099,11 @@ end;
 
 {************* TOpOperator *************}
 
-constructor TOpOperator.Create;
-begin
-  inherited Create;
-  FLeftOp := nil;
-  FRightOp := nil;
-end;
-
 destructor TOpOperator.Destroy;
 begin
-  if Assigned(FLeftOp) then FLeftOp.Free;
-  if Assigned(FRightOp) then FRightOp.Free;
-  inherited Destroy;
+  FreeAndNil(FLeftOp);
+  FreeAndNil(FRightOp);
+  inherited;
 end;
 
 function TOpOperator.Evaluate(AEngine: TSmartyEngine; var NeedFinalize: Boolean): TVariableRecord;
@@ -8334,22 +8240,16 @@ end;
 
 {************* TSimpleIf *************}
 
-constructor TSimpleIf.Create(AEngine: TSmartyEngine);
+constructor TSimpleIf.CreateOperation(AEngine: TSmartyEngine; const AExpr: string);
 begin
   inherited Create(AEngine);
-  FOperation := nil;
-end;
-
-constructor TSimpleIf.CreateOperation(AEngine: TSmartyEngine; AExpr: string);
-begin
-  Create(AEngine);
   FOperation := TOperation.Parse(AEngine, AExpr);
 end;
 
 destructor TSimpleIf.Destroy;
 begin
-  if Assigned(FOperation) then FOperation.Free;
-  inherited Destroy;
+  FreeAndNil(FOperation);
+  inherited;
 end;
 
 function TSimpleIf.Evaluate: Boolean;
@@ -8372,8 +8272,7 @@ end;
 
 constructor TVariableIf.Create(AEngine: TSmartyEngine);
 begin
-  inherited Create(AEngine);
-  FNamespace := nil;
+  inherited;
   FVarDetails := TVarList.Create;
 end;
 
@@ -8386,7 +8285,7 @@ end;
 destructor TVariableIf.Destroy;
 begin
   FVarDetails.Finalize;
-  inherited Destroy;
+  inherited;
 end;
 
 function TVariableIf.Evaluate: Boolean;
@@ -8459,25 +8358,23 @@ end;
 constructor TElseIfAction.Create;
 begin
   inherited Create;
-  FCondition := nil;
   FActions := TTemplateActions.Create(True);
 end;
 
 destructor TElseIfAction.Destroy;
 begin
-  if Assigned(FCondition) then FCondition.Free;
-  FActions.Free;
-  inherited Destroy;
+  FreeAndNil(FCondition);
+  FreeAndNil(FActions);
+  inherited;
 end;
 
 {************* TIfOutputAction *************}
 
 constructor TIfOutputAction.Create(AEngine: TSmartyEngine);
 begin
-  inherited Create(AEngine);
+  inherited;
   FActionType := tatIf;
 
-  FCondition := nil;
   FThenActions := TTemplateActions.Create;
   FElseActions := TTemplateActions.Create;
   FElseIfActions := TElseIfActions.Create(True);
@@ -8485,11 +8382,11 @@ end;
 
 destructor TIfOutputAction.Destroy;
 begin
-  if Assigned(FCondition) then FCondition.Free;
-  FElseIfActions.Free;
-  FThenActions.Free;
-  FElseActions.Free;
-  inherited Destroy;
+  FreeAndNil(FCondition);
+  FreeAndNil(FElseIfActions);
+  FreeAndNil(FThenActions);
+  FreeAndNil(FElseActions);
+  inherited;
 end;
 
 function TIfOutputAction.ContinueIf(AEngine: TSmartyEngine; const ACommand: string;
@@ -8600,7 +8497,7 @@ end;
 
 constructor TForEachOutputAction.Create(AEngine: TSmartyEngine);
 begin
-  inherited Create(AEngine);
+  inherited;
   FActionType := tatForEach;
   FNamespaceBased := False;
 
@@ -8614,7 +8511,7 @@ begin
   FVarDetails.Finalize;
   FBaseActions.Free;
   FElseActions.Free;
-  inherited Destroy;
+  inherited;
 end;
 
 function TForEachOutputAction.Execute: string;
@@ -8784,17 +8681,16 @@ end;
 
 constructor TCaptureArrayAction.Create(AEngine: TSmartyEngine);
 begin
-  inherited Create(AEngine);
+  inherited;
   FActionType := tatCaptureArray;
   FVarDetails := TVarList.Create;
-  FFilter := nil;
 end;
 
 destructor TCaptureArrayAction.Destroy;
 begin
   FVarDetails.Finalize;
-  if Assigned(FFilter) then FFilter.Free;
-  inherited Destroy;
+  FreeAndNil(FFilter);
+  inherited;
 end;
 
 function TCaptureArrayAction.Execute: string;
@@ -8908,13 +8804,8 @@ end;
 
 constructor TReleaseArrayAction.Create(AEngine: TSmartyEngine);
 begin
-  inherited Create(AEngine);
+  inherited;
   FActionType := tatReleaseArray;
-end;
-
-destructor TReleaseArrayAction.Destroy;
-begin
-  inherited Destroy;
 end;
 
 function TReleaseArrayAction.Execute: string;
@@ -8951,15 +8842,14 @@ end;
 
 constructor TAssignAction.Create(AEngine: TSmartyEngine);
 begin
-  inherited Create(AEngine);
+  inherited;
   FActionType := tatAssign;
-  FValue := nil;
 end;
 
 destructor TAssignAction.Destroy;
 begin
-  if Assigned(FValue) then FValue.Free;
-  inherited Destroy;
+  FreeAndNil(FValue);
+  inherited;
 end;
 
 function TAssignAction.Execute: string;
@@ -9014,13 +8904,8 @@ end;
 
 constructor TReleaseAction.Create(AEngine: TSmartyEngine);
 begin
-  inherited Create(AEngine);
+  inherited;
   FActionType := tatRelease;
-end;
-
-destructor TReleaseAction.Destroy;
-begin
-  inherited Destroy;
 end;
 
 function TReleaseAction.Execute: string;
@@ -9058,7 +8943,7 @@ end;
 
 constructor TSmartyInfoProvider.Create;
 begin
-  inherited Create;
+  inherited;
 
   FModifiers := TStringList.Create;
   FModifiers.CaseSensitive := False;
@@ -9193,7 +9078,7 @@ end;
 
 constructor TSmartyEngine.Create;
 begin
-  inherited Create;
+  inherited;
 
   FCompiled := False;
   FActions := TTemplateActions.Create;
