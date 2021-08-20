@@ -10,6 +10,9 @@ uses
 {$R *.res}
 
 begin
+  {$IFDEF FPC}
+  Application.Scaled := True;
+  {$ENDIF}
   Application.Initialize;
   Application.CreateForm(TForm1, Form1);
   Application.Run;
