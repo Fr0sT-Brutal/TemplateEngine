@@ -233,8 +233,9 @@ type
 
   TVarList = class (TList<TVariablePart>)
   public
+    destructor Destroy; override;
     function Clone: TVarList;
-    procedure Finalize;
+    procedure Clear;
     procedure DeleteElement(Index: Integer);
     procedure AddArrayPrefix(AVariable: TVarList; Index: Integer);
     function IsSimpleVariable(out VarName: string): Boolean;
@@ -3694,6 +3695,12 @@ end;
 
 {************* TVarList *************}
 
+destructor TVarList.Destroy;
+begin
+  Clear;
+  inherited;
+end;
+
 function TVarList.Clone: TVarList;
 var
   I: Integer;
@@ -3702,12 +3709,12 @@ begin
    for I := 0 to Count - 1 do Result.Add(Items[I].Clone);
 end;
 
-procedure TVarList.Finalize;
+procedure TVarList.Clear;
 var
   I: Integer;
 begin
   for I := 0 to Count - 1 do Items[I].Finalize;
-  Free;
+  inherited;
 end;
 
 procedure TVarList.DeleteElement(Index: Integer);
@@ -4118,7 +4125,7 @@ begin
         end;
 
       finally
-        VarDetails.Finalize;
+        FreeAndNil(VarDetails);
       end;
     end
     else if VarName = 'capture' then
@@ -4133,7 +4140,7 @@ begin
           NeedFinalize := False;
         end;
       finally
-        VarDetails.Finalize;
+        FreeAndNil(VarDetails);
       end;
     end;
   end;
@@ -4169,7 +4176,7 @@ begin
           else
             Result := TVariableRecord.Null;
         finally
-          VList.Finalize;
+          FreeAndNil(VList);
         end;
       end
       else begin
@@ -6479,7 +6486,7 @@ end;
 
 destructor TVariableOutputAction.Destroy;
 begin
-  FVarDetails.Finalize;
+  FreeAndNil(FVarDetails);
   FreeAndNil(FModifiers);
   inherited;
 end;
@@ -8006,7 +8013,7 @@ end;
 
 destructor TOpVariable.Destroy;
 begin
-  FVarDetails.Finalize;
+  FreeAndNil(FVarDetails);
   inherited;
 end;
 
@@ -8284,7 +8291,7 @@ end;
 
 destructor TVariableIf.Destroy;
 begin
-  FVarDetails.Finalize;
+  FreeAndNil(FVarDetails);
   inherited;
 end;
 
@@ -8508,7 +8515,7 @@ end;
 
 destructor TForEachOutputAction.Destroy;
 begin
-  FVarDetails.Finalize;
+  FreeAndNil(FVarDetails);
   FreeAndNil(FBaseActions);
   FreeAndNil(FElseActions);
   inherited;
@@ -8688,7 +8695,7 @@ end;
 
 destructor TCaptureArrayAction.Destroy;
 begin
-  FVarDetails.Finalize;
+  FreeAndNil(FVarDetails);
   FreeAndNil(FFilter);
   inherited;
 end;
