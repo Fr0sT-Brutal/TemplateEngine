@@ -79,3 +79,7 @@ I'm not going to develop this code actively since I'm not using it much and ever
 # Contributions #
 
 If you find this project useful, you can help by adding tests. Test fixtures are located in Test\TestCases.lst, format is described at the beginning of the file. Many modifiers and functions are waiting to be covered.
+
+# License #
+
+Initial license is dual GPL / MPL 1.0, as mentioned in TemplateEngine.pas, now GPL / MPL 2.0.
